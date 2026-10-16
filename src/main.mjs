@@ -2,6 +2,7 @@ import {SIZE,newGame,rotatePiece,applyMove,bounds,canPlace} from "./engine.mjs";
 import {loadSave,writeSave,checkpoint,finish} from "./storage.mjs";
 import {Feedback,MASCOTS} from "./feedback.mjs";
 import {evaluateBonus,speedTier} from "./bonus.mjs";
+import {PlacementCueGate} from "./placement-cues.mjs";
 
 const $=id=>document.getElementById(id);
 const boardEl=$("board"),trayEl=$("tray"),ghostEl=$("drag-ghost"),surface=$("surface");
@@ -9,6 +10,7 @@ let save=loadSave(),runStartBest=save.progress?.runStartBest??save.bestScore;
 let game=save.progress?.game||newGame();
 let selected=null,drag=null,flashTimer=null,confettiTimer=null,finishing=false;
 let selectedAt=null,selectedTurns=0;
+const cueGate=new PlacementCueGate(540);
 function selectPiece(index){
   if(selected!==index || selectedAt===null){
     selectedAt=performance.now();
@@ -49,6 +51,7 @@ function showMascot(){
   $("mascot-choice").value=save.mascot;
   $("voice-setting").checked=save.settings.voice;$("fx-setting").checked=save.settings.fx;
   $("motion-setting").checked=save.settings.reducedMotion;
+  $("haptics-setting").checked=save.settings.haptics!==false;
   document.body.classList.toggle("reduce-motion",save.settings.reducedMotion);
 }
 function cellDiv(color,x,y,extra=""){
@@ -139,25 +142,33 @@ function drawGhost(){
   ghostEl.replaceChildren(wrap);
   ghostEl.style.left=m.left+"px";ghostEl.style.top=m.top+"px";
   ghostEl.hidden=false;preview(m.x,m.y,m.valid);
+  if(drag.moved || drag.rotatedCue) {
+    const cue=cueGate.update(m.valid,performance.now(),true,Boolean(drag.rotatedCue));
+    if(cue){feedback.fx(cue);feedback.haptic(cue);}
+  } else cueGate.update(false,performance.now(),false);
+  drag.rotatedCue=false;
 }
 function resetDrag(){
-  drag=null;ghostEl.hidden=true;ghostEl.replaceChildren();
+  drag=null;cueGate.reset();ghostEl.hidden=true;ghostEl.replaceChildren();
   for(const c of boardEl.children)c.classList.remove("preview-good","preview-bad");
 }
 function rotateSelected(){
   const index=drag?.index??selected;
   if(index===null||game.gameOver||game.pieces[index]?.used)return;
   game=rotatePiece(game,index);selectedTurns++;
-  feedback.fx("rotate");persist();drawTray();updateBonusLive();
-  if(drag)drawGhost();
+  feedback.fx("rotate");feedback.haptic("rotate");
+  persist();drawTray();updateBonusLive();
+  if(drag){drag.rotatedCue=true;drawGhost();}
   else feedback.onCaption("Pièce tournée de 90° !");
 }
 function beginDrag(index,e){
   if(game.gameOver||game.pieces[index]?.used)return;
   selectPiece(index);
   drag={index,pointer:e.pointerId,startX:e.clientX,startY:e.clientY,
-    x:e.clientX,y:e.clientY,proposed:null,moved:false};
-  feedback.ensureAudio();drawTray();drawGhost();
+    x:e.clientX,y:e.clientY,proposed:null,moved:false,rotatedCue:false};
+  cueGate.reset();
+  feedback.ensureAudio();feedback.fx("grab");feedback.haptic("grab");
+  drawTray();drawGhost();
   try{surface.setPointerCapture(e.pointerId);}catch{}
 }
 function insertAt(index,x,y){
@@ -168,6 +179,7 @@ function insertAt(index,x,y){
     feedback.fx("invalid");feedback.onCaption("Essaie dans un espace libre !");
     return false;
   }
+  feedback.haptic(res.event.lines>0?"clear":"drop");
   game=res.game;selected=null;selectedAt=null;selectedTurns=0;
   const isRecord=game.score>runStartBest;
   if(game.gameOver){
@@ -310,7 +322,7 @@ $("mascot-choice").addEventListener("change",e=>{
   save={...save,mascot:e.target.value};persistSettings();showMascot();
   feedback.speak("welcome",1,true);
 });
-for(const [id,key] of [["voice-setting","voice"],["fx-setting","fx"],["motion-setting","reducedMotion"]]){
+for(const [id,key] of [["voice-setting","voice"],["fx-setting","fx"],["motion-setting","reducedMotion"],["haptics-setting","haptics"]]){
   $(id).addEventListener("change",e=>{
     save={...save,settings:{...save.settings,[key]:e.target.checked}};
     persistSettings();showMascot();if(key==="voice"&&!e.target.checked)feedback.stop();

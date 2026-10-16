@@ -1,3 +1,4 @@
+import {CHARACTER_LINES,SHARED_LINES} from "./phrase-bank.mjs";
 /**
  * Voice orchestration: semantic variety, 48-item history, mood, cooldowns.
  * Pure JavaScript, independent of the game engine, works offline.
@@ -46,22 +47,33 @@ export class VoiceDirector {
   }
   choose(mascot,kind,force=false){
     const event=EMOTIONS[kind]||EMOTIONS.clear;
-    const options=[...(mascot.lines[kind]||[]),...(EXTRA_LINES[kind]||EXTRA_LINES.clear)];
-    if(!options.length)return null;
+    const key=mascot.id||"pompom";
+    const options=[...(CHARACTER_LINES[key]?.[kind]||[]),
+      ...(SHARED_LINES[kind]||[]),
+      ...(mascot.lines[kind]||[]),
+      ...(EXTRA_LINES[kind]||EXTRA_LINES.clear)]
+      .filter((phrase,index,array)=>array.indexOf(phrase)===index);
+    // The spoken announcement must name the earned speed tier.
+    const speedWords={speed2:/deux|double|turbo|fois deux/i,
+      speed3:/trois|triple|fusée/i,speed4:/quatre|éclair|fois quatre/i,
+      noRotation:/rotation|direct/i};
+    const matching=speedWords[kind]?options.filter(p=>speedWords[kind].test(p)):options;
+    const pool=matching.length?matching:options;
+    if(!pool.length)return null;
     const now=this.clock();
-    // Avoid the last 8 sentences across all mascots, not just exact immediate repeat.
-    const recent=new Set(this.history.slice(-8).map(h=>h.key));
-    let choices=options.filter(phrase=>!recent.has(phrase));
+    // Remember 48 actual previously chosen phrases, even after app restart.
+    const recent=new Set(this.history.map(h=>h.key));
+    let choices=pool.filter(phrase=>!recent.has(phrase));
     if(!choices.length){
       // Exhausted pool: least recently spoken option rather than same phrase again.
       let oldest=Infinity;
-      for(const text of options){
+      for(const text of pool){
         const recentMatch=this.history.findLast?.(h=>h.key===text) ||
           [...this.history].reverse().find(h=>h.key===text);
         const at=recentMatch?.time??-1;
         oldest=Math.min(oldest,at);
       }
-      choices=options.filter(text=>{
+      choices=pool.filter(text=>{
         const match=[...this.history].reverse().find(h=>h.key===text);
         return (match?.time??-1)===oldest;
       });

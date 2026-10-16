@@ -26,7 +26,7 @@ function computeSonar(index){
   currentGuidance=0;
 }
 function updateSonar(x,y){
-  const level=drag&&drag.moved&&targetPositions.length ?
+  const level=drag&&drag.moved&&targetPositions.length&&save.settings.hapticGuidance!==false ?
     proximityStrength(targetPositions,x,y):0;
   currentGuidance=level;
   feedback.guideHaptic(level);
@@ -79,6 +79,7 @@ function showMascot(){
   $("voice-setting").checked=save.settings.voice;$("fx-setting").checked=save.settings.fx;
   $("motion-setting").checked=save.settings.reducedMotion;
   $("haptics-setting").checked=save.settings.haptics!==false;
+  $("guidance-setting").checked=save.settings.hapticGuidance!==false;
   document.body.classList.toggle("reduce-motion",save.settings.reducedMotion);
 }
 function cellDiv(color,x,y,extra=""){
@@ -354,12 +355,12 @@ $("mascot-choice").addEventListener("change",e=>{
   save={...save,mascot:e.target.value};persistSettings();showMascot();
   feedback.speak("welcome",1,true);
 });
-for(const [id,key] of [["voice-setting","voice"],["fx-setting","fx"],["motion-setting","reducedMotion"],["haptics-setting","haptics"]]){
+for(const [id,key] of [["voice-setting","voice"],["fx-setting","fx"],["motion-setting","reducedMotion"],["haptics-setting","haptics"],["guidance-setting","hapticGuidance"]]){
   $(id).addEventListener("change",e=>{
     save={...save,settings:{...save.settings,[key]:e.target.checked}};
     persistSettings();showMascot();
     if(key==="voice"&&!e.target.checked)feedback.stop();
-    if(key==="haptics"&&!e.target.checked)feedback.stopGuidance();
+    if((key==="haptics"||key==="hapticGuidance")&&!e.target.checked)feedback.stopGuidance();
   });
 }
 $("new-game").addEventListener("click",()=>restart(true));

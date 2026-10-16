@@ -103,7 +103,7 @@ function drawTray(){
 function paint(){
   $("score").textContent=number(game.score);
   $("record").textContent=number(Math.max(game.score,save.bestScore));
-  showMascot();drawBoard();drawTray();
+  showMascot();drawBoard();drawTray();updateBonusLive();
 }
 function metrics(coords,clientX,clientY){
   const b=bounds(coords),r=boardEl.getBoundingClientRect();

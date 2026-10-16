@@ -1,0 +1,14 @@
+{
+  "name": "block-boost",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Jeu de blocs et mascottes — PWA offline",
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "test:touch": "node tests/touch.e2e.mjs"
+  },
+  "devDependencies": {
+    "playwright-core": "1.56.1"
+  }
+}

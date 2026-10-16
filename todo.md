@@ -70,3 +70,18 @@ Voir [docs/description-gameplay-mascottes-voix-fx-et-score-local.md](docs/descri
 - [ ] Garder main et publications stables intacts sans nouvel accord.
 
 APK brute : https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-bonus-0.3.0/temp/android/BlockBoost-0.3.0-bonus-debug.apk
+
+## 16/10/2026 — Audio, dialogue, retour tactile (version labo 0.4.0)
+
+- [x] Ajouter **388 nouvelles phrases** réellement différentes : six animaux, plusieurs événements et bonus.
+- [x] Éviter les **48 dernières** phrases et conserver cet historique après redémarrage.
+- [x] Espacer les discours pour rendre de la place au silence et aux effets du jeu.
+- [x] Ajouter son distinct de **décrochage** à la prise d'une pièce.
+- [x] Ajouter deux petits sons **« dring-biling »** lors de l'entrée dans un emplacement valide, variante après rotation ; éviter les répétitions continues.
+- [x] Ajouter vibrations haptiques Android depuis la WebView, PWA en repli, et un réglage indépendant.
+- [x] Tester le moteur de dialogue, validité, vitesse, bonus et interaction Chrome multitactile : https://github.com/greenpower2669/Block-Boost/actions/runs/38962905329.
+- [x] Compiler APK test et la publier directement sans ZIP sur GitHub : https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-audio-0.4.0/temp/android/BlockBoost-0.4.0-audio-debug.apk ; SHA `304e962393c98a2e356bf5b976e4c74aed55d492ddb1b6b7514a11f22773ed0a`.
+- [ ] Tester sur Samsung si les vibrations fonctionnent réellement et sont confortables.
+- [ ] Vérifier au casque et sur haut-parleur les sons de prise/pose et l'équilibre avec les voix.
+- [ ] Mesurer l'impression de répétition durant une longue partie et ajuster si nécessaire.
+- [ ] Aucun merge main ni release officielle sans autorisation.

@@ -76,7 +76,9 @@ test("three consumed pieces generate a fresh batch",()=>{
   assert.equal(r.game.pieces.length,3);assert.equal(r.game.pieces.every(p=>!p.used),true);
 });
 test("game ends when none of the unconsumed pieces fits",()=>{
-  const board=Array.from({length:SIZE},()=>Array(SIZE).fill("rose"));board[7][7]=null;
+  const board=Array.from({length:SIZE},()=>Array(SIZE).fill("rose"));
+  // Leave separated isolated pockets: finishing a single cell must not clear a full row/column.
+  for(const [y,x] of [[0,0],[1,1],[6,6],[7,7]])board[y][x]=null;
   const g=game(board);
   const r=applyMove(g,0,7,7);
   assert.equal(r.game.gameOver,true);assert.equal(r.event.type,"gameOver");

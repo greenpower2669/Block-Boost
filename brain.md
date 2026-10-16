@@ -70,3 +70,19 @@ Demande explicite après test audio 0.2.0 : rendre visibles et fonctionnels « V
 - APK debug [run 38958540134](https://github.com/greenpower2669/Block-Boost/actions/runs/38958540134) vert, branche temporaire `temp/blockboost-bonus-0.3.0`, fichier [BlockBoost-0.3.0-bonus-debug.apk](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-bonus-0.3.0/temp/android/BlockBoost-0.3.0-bonus-debug.apk), 42 688 octets, SHA256 `e14696954dbf30b17fb006fb34ab72daf9a131da1e4e4f27cf319110faf72b65`.
 - App ID de test **distinct** `fr.greenpower.blockboost.bonuslab` pour ne pas écraser 0.1/0.2 ; sauvegarde et record distincts. Test réel Samsung encore à faire.
 - Spécification : [docs/bonus-vitesse-extra-sans-rotation-030.md](docs/bonus-vitesse-extra-sans-rotation-030.md). Aucun merge ni Play Store.
+
+## 16/10/2026 — Audio/Haptiques 0.4.0, phrases nombreuses
+
+**Demande :** « Ok code rajoute des phrase en quantité », après constat de dialogue trop répétitif, de l'absence de son de décrochage, de « dring-biling » à la pose prête et des retours haptiques.
+
+**Implémentation validée en CI** sur `feature/audio-haptics-variety-040` :
+- `src/phrase-bank.mjs` : 388 nouvelles phrases françaises écrites pour les six compagnons (288 propres aux mascottes et 100 communes) **en supplément** des anciennes répliques.
+- `src/voice-director.mjs` : tirage contextuel avec exclusion des 48 dernières phrases persistant en local ; sélection de répliques mentionnant explicitement la vitesse obtenue ou le bonus sans rotation.
+- `src/feedback.mjs` : silence volontaire (au moins 7 secondes entre interventions ordinaires et 17 s entre deux annonces du même type), sons `grab`, `valid` (deux notes) et `validRotate`. Sons non spam : automate `PlacementCueGate` avec passage invalide → valide et délai ≥540 ms ; ne rejoue pas le son en glissant dans la même zone valide.
+- Vibrations haptiques optionnelles indépendantes de la voix/des FX, activées par défaut ; pont natif Android `AndroidBridge.haptic` → `WebView.performHapticFeedback`, sans permission VIBRATE, respect du réglage système ; PWA : `navigator.vibrate` si pris en charge.
+- Les gestes à deux doigts et bonus vitesse ×4→×0 / EXTRA sans rotation restent inchangés.
+- Test Node/browser vert : https://github.com/greenpower2669/Block-Boost/actions/runs/38962905329 ; APK CI verte : https://github.com/greenpower2669/Block-Boost/actions/runs/38962905413.
+- APK 0.4.0 `fr.greenpower.blockboost.audiolab`, distincte des trois versions précédentes, scores séparés : [APK directe sans ZIP](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-audio-0.4.0/temp/android/BlockBoost-0.4.0-audio-debug.apk), **52 067 octets**, SHA-256 `304e962393c98a2e356bf5b976e4c74aed55d492ddb1b6b7514a11f22773ed0a`.
+- Démonstration physique sur Samsung à faire : confirmer force des vibrations, volume des deux notes et fréquence de parole. Aucun merge de `main`, aucune release Play.
+
+Voir `docs/audio-haptics-phrases-040.md`.

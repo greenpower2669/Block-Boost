@@ -1,10 +1,11 @@
-name: 🐾 Block Boost — APK Android debug
+name: 🐾 Block Boost — APK Android debug et voix expressives
 
 on:
   workflow_dispatch:
   push:
     branches:
       - feature/block-boost-playable-rotation-v1
+      - feature/emotional-voice-multithread-020
     paths:
       - 'android/**'
       - 'index.html'
@@ -14,11 +15,11 @@ on:
       - '.github/workflows/android-apk.yml'
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build-apk:
-    name: Construire et vérifier BlockBoost-0.1.0-debug.apk
+    name: Construire et vérifier BlockBoost-0.2.0-emotion-debug.apk
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
@@ -49,18 +50,41 @@ jobs:
       - name: Vérifier le contenu APK et le nommer
         run: |
           mkdir -p android/dist
-          cp android/app/build/outputs/apk/debug/app-debug.apk android/dist/BlockBoost-0.1.0-debug.apk
-          unzip -l android/dist/BlockBoost-0.1.0-debug.apk | grep -F 'assets/www/index.html'
-          unzip -l android/dist/BlockBoost-0.1.0-debug.apk | grep -F 'assets/www/src/main.mjs'
-          unzip -l android/dist/BlockBoost-0.1.0-debug.apk | grep -F 'classes.dex'
-          sha256sum android/dist/BlockBoost-0.1.0-debug.apk | tee android/dist/BlockBoost-0.1.0-debug.sha256
+          cp android/app/build/outputs/apk/debug/app-debug.apk android/dist/BlockBoost-0.2.0-emotion-debug.apk
+          unzip -l android/dist/BlockBoost-0.2.0-emotion-debug.apk | grep -F 'assets/www/index.html'
+          unzip -l android/dist/BlockBoost-0.2.0-emotion-debug.apk | grep -F 'assets/www/src/main.mjs'
+          unzip -l android/dist/BlockBoost-0.2.0-emotion-debug.apk | grep -F 'classes.dex'
+          sha256sum android/dist/BlockBoost-0.2.0-emotion-debug.apk | tee android/dist/BlockBoost-0.2.0-emotion-debug.sha256
 
       - name: Publier l'APK en artifact GitHub (pas de release)
         uses: actions/upload-artifact@v4
         with:
-          name: BlockBoost-0.1.0-debug-APK
+          name: BlockBoost-0.2.0-emotion-debug-APK
           path: |
-            android/dist/BlockBoost-0.1.0-debug.apk
-            android/dist/BlockBoost-0.1.0-debug.sha256
+            android/dist/BlockBoost-0.2.0-emotion-debug.apk
+            android/dist/BlockBoost-0.2.0-emotion-debug.sha256
           if-no-files-found: error
           retention-days: 30
+
+      - name: Créer le fichier APK direct sans ZIP sur une branche temporaire
+        if: github.ref_name == 'feature/emotional-voice-multithread-020'
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b temp/blockboost-emotion-0.2.0
+          mkdir -p temp/android
+          cp android/dist/BlockBoost-0.2.0-emotion-debug.apk temp/android/
+          cp android/dist/BlockBoost-0.2.0-emotion-debug.sha256 temp/android/
+          sed -i 's#android/dist/#temp/android/#' temp/android/BlockBoost-0.2.0-emotion-debug.sha256
+          sha256sum -c temp/android/BlockBoost-0.2.0-emotion-debug.sha256
+          printf "%s\n" "# Block Boost Émotion 0.2.0 — APK expérimentale" "" \
+            "Cette APK est signée debug. La synthèse vocale utilise les voix françaises locales d'Android." \
+            "Elle s'installe séparément de Block Boost 0.1.0 pour éviter un conflit de signature." \
+            "Aucun merge main, aucune publication Google Play." > temp/android/README.md
+          git add temp/android
+          git commit -m "artifact(android): livrer APK émotion 0.2.0 en lien direct"
+          git push origin HEAD:refs/heads/temp/blockboost-emotion-0.2.0
+          git ls-remote --exit-code origin refs/heads/temp/blockboost-emotion-0.2.0
+          echo "## 🎙️ Block Boost Émotion 0.2.0 — APK directe" >> "$GITHUB_STEP_SUMMARY"
+          echo "[Télécharger le fichier APK (pas un ZIP)](https://raw.githubusercontent.com/\${{ github.repository }}/temp/blockboost-emotion-0.2.0/temp/android/BlockBoost-0.2.0-emotion-debug.apk)" >> "$GITHUB_STEP_SUMMARY"

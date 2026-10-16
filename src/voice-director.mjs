@@ -55,7 +55,8 @@ export class VoiceDirector {
       .filter((phrase,index,array)=>array.indexOf(phrase)===index);
     // The spoken announcement must name the earned speed tier.
     const speedWords={speed2:/deux|double|turbo|fois deux/i,
-      speed3:/trois|triple|fusée/i,speed4:/quatre|éclair|fois quatre/i};
+      speed3:/trois|triple|fusée/i,speed4:/quatre|éclair|fois quatre/i,
+      noRotation:/rotation|direct|sans tourner|pas besoin|sans pirouette|sans détour/i};
     const matching=speedWords[kind]?options.filter(p=>speedWords[kind].test(p)):options;
     const pool=matching.length?matching:options;
     if(!pool.length)return null;

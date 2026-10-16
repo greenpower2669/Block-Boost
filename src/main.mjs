@@ -1,12 +1,36 @@
 import {SIZE,newGame,rotatePiece,applyMove,bounds,canPlace} from "./engine.mjs";
 import {loadSave,writeSave,checkpoint,finish} from "./storage.mjs";
 import {Feedback,MASCOTS} from "./feedback.mjs";
+import {evaluateBonus,speedTier} from "./bonus.mjs";
 
 const $=id=>document.getElementById(id);
 const boardEl=$("board"),trayEl=$("tray"),ghostEl=$("drag-ghost"),surface=$("surface");
 let save=loadSave(),runStartBest=save.progress?.runStartBest??save.bestScore;
 let game=save.progress?.game||newGame();
 let selected=null,drag=null,flashTimer=null,confettiTimer=null,finishing=false;
+let selectedAt=null,selectedTurns=0;
+function selectPiece(index){
+  if(selected!==index || selectedAt===null){
+    selectedAt=performance.now();
+    selectedTurns=0;
+  }
+  selected=index;
+  updateBonusLive();
+}
+function elapsed(){
+  return selectedAt===null?Infinity:Math.max(0,performance.now()-selectedAt);
+}
+function updateBonusLive(){
+  const node=$("bonus-live");
+  if(selected===null || game.gameOver || game.pieces[selected]?.used){
+    node.textContent="⚡ VITESSE ×4 à ×0 · ⭐ EXTRA sans rotation";
+    node.classList.remove("running");return;
+  }
+  const tier=speedTier(elapsed());
+  node.textContent="⚡ VITESSE ×"+tier.multiplier+" · "+(selectedTurns===0?"⭐ EXTRA POSSIBLE":"↻ "+selectedTurns+" rotation"+(selectedTurns>1?"s":""));
+  node.classList.add("running");
+}
+setInterval(()=>{if(selected!==null)updateBonusLive();},125);
 const feedback=new Feedback(()=>save.settings,()=>save.mascot,
   caption=>{$("mascot-caption").textContent=caption||"À toi de jouer !";},
   emotion=>{$("mascot-face").className="mascot-face"+(emotion!=="idle"?" "+emotion:"");});
@@ -123,13 +147,14 @@ function resetDrag(){
 function rotateSelected(){
   const index=drag?.index??selected;
   if(index===null||game.gameOver||game.pieces[index]?.used)return;
-  game=rotatePiece(game,index);feedback.fx("rotate");persist();drawTray();
+  game=rotatePiece(game,index);selectedTurns++;
+  feedback.fx("rotate");persist();drawTray();updateBonusLive();
   if(drag)drawGhost();
   else feedback.onCaption("Pièce tournée de 90° !");
 }
 function beginDrag(index,e){
   if(game.gameOver||game.pieces[index]?.used)return;
-  selected=index;
+  selectPiece(index);
   drag={index,pointer:e.pointerId,startX:e.clientX,startY:e.clientY,
     x:e.clientX,y:e.clientY,proposed:null,moved:false};
   feedback.ensureAudio();drawTray();drawGhost();
@@ -137,41 +162,54 @@ function beginDrag(index,e){
 }
 function insertAt(index,x,y){
   const oldScore=game.score;
-  const res=applyMove(game,index,x,y);
+  const bonus=evaluateBonus(game.pieces[index].coords.length,elapsed(),selectedTurns);
+  const res=applyMove(game,index,x,y,Math.random,bonus);
   if(res.event.type==="invalid"){
     feedback.fx("invalid");feedback.onCaption("Essaie dans un espace libre !");
     return false;
   }
-  game=res.game;selected=null;
+  game=res.game;selected=null;selectedAt=null;selectedTurns=0;
   const isRecord=game.score>runStartBest;
   if(game.gameOver){
     const result=finish(save,game);save=result.save;$("storage-status").hidden=result.persisted;
   }else persist();
   paint();
   const event=res.event;
+  flashClear(event.clearedCells,event.lines,event.combo,event.gained,bonus);
+  const descriptions=["⚡ VITESSE ×"+bonus.speedMultiplier+" : +"+event.speedBonus];
+  if(event.noRotationBonus)descriptions.push("⭐ EXTRA SANS ROTATION : +"+event.noRotationBonus);
+  $("bonus-earned").textContent=descriptions.join(" · ");
   if(event.lines>0){
-    flashClear(event.clearedCells,event.lines,event.combo,event.gained);
     feedback.fx(event.combo>=3||event.lines>=2?"combo":"clear");
-    const kind=event.combo>=3?"combo":event.lines>=2?"big":"clear";
-    feedback.speak(kind,event.combo>=3?3:2);
-  }else{
-    feedback.fx("drop");
-    if(game.moves===1||game.moves%10===0)feedback.speak("welcome",1);
-  }
+  }else feedback.fx("drop");
+  if(bonus.speedMultiplier>=3)feedback.fx("speed");
+  if(event.noRotationBonus)feedback.fx("extra");
+  if(event.combo>=3)feedback.speak("combo",4);
+  else if(bonus.speedMultiplier>=2)feedback.speak("speed"+bonus.speedMultiplier,3);
+  else if(event.lines>=2)feedback.speak("big",3);
+  else if(bonus.noRotationBonus>0)feedback.speak("noRotation",2);
+  else if(event.lines>0)feedback.speak("clear",2);
+  else if(game.moves===1||game.moves%10===0)feedback.speak("welcome",1);
   if(game.gameOver){
     const newRecord=game.score>runStartBest;
-    window.setTimeout(()=>endGame(newRecord),1050);
+    window.setTimeout(()=>endGame(newRecord),1850);
   }
   return game.score!==oldScore;
 }
-function flashClear(cleared,lines,combo,gained){
-  const text=combo>=2?"✨ COMBO "+combo+" !":lines>=2?"🌟 DOUBLE !":"✨ +"+gained;
+function flashClear(cleared,lines,combo,gained,bonus){
+  const parts=[];
+  if(combo>=2)parts.push("✨ COMBO "+combo+" !");
+  else if(lines>=2)parts.push("🌟 DOUBLE !");
+  parts.push("⚡ VITESSE ×"+bonus.speedMultiplier);
+  if(bonus.noRotationBonus>0)parts.push("⭐ EXTRA SANS ROTATION !");
+  parts.push("+"+gained+" POINTS");
+  const text=parts.join("\n");
   $("combo-flash").textContent=text;
   $("combo-flash").classList.remove("active");void $("combo-flash").offsetWidth;
   $("combo-flash").classList.add("active");
   const frag=document.createDocumentFragment(),rect=boardEl.getBoundingClientRect();
   if(!save.settings.reducedMotion){
-    for(let i=0;i<Math.min(35,14+lines*9);i++){
+    for(let i=0;i<Math.min(35,11+lines*9);i++){
       const node=document.createElement("div"),center=cleared[Math.floor(Math.random()*cleared.length)]||[3,3];
       node.className="spark";
       node.style.setProperty("--px",rect.left+(center[1]+.5)*rect.width/8+"px");
@@ -185,8 +223,8 @@ function flashClear(cleared,lines,combo,gained){
     $("sparkles").appendChild(frag);
   }
   clearTimeout(flashTimer);clearTimeout(confettiTimer);
-  flashTimer=setTimeout(()=>$("combo-flash").classList.remove("active"),1150);
-  confettiTimer=setTimeout(()=>$("sparkles").replaceChildren(),1000);
+  flashTimer=setTimeout(()=>$("combo-flash").classList.remove("active"),1650);
+  confettiTimer=setTimeout(()=>$("sparkles").replaceChildren(),1400);
 }
 function endGame(newRecord){
   if(finishing)return;
@@ -204,7 +242,8 @@ function restart(confirmActive=false){
   if(confirmActive&&!game.gameOver&&game.moves>0&&!window.confirm("Recommencer cette partie ? Le record restera enregistré."))return;
   feedback.stop();finishing=false;
   if($("end-dialog").open)$("end-dialog").close();
-  game=newGame();selected=null;resetDrag();
+  game=newGame();selected=null;selectedAt=null;selectedTurns=0;resetDrag();
+  $("bonus-earned").textContent="";updateBonusLive();
   runStartBest=save.bestScore;persist();paint();
   feedback.onCaption("Choisis une pièce et amuse-toi !");
 }
@@ -257,7 +296,7 @@ document.addEventListener("keydown",e=>{
     e.preventDefault();rotateSelected();
   }
   if((e.key==="Enter"||e.key===" ")&&e.target.closest?.(".piece-slot")){
-    e.preventDefault();selected=Number(e.target.closest(".piece-slot").dataset.piece);drawTray();
+    e.preventDefault();selectPiece(Number(e.target.closest(".piece-slot").dataset.piece));drawTray();
   }
 });
 document.addEventListener("contextmenu",e=>{
@@ -282,7 +321,7 @@ $("retry-button").addEventListener("click",()=>restart(false));
 window.addEventListener("resize",()=>{drawTray();if(drag)drawGhost();});
 window.addEventListener("pagehide",()=>{if(!game.gameOver)persist();feedback.stop();});
 if(!save.progress)persist();
-paint();
+paint();updateBonusLive();
 if(!globalThis.AndroidBridge && "serviceWorker" in navigator && location.protocol.startsWith("http")){
   window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
 }

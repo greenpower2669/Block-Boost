@@ -27,6 +27,10 @@ jobs:
           node --check sw.js
       - name: Tests moteur et sauvegardes
         run: node --test tests/*.test.mjs
+      - name: Installer le pilote de test du navigateur
+        run: npm install --no-audit --no-fund
+      - name: Tester deux doigts dans Chrome (rotation + pose + reprise)
+        run: npm run test:touch
       - name: Vérifier les fichiers PWA
         run: |
           test -s index.html

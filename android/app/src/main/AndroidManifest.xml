@@ -4,7 +4,7 @@
         android:allowBackup="true"
         android:fullBackupContent="false"
         android:usesCleartextTraffic="false"
-        android:label="Block Boost"
+        android:label="Block Boost Émotion"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher"
         android:theme="@style/Theme.BlockBoost"

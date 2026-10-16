@@ -38,6 +38,7 @@ export class Feedback {
     this.ctx=null;this.lastVoice=0;this.lastPhrase="";this.priority=0;
     this.currentSpeech=null;this.captionTimeout=null;this.emotionTimeout=null;
     this.director=new VoiceDirector();this.nativeSpeakingUntil=0;
+    this.lastByKind=new Map();
   }
   ensureAudio() {
     if(!this.getSettings().fx) return;
@@ -48,11 +49,11 @@ export class Feedback {
       if(this.ctx.state==="suspended")this.ctx.resume().catch(()=>{});
     }catch{}
   }
-  chirp(freq=520,duration=.12,volume=.10) {
+  chirp(freq=520,duration=.12,volume=.10,delay=0) {
     if(!this.getSettings().fx)return;
     this.ensureAudio();if(!this.ctx)return;
     try{
-      const osc=this.ctx.createOscillator(),gain=this.ctx.createGain(),now=this.ctx.currentTime;
+      const osc=this.ctx.createOscillator(),gain=this.ctx.createGain(),now=this.ctx.currentTime+delay;
       osc.type="sine";osc.frequency.setValueAtTime(freq,now);
       osc.frequency.exponentialRampToValueAtTime(Math.max(150,freq*1.4),now+duration);
       gain.gain.setValueAtTime(.0001,now);
@@ -63,6 +64,15 @@ export class Feedback {
   }
   fx(event) {
     if(!this.getSettings().fx)return;
+    if(event==="grab")this.chirp(285,.07,.055); // Detaching a block from tray
+    if(event==="valid") {
+      this.chirp(690,.085,.053);
+      this.chirp(940,.13,.050,.09); // The little "dring-biling" when placement is ready
+    }
+    if(event==="validRotate") {
+      this.chirp(740,.085,.053);
+      this.chirp(1060,.16,.050,.095);
+    }
     if(event==="drop")this.chirp(310,.075,.07);
     if(event==="invalid")this.chirp(195,.11,.035);
     if(event==="rotate")this.chirp(450,.10,.05);
@@ -72,19 +82,32 @@ export class Feedback {
     if(event==="extra") this.chirp(880,.18,.06);
     if(event==="record") {this.chirp(620,.26,.09);this.chirp(930,.32,.09);this.chirp(1200,.37,.09);}
   }
+  haptic(kind) {
+    if(this.getSettings().haptics===false)return;
+    if(globalThis.AndroidBridge?.haptic){
+      try{globalThis.AndroidBridge.haptic(kind);return;}catch{}
+    }
+    const pattern={grab:12,valid:16,validRotate:[15,35,17],
+      rotate:[12,30,12],drop:22,clear:[20,35,28],combo:[25,35,25]}[kind];
+    if(pattern!==undefined)try{globalThis.navigator?.vibrate?.(pattern);}catch{}
+  }
   speak(kind,priority=1,force=false) {
-    const mascot=MASCOTS[this.getMascot()]||MASCOTS.pompom;
+    const mascot={...(MASCOTS[this.getMascot()]||MASCOTS.pompom),id:this.getMascot()};
     const now=Date.now();
     const currentlySpeaking=Boolean(this.currentSpeech?.speaking) ||
       now<(this.nativeSpeakingUntil||0);
     if(!currentlySpeaking)this.priority=0;
     if(!force&&currentlySpeaking&&priority<this.priority)return;
-    if(!force&&now-this.lastVoice<2300&&priority<=this.priority)return;
+    // Silence is intentional: the score/banner/FX still respond to every move.
+    // A mascot speaks at most once every 7s, and no one event dominates the speech.
+    if(!force && now-this.lastVoice<7000)return;
+    if(!force && now-(this.lastByKind.get(kind)||0)<17000)return;
     const speech=this.director.choose(mascot,kind,force);
     if(!speech)return;
     const {phrase,mood}=speech;
     const effectivePriority=Math.max(priority,speech.priority);
     this.lastPhrase=phrase;this.lastVoice=now;this.priority=effectivePriority;
+    this.lastByKind.set(kind,now);
     this.onCaption(phrase);
     this.onEmotion(kind==="clear"?"happy":kind);
     clearTimeout(this.captionTimeout);clearTimeout(this.emotionTimeout);

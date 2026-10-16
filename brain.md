@@ -57,3 +57,16 @@ Demande explicite : intégrer dans **Block Boost**, pas dans VisionMaxRead, une 
 APK **debug lab** `fr.greenpower.blockboost.emotionlab` distincte de la version 0.1.0 : évite conflit de signature, mais **les sauvegardes du labo restent indépendantes de celles de 0.1.0**. Build et tests GitHub Actions verts : https://github.com/greenpower2669/Block-Boost/actions/runs/38956309047 (APK) et https://github.com/greenpower2669/Block-Boost/actions/runs/38956309287 (Chrome).
 APK directe sans ZIP sur branche `temp/blockboost-emotion-0.2.0` : https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-emotion-0.2.0/temp/android/BlockBoost-0.2.0-emotion-debug.apk (40 230 octets, SHA-256 `49c5bce6a6edc4892b60f1505c5b06b321bd54819068e62dede7407cd4f9f6e0`).
 Voir `docs/block-boost-emotion-multithread-020.md`. Aucune validation physique Samsung, aucun merge main ni publication Play.
+
+## 2026-10-16 — Bonus vitesse visibles et EXTRA sans rotation (0.3.0)
+
+Demande explicite après test audio 0.2.0 : rendre visibles et fonctionnels « VITESSE ×2 / ×4 » et « EXTRA SANS ROTATION », avec célébration type combo, annonce vocale et nouveau test tactile.
+
+- Branche `feature/fast-bonus-no-rotation-030`, sans merge `main`.
+- `src/bonus.mjs` : chrono `performance.now()` depuis la sélection ; paliers ×4 (≤2s), ×3 (≤4s), ×2 (≤7s), ×1 (≤11s), ×0 (>11s).
+- **Score** : points traditionnels inchangés (5 par case + 80 × lignes² × combo). Bonus vitesse additionnel : `5 × casesPièce × coefficient`. À ×0, les points normaux restent. Bonus **EXTRA sans rotation** additionnel : `5 × casesPièce`, y compris à ×0 ; aucune rotation permise, quatre rotations qui redonnent le même angle ne comptent pas comme zéro.
+- `src/main.mjs` : prise, chrono, suivi des rotations, pose valide seulement, petit HUD permanent en jeu + gros flash « VITESSE ×N / EXTRA SANS ROTATION / +points » ; voix variées et FX dédiés.
+- Tests 22 scénarios Node, puis test Chrome tactile simulant deux doigts suivi d'une pose sans rotation + sauvegarde : run [38958540023](https://github.com/greenpower2669/Block-Boost/actions/runs/38958540023) vert.
+- APK debug [run 38958540134](https://github.com/greenpower2669/Block-Boost/actions/runs/38958540134) vert, branche temporaire `temp/blockboost-bonus-0.3.0`, fichier [BlockBoost-0.3.0-bonus-debug.apk](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-bonus-0.3.0/temp/android/BlockBoost-0.3.0-bonus-debug.apk), 42 688 octets, SHA256 `e14696954dbf30b17fb006fb34ab72daf9a131da1e4e4f27cf319110faf72b65`.
+- App ID de test **distinct** `fr.greenpower.blockboost.bonuslab` pour ne pas écraser 0.1/0.2 ; sauvegarde et record distincts. Test réel Samsung encore à faire.
+- Spécification : [docs/bonus-vitesse-extra-sans-rotation-030.md](docs/bonus-vitesse-extra-sans-rotation-030.md). Aucun merge ni Play Store.

@@ -24,7 +24,16 @@ try{
     deviceScaleFactor:1});
   const page=await context.newPage(),errors=[];
   page.on("pageerror",err=>errors.push(err.message));
-  await page.addInitScript(()=>{Math.random=()=>0.13;});
+  await page.addInitScript(()=>{
+    Math.random=()=>0.13;
+    window.__hapticCalls=[];
+    window.AndroidBridge={
+      speak(){},stop(){},haptic(kind){window.__hapticCalls.push(["tap",kind]);},
+      reward(kind){window.__hapticCalls.push(["reward",kind]);},
+      guidance(level){window.__hapticCalls.push(["guide",level]);},
+      stopHaptics(){window.__hapticCalls.push(["stop"]); }
+    };
+  });
   await page.goto("http://127.0.0.1:"+port+"/",{waitUntil:"networkidle"});
   const board=await page.locator("#board").boundingBox();
   const slot=await page.locator(".piece-slot").first().boundingBox();
@@ -56,6 +65,11 @@ try{
   assert.match(extraText,/VITESSE ×[0-4]/);
   const scoreAfterExtra=Number((await page.locator("#score").textContent()).replace(/\s/g,""));
   assert.ok(scoreAfterExtra>score,"EXTRA and normal points must increase score");
+  const hapticCalls=await page.evaluate(()=>window.__hapticCalls);
+  assert.ok(hapticCalls.filter(c=>c[0]==="reward").length>=2,
+    "Each valid placement, including EXTRA, must emit a distinct haptic reward");
+  assert.ok(hapticCalls.some(c=>["extra","speedExtra","lineBonus","comboBonus"].includes(c[1])),
+    "A no-rotation bonus must trigger a tactile celebration");
   await page.reload({waitUntil:"networkidle"});
   const restored=Number((await page.locator("#score").textContent()).replace(/\s/g,""));
   assert.equal(restored,scoreAfterExtra,"Speed and no-rotation points must persist after reload");

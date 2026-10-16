@@ -1,0 +1,19 @@
+{
+  "name": "Block Boost — Puzzle des petits compagnons",
+  "short_name": "Block Boost",
+  "description": "Puzzle de blocs avec mascottes et records locaux",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#171940",
+  "theme_color": "#191c48",
+  "lang": "fr",
+  "icons": [
+    {
+      "src": "./assets/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

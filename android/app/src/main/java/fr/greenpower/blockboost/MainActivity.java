@@ -32,6 +32,7 @@ public final class MainActivity extends Activity {
     private static final String START_URL = "https://" + ASSET_HOST + "/assets/index.html";
     private WebView game;
     private ExpressiveVoiceEngine voice;
+    private HapticWaveEngine hapticWave;
     private long lastHapticAt = 0L;
 
     @Override
@@ -93,6 +94,7 @@ public final class MainActivity extends Activity {
         game.addJavascriptInterface(new VoiceBridge(), "AndroidBridge");
         setContentView(game);
         voice = new ExpressiveVoiceEngine(getApplicationContext());
+        hapticWave = new HapticWaveEngine(getApplicationContext());
         game.loadUrl(START_URL);
     }
 
@@ -153,6 +155,18 @@ public final class MainActivity extends Activity {
             if(voice!=null) voice.stop();
         }
         @JavascriptInterface
+        public void guidance(int level) {
+            if(hapticWave!=null)hapticWave.guide(level);
+        }
+        @JavascriptInterface
+        public void reward(String kind) {
+            if(hapticWave!=null)hapticWave.celebrate(kind);
+        }
+        @JavascriptInterface
+        public void stopHaptics() {
+            if(hapticWave!=null)hapticWave.stop();
+        }
+        @JavascriptInterface
         public void haptic(String event) {
             if (event == null) return;
             // The JS interface is executed off the UI thread. Haptics must run on the view thread.
@@ -187,6 +201,7 @@ public final class MainActivity extends Activity {
     protected void onPause() {
         if (game != null) game.onPause();
         if (voice != null) voice.stop();
+        if (hapticWave != null) hapticWave.stop();
         super.onPause();
     }
 
@@ -207,6 +222,10 @@ public final class MainActivity extends Activity {
         if (voice != null) {
             voice.close();
             voice = null;
+        }
+        if (hapticWave != null) {
+            hapticWave.close();
+            hapticWave = null;
         }
         super.onDestroy();
     }

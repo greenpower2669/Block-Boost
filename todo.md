@@ -42,3 +42,17 @@ Voir [docs/description-gameplay-mascottes-voix-fx-et-score-local.md](docs/descri
 - [APK sans ZIP](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-apk-0.1.0/temp/android/BlockBoost-0.1.0-debug.apk)
 - [GitHub Action de décompression et publication](https://github.com/greenpower2669/Block-Boost/actions/runs/38933516757)
 - SHA-256 : `49e963e01c075a2014b1889c54a236fec86b56587b328bfede3e2bea0688b98c`
+
+## 16/10/2026 — Évolution vocale émotionnelle lab 0.2.0
+
+- [x] Moteur `ExpressiveVoiceEngine` Android sur `HandlerThread` audio séparé des gestes tactiles/WebView.
+- [x] Profils d'intervention joyeux, surpris, combo, record et consolation ; variations de vitesse/hauteur de la voix native.
+- [x] Anti-répétition de 48 phrases et historique de voix persistant localement.
+- [x] Priorités vocales, annulation et solution de repli TTS si aucun clip enregistré disponible.
+- [x] Tests Node du directeur vocal, tests Chrome tactile, compilation APK debug et livraison GitHub sans ZIP : [run 38956309047](https://github.com/greenpower2669/Block-Boost/actions/runs/38956309047).
+- [ ] Sur Samsung, tester la qualité de voix française réellement disponible, la fluidité du jeu pendant les combos et le mode avion.
+- [ ] Fournir de **vrais clips préenregistrés émotionnels** originaux et licenciés / envisager génération Qwen3-TTS hors appareil. Actuellement seuls les profils TTS Android sont implémentés.
+- [ ] Revoir le mixage et le volume des FX lorsqu'une parole commence.
+- [ ] Ne pas merger main, publier release stable ou utiliser une clé Play sans autorisation.
+
+**APK directe 0.2.0 :** https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-emotion-0.2.0/temp/android/BlockBoost-0.2.0-emotion-debug.apk.

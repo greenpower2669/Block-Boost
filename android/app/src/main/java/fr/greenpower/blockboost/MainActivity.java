@@ -6,6 +6,8 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.HapticFeedbackConstants;
+import android.os.SystemClock;
 import android.view.WindowInsets;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
@@ -30,6 +32,7 @@ public final class MainActivity extends Activity {
     private static final String START_URL = "https://" + ASSET_HOST + "/assets/index.html";
     private WebView game;
     private ExpressiveVoiceEngine voice;
+    private long lastHapticAt = 0L;
 
     @Override
     protected void onCreate(Bundle state) {
@@ -42,6 +45,7 @@ public final class MainActivity extends Activity {
 
         game = new WebView(this);
         game.setBackgroundColor(Color.rgb(23, 25, 64));
+        game.setHapticFeedbackEnabled(true);
         game.setOverScrollMode(View.OVER_SCROLL_NEVER);
         game.setVerticalScrollBarEnabled(false);
         game.setHorizontalScrollBarEnabled(false);
@@ -147,6 +151,35 @@ public final class MainActivity extends Activity {
         @JavascriptInterface
         public void stop() {
             if(voice!=null) voice.stop();
+        }
+        @JavascriptInterface
+        public void haptic(String event) {
+            if (event == null) return;
+            // The JS interface is executed off the UI thread. Haptics must run on the view thread.
+            final int feedbackType;
+            switch (event) {
+                case "grab":
+                case "valid":
+                case "rotate":
+                case "validRotate":
+                    feedbackType = HapticFeedbackConstants.KEYBOARD_TAP;
+                    break;
+                case "drop":
+                case "clear":
+                case "combo":
+                    feedbackType = HapticFeedbackConstants.VIRTUAL_KEY;
+                    break;
+                default:
+                    return;
+            }
+            runOnUiThread(() -> {
+                if (game == null || !game.isHapticFeedbackEnabled()) return;
+                long now = SystemClock.uptimeMillis();
+                if (now - lastHapticAt < 85) return;
+                lastHapticAt = now;
+                // Honors Android system haptic preferences. No VIBRATE permission is needed.
+                game.performHapticFeedback(feedbackType);
+            });
         }
     }
 

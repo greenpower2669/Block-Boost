@@ -54,7 +54,7 @@ export class Feedback {
       osc.type="sine";osc.frequency.setValueAtTime(freq,now);
       osc.frequency.exponentialRampToValueAtTime(Math.max(150,freq*1.4),now+duration);
       gain.gain.setValueAtTime(.0001,now);
-      gain.gain.exponentialRampToValueAtTime(volume*(this.currentSpeech?.speaking?.() ? .3 : 1),now+.015);
+      gain.gain.exponentialRampToValueAtTime(volume*(this.currentSpeech?.speaking ? .3 : 1),now+.015);
       gain.gain.exponentialRampToValueAtTime(.0001,now+duration);
       osc.connect(gain);gain.connect(this.ctx.destination);osc.start(now);osc.stop(now+duration+.01);
     }catch{}

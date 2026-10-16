@@ -77,3 +77,11 @@ Nouvelle version de test avec **multiplicateur vitesse VISIBLE ×4→×0** et **
 **📲 [Télécharger l'APK brute sans ZIP](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-audio-0.4.0/temp/android/BlockBoost-0.4.0-audio-debug.apk)** — 52 067 octets, SHA-256 `304e962393c98a2e356bf5b976e4c74aed55d492ddb1b6b7514a11f22773ed0a`. Version de laboratoire `fr.greenpower.blockboost.audiolab` (scores indépendants des précédentes applications). [CI validations verte](https://github.com/greenpower2669/Block-Boost/actions/runs/38962905329) et [CI Android verte](https://github.com/greenpower2669/Block-Boost/actions/runs/38962905413). La vraie sensation sonore et haptique doit encore être essayée sur Samsung.
 
 Détails dans [docs/audio-haptics-phrases-040.md](docs/audio-haptics-phrases-040.md). Pas de merge main, aucune publication stable.
+
+## 📳 Block Boost Haptique 0.5.0 — un guidage qui monte en puissance
+
+Les bonus de vitesse, EXTRA sans rotation, lignes et combos déclenchent désormais des **vibrations de célébration distinctes**. Pendant le glissement d'une pièce, un sonar calcule les emplacements **légaux qui effacent au moins une ligne** ; la vibration cyclique augmente sur quatre niveaux en approchant de ces cibles. Dès que le doigt se relève, le jeu est interrompu ou l'option est désactivée, le guidage s'arrête. Une sécurité native l'interrompt automatiquement en absence de commandes.
+
+Option « Guidage vibratoire progressif vers les lignes et combos » indépendante de l'option vibrations générales. Les bonus et les 388 phrases de 0.4.0 sont conservés.
+
+**[APK 0.5.0 Android à télécharger directement sans ZIP](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-haptic-0.5.0/temp/android/BlockBoost-0.5.0-haptic-debug.apk)**, 57 692 octets, SHA-256 `94f44de8f569841a5ce91061dda22cb73b6cca0e6d035c7c5ed1213c598ee790`. Laboratoire `fr.greenpower.blockboost.hapticlab` avec sauvegardes séparées ; [tests Chrome/Node](https://github.com/greenpower2669/Block-Boost/actions/runs/38970378913) et [Android](https://github.com/greenpower2669/Block-Boost/actions/runs/38970267717) verts. **Test réel Samsung non encore effectué.** Voir [spécification haptique 0.5.0](docs/haptic-sonar-050.md). Aucune fusion sur main.

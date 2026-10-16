@@ -43,14 +43,18 @@ try{
   await cdp.send("Input.dispatchTouchEvent",{type:"touchEnd",touchPoints:[]});
   await page.waitForTimeout(150);
   const score=Number((await page.locator("#score").textContent()).replace(/\s/g,""));
-  assert.equal(score,15,"Releasing the original finger must place the rotated piece once");
+  assert.ok(score>15,"A quick rotated piece must score its ordinary points plus the visible speed bonus");
+  assert.match(await page.locator("#bonus-earned").textContent(),/VITESSE ×[0-4]/);
+  assert.ok((await page.locator("#bonus-live").textContent()).includes("EXTRA"));
+  assert.ok(!(await page.locator("#bonus-earned").textContent()).includes("EXTRA SANS ROTATION"),
+    "A rotated piece must not receive the no-rotation EXTRA");
   await page.reload({waitUntil:"networkidle"});
   const restored=Number((await page.locator("#score").textContent()).replace(/\s/g,""));
-  assert.equal(restored,15,"Score should be locally restored after reload");
+  assert.equal(restored,score,"Score including the speed multiplier should persist after reload");
   const record=Number((await page.locator("#record").textContent()).replace(/\s/g,""));
-  assert.equal(record,15);
+  assert.equal(record,score);
   assert.deepEqual(errors,[],"Browser should not report uncaught errors");
-  console.log("✅ Test tactile deux doigts, dépôt et restauration locale : OK");
+  console.log("✅ Tactile à deux doigts, bonus visible, EXTRA absent après rotation et restauration locale : OK");
 }finally{
   if(browser)await browser.close();
   await new Promise(resolve=>server.close(resolve));

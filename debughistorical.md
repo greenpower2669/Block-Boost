@@ -36,3 +36,11 @@
 - CI tests [38956309287](https://github.com/greenpower2669/Block-Boost/actions/runs/38956309287) **success** ; CI Android [38956309047](https://github.com/greenpower2669/Block-Boost/actions/runs/38956309047) **success**, APK et empreinte contrôlées, commit du binaire sur `temp/blockboost-emotion-0.2.0/temp/android/`.
 - SHA-256 APK `49c5bce6a6edc4892b60f1505c5b06b321bd54819068e62dede7407cd4f9f6e0` ; 40 230 octets. App ID `fr.greenpower.blockboost.emotionlab`, indépendant de l'ancienne debug afin d'éviter conflit de clé.
 - Test Samsung non effectué. Vraies voix émotionnelles préenregistrées / synthèse neuronale non livrées. Aucun merge main ni release.
+
+## 2026-10-16 — Bonus vitesse visibles et EXTRA sans rotation (0.3.0)
+
+- CI de développement initiale rouge : ancienne assertion Chrome attendait exactement 15 points et une bannière « EXTRA » après une rotation ; après ajout des points vitesse et du HUD il fallait adapter le scénario.
+- Correction : calculer, afficher et effacer l'état de sélection après toute pose dans `paint()`. Tests de navigateur désormais orientés sur la valeur affichée et le score conservé, non sur la valeur de l'ancienne version.
+- Test Chrome renforcé : un premier glisser à **deux doigts** gagne son coefficient vitesse mais **pas** d'extra. Une seconde pose **sans rotation** affiche `EXTRA SANS ROTATION`, augmente le score et reste sauvegardée après rechargement.
+- Suite JavaScript 22 scénarios verte, CI globale [38958540023](https://github.com/greenpower2669/Block-Boost/actions/runs/38958540023) verte ; Android [38958540134](https://github.com/greenpower2669/Block-Boost/actions/runs/38958540134) vert ; APK directe https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-bonus-0.3.0/temp/android/BlockBoost-0.3.0-bonus-debug.apk.
+- 42 688 octets, SHA256 `e14696954dbf30b17fb006fb34ab72daf9a131da1e4e4f27cf319110faf72b65` stocké dans `temp/android/BlockBoost-0.3.0-bonus-debug.sha256`. APK signée debug, pas Google Play. Aucune validation humaine du rendu Samsung.

@@ -72,7 +72,8 @@ public final class MainActivity extends Activity implements TextToSpeech.OnInitL
         settings.setMediaPlaybackRequiresUserGesture(false);
         settings.setCacheMode(WebSettings.LOAD_DEFAULT);
 
-        WebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG);
+        WebView.setWebContentsDebuggingEnabled(
+                (getApplicationInfo().flags & android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) != 0);
         game.setWebChromeClient(new WebChromeClient());
         game.setWebViewClient(new WebViewClient() {
             @Override

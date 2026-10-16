@@ -53,3 +53,13 @@ Le second test demande Google Chrome installé ; il simule deux contacts tactile
 - [ordres-de-mission.md](ordres-de-mission.md)
 
 Les ressources de la vidéo de référence ne sont **pas copiées** : les règles connues inspirent le prototype, qui utilise ses propres visuels et effets.
+
+## 🎙️ Block Boost Émotion 0.2.0 — labo audio Android (16/10/2026)
+
+Nouvelle APK de test signée debug : [téléchargement direct, sans ZIP](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-emotion-0.2.0/temp/android/BlockBoost-0.2.0-emotion-debug.apk). SHA-256 : `49c5bce6a6edc4892b60f1505c5b06b321bd54819068e62dede7407cd4f9f6e0`.
+
+Cette version utilise le moteur de voix locale Android sur un **thread audio dédié**, des profils d'intonation plus enthousiastes (encouragement, surprise, combo, record), et un historique anti-répétition de 48 répliques. Fonctionnement hors ligne si une voix française locale est disponible sur le système. Le modèle Qwen et les voix de VisionMaxRead ne sont pas intégrés.
+
+**Important : ce n'est pas encore une voix émotionnelle neuronale !** Les profils changent la hauteur, le rythme et les phrases ; la lecture de vrais clips expressifs est préparée mais aucun clip n'est encore inclus. Application de test séparée `fr.greenpower.blockboost.emotionlab`, avec sauvegardes indépendantes de la 0.1.0. Pas de publication stable, pas de validation physique Samsung.
+
+Plus d'informations : [spécification 0.2.0](docs/block-boost-emotion-multithread-020.md). [Compilation GitHub Actions réussie](https://github.com/greenpower2669/Block-Boost/actions/runs/38956309047).

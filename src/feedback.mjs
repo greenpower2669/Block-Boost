@@ -1,3 +1,4 @@
+import {VoiceDirector} from "./voice-director.mjs";
 // Audio and mascot direction: independent of the rules engine. No remote services.
 export const MASCOTS={
   pompom:{name:"Pompom",species:"Panda roux",emoji:"🦊",voicePitch:0.90,lines:{
@@ -36,6 +37,7 @@ export class Feedback {
     this.onCaption=onCaption;this.onEmotion=onEmotion;
     this.ctx=null;this.lastVoice=0;this.lastPhrase="";this.priority=0;
     this.currentSpeech=null;this.captionTimeout=null;this.emotionTimeout=null;
+    this.director=new VoiceDirector();this.nativeSpeakingUntil=0;
   }
   ensureAudio() {
     if(!this.getSettings().fx) return;
@@ -70,15 +72,19 @@ export class Feedback {
   }
   speak(kind,priority=1,force=false) {
     const mascot=MASCOTS[this.getMascot()]||MASCOTS.pompom;
-    const options=mascot.lines[kind]||mascot.lines.clear;
     const now=Date.now();
-    if(!force && now-this.lastVoice<3200)return;
-    if(!force && priority<this.priority && globalThis.speechSynthesis?.speaking)return;
-    const candidates=options.filter(s=>s!==this.lastPhrase);
-    const phrase=(candidates.length?candidates:options)[Math.floor(Math.random()*(candidates.length||options.length))];
-    this.lastPhrase=phrase;this.lastVoice=now;this.priority=priority;
+    const currentlySpeaking=Boolean(this.currentSpeech?.speaking) ||
+      now<(this.nativeSpeakingUntil||0);
+    if(!currentlySpeaking)this.priority=0;
+    if(!force&&currentlySpeaking&&priority<this.priority)return;
+    if(!force&&now-this.lastVoice<2300&&priority<=this.priority)return;
+    const speech=this.director.choose(mascot,kind,force);
+    if(!speech)return;
+    const {phrase,mood}=speech;
+    const effectivePriority=Math.max(priority,speech.priority);
+    this.lastPhrase=phrase;this.lastVoice=now;this.priority=effectivePriority;
     this.onCaption(phrase);
-    this.onEmotion(kind);
+    this.onEmotion(kind==="clear"?"happy":kind);
     clearTimeout(this.captionTimeout);clearTimeout(this.emotionTimeout);
     this.captionTimeout=setTimeout(()=>this.onCaption(""),3700);
     this.emotionTimeout=setTimeout(()=>this.onEmotion("idle"),1200);
@@ -86,8 +92,8 @@ export class Feedback {
     if(globalThis.AndroidBridge?.speak){
       try{
         // Native Android TextToSpeech is offline-capable and uses the installed French voice.
-        globalThis.AndroidBridge.speak(phrase, mascot.voicePitch);
-        this.nativeSpeakingUntil=Date.now()+Math.max(1600,phrase.length*85);
+        globalThis.AndroidBridge.speak(phrase, mascot.voicePitch, mood, effectivePriority, "");
+        this.nativeSpeakingUntil=Date.now()+Math.max(1900,phrase.length*100);
         return;
       }catch{ /* Fall back to the browser voice if available. */ }
     }
@@ -95,7 +101,10 @@ export class Feedback {
     try{
       globalThis.speechSynthesis.cancel();
       const utterance=new SpeechSynthesisUtterance(phrase);
-      utterance.lang="fr-FR";utterance.rate=1.06;utterance.pitch=mascot.voicePitch;utterance.volume=.85;
+      utterance.lang="fr-FR";
+      utterance.rate=({calm:.95,encourage:1.04,surprise:1.10,combo:1.12,celebrate:1.13,consolation:.92}[mood]||1);
+      utterance.pitch=Math.min(1.55,mascot.voicePitch*({calm:.96,encourage:1.05,surprise:1.13,combo:1.17,celebrate:1.21,consolation:.94}[mood]||1));
+      utterance.volume=.85;
       const voices=globalThis.speechSynthesis.getVoices();
       const french=voices.find(v=>v.lang?.toLowerCase().startsWith("fr")&&v.localService)||
                    voices.find(v=>v.lang?.toLowerCase().startsWith("fr"));

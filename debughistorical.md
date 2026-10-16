@@ -27,3 +27,12 @@
 - Action directe **verte** : https://github.com/greenpower2669/Block-Boost/actions/runs/38933516757.
 - Fichier vérifié dans GitHub : https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-apk-0.1.0/temp/android/BlockBoost-0.1.0-debug.apk. Taille 33307 octets ; SHA-256 `49e963e01c075a2014b1889c54a236fec86b56587b328bfede3e2bea0688b98c`.
 - Aucun merge ni release ; APK debug non validée par test manuel Android 16.
+
+## 16/10/2026 — Moteur vocal Android isolé, validation CI
+
+- Besoin : voix Block Boost plus expressive et sans blocage UI durant les voix/combo.
+- Solution : bridge JS → `ExpressiveVoiceEngine` utilisant HandlerThread, TTS Android local, validation des paramètres, priorité, annulation et préparation d'assets OGG vocaux (absents de cette version).
+- Director JS : huit dernières phrases écartées du tirage, historique maximum 48 en stockage local, profils émotionnels et répliques supplémentaires ; tests Node.
+- CI tests [38956309287](https://github.com/greenpower2669/Block-Boost/actions/runs/38956309287) **success** ; CI Android [38956309047](https://github.com/greenpower2669/Block-Boost/actions/runs/38956309047) **success**, APK et empreinte contrôlées, commit du binaire sur `temp/blockboost-emotion-0.2.0/temp/android/`.
+- SHA-256 APK `49c5bce6a6edc4892b60f1505c5b06b321bd54819068e62dede7407cd4f9f6e0` ; 40 230 octets. App ID `fr.greenpower.blockboost.emotionlab`, indépendant de l'ancienne debug afin d'éviter conflit de clé.
+- Test Samsung non effectué. Vraies voix émotionnelles préenregistrées / synthèse neuronale non livrées. Aucun merge main ni release.

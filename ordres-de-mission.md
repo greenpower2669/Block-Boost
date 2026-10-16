@@ -34,3 +34,11 @@ Voir `brain.md`, `todo.md`, et la spécification complète.
 - Téléchargement direct : https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-apk-0.1.0/temp/android/BlockBoost-0.1.0-debug.apk
 - Workflow vert : https://github.com/greenpower2669/Block-Boost/actions/runs/38933516757
 - Branche source `main` inchangée ; pas de release, pas de fusion, pas de signature d'édition Play.
+
+## Demande du 16 octobre 2026 — voix expressives multithread
+
+Instruction actuelle : « Integre le son de la voix mais dans block boost avec une voix émotionnelle de suite mais en miltithread ça marché mieux comme ça ».
+
+**Périmètre :** agir dans Block Boost (et pas dans VisionMaxRead) ; rendre les réactions plus vivantes, introduire une orchestration audio asynchrone séparée de l'UI, préserver jeu hors ligne et anti-répétition, préparer une APK debug test directement téléchargeable par lien GitHub. Une vraie voix émotionnelle neuronale ou des clips joués demanderaient une génération et une validation distinctes ; ne pas déclarer cette partie réalisée par des variations de pitch/rate seules.
+
+**Livré :** branche `feature/emotional-voice-multithread-020`, APK debug 0.2.0, Actions vérifiées et publication temporaire directe `temp/blockboost-emotion-0.2.0`. Ne pas fusionner main ni publier une release stable. L'app de labo a une identité Android séparée et ses propres scores. Voir `docs/block-boost-emotion-multithread-020.md`.

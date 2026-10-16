@@ -14,28 +14,22 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.speech.tts.TextToSpeech;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Locale;
-import java.util.Set;
 
 /**
  * Offline Block Boost shell. A reserved HTTPS origin serves only APK-bundled
  * resources, so ES modules and localStorage share a proper secure origin.
  * No INTERNET permission, remote JavaScript or external URLs.
  */
-public final class MainActivity extends Activity implements TextToSpeech.OnInitListener {
+public final class MainActivity extends Activity {
     private static final String ASSET_HOST = "appassets.androidplatform.net";
     private static final String START_URL = "https://" + ASSET_HOST + "/assets/index.html";
     private WebView game;
-    private TextToSpeech tts;
-    private boolean ttsReady;
-    private String pendingSpeech;
-    private float pendingPitch = 1.0f;
+    private ExpressiveVoiceEngine voice;
 
     @Override
     protected void onCreate(Bundle state) {
@@ -94,7 +88,7 @@ public final class MainActivity extends Activity implements TextToSpeech.OnInitL
         // Bridge is exposed ONLY to a fixed first-party offline origin.
         game.addJavascriptInterface(new VoiceBridge(), "AndroidBridge");
         setContentView(game);
-        tts = new TextToSpeech(this, this);
+        voice = new ExpressiveVoiceEngine(getApplicationContext());
         game.loadUrl(START_URL);
     }
 
@@ -144,63 +138,22 @@ public final class MainActivity extends Activity implements TextToSpeech.OnInitL
         }
     }
 
-    @Override
-    public void onInit(int status) {
-        if (status != TextToSpeech.SUCCESS || tts == null) return;
-        ttsReady = true;
-        int lang = tts.setLanguage(Locale.FRANCE);
-        if (lang != TextToSpeech.LANG_MISSING_DATA
-                && lang != TextToSpeech.LANG_NOT_SUPPORTED) {
-            // Prefer a local French voice so phrases remain available offline.
-            try {
-                Set<android.speech.tts.Voice> voices = tts.getVoices();
-                if (voices != null) {
-                    for (android.speech.tts.Voice candidate : voices) {
-                        if ("fr".equals(candidate.getLocale().getLanguage())
-                                && !candidate.isNetworkConnectionRequired()) {
-                            tts.setVoice(candidate);
-                            break;
-                        }
-                    }
-                }
-            } catch (Exception ignored) { /* Device voice list may be unavailable. */ }
-        }
-        if (pendingSpeech != null) {
-            speakNative(pendingSpeech, pendingPitch);
-            pendingSpeech = null;
-        }
-    }
-
-    private void speakNative(String sentence, float pitch) {
-        if (!ttsReady || tts == null) {
-            pendingSpeech = sentence;
-            pendingPitch = pitch;
-            return;
-        }
-        tts.setPitch(Math.max(0.7f, Math.min(1.5f, pitch)));
-        tts.setSpeechRate(1.04f);
-        tts.speak(sentence, TextToSpeech.QUEUE_FLUSH, null, "blockboost_companion");
-    }
-
+    /** Voice requests are immediately sent to a dedicated Android HandlerThread. */
     public final class VoiceBridge {
         @JavascriptInterface
-        public void speak(String sentence, double pitch) {
-            if (sentence == null || sentence.isEmpty() || sentence.length() > 240) return;
-            runOnUiThread(() -> speakNative(sentence, (float)pitch));
+        public void speak(String sentence, double pitch, String emotion, int priority, String clip) {
+            if(voice!=null) voice.speak(sentence, emotion, clip, (float)pitch, priority);
         }
         @JavascriptInterface
         public void stop() {
-            runOnUiThread(() -> {
-                pendingSpeech = null;
-                if (tts != null) tts.stop();
-            });
+            if(voice!=null) voice.stop();
         }
     }
 
     @Override
     protected void onPause() {
         if (game != null) game.onPause();
-        if (tts != null) tts.stop();
+        if (voice != null) voice.stop();
         super.onPause();
     }
 
@@ -218,10 +171,9 @@ public final class MainActivity extends Activity implements TextToSpeech.OnInitL
             game.destroy();
             game = null;
         }
-        if (tts != null) {
-            tts.stop();
-            tts.shutdown();
-            tts = null;
+        if (voice != null) {
+            voice.close();
+            voice = null;
         }
         super.onDestroy();
     }

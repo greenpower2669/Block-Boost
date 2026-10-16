@@ -58,3 +58,11 @@ Fab autorise le code : « Ok code rajoute des phrase en quantité », à la suit
 **Réalisation :** 388 nouvelles répliques, historiques de 48 et intervalles de silence ; sons de prise, de passage invalide→valide et retour spécifique de rotation ; vibrations natives Android activables, sans altérer la mécanique à deux doigts ni les bonus de 0.3.0. Branches de référence inchangées.
 
 **Preuve :** CI Node/Chrome run `38962905329` et build APK run `38962905413` success ; version expérimentale `fr.greenpower.blockboost.audiolab` 0.4.0 signée debug, fichier `https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-audio-0.4.0/temp/android/BlockBoost-0.4.0-audio-debug.apk`, SHA `304e962393c98a2e356bf5b976e4c74aed55d492ddb1b6b7514a11f22773ed0a`. Aucune release stable ni fusion main ; test Samsung humain restant. Détails : `docs/audio-haptics-phrases-040.md`.
+
+## 16 octobre 2026 — Haptique progressive et bonus (0.5.0)
+
+Instruction : « Les bonus ne declenche pas d aptique et quand on va déclencher des compositions ou ligne bibre en continu et de plus en plus fort si de plus en plus près de sa place et .... ».
+
+Interprétation fonctionnelle : vibration de bonus réellement déclenchée et prolongée/graduellement plus intense quand la pièce approche d'une pose qui effacera réellement une ligne ou prolongera une série. Ne pas rendre les vibrations permanentes sans raison, ne pas casser l'usage tactile à deux doigts, ne pas modifier les règles de score.
+
+Réalisation sur branche `feature/haptic-sonar-combo-bonus-050` : guide 0..4 vers placements légaux gagnants, waveform Android gradué en boucle et arrêt <750 ms sans heartbeat, motifs pour vitesse/extra/ligne/combo, option indépendante, tests Node/Chrome et compilation APK verts. Livraison directe https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-haptic-0.5.0/temp/android/BlockBoost-0.5.0-haptic-debug.apk, SHA-256 `94f44de8f569841a5ce91061dda22cb73b6cca0e6d035c7c5ed1213c598ee790`. Aucun merge main, aucune release officielle, aucune validation physique Android annoncée.

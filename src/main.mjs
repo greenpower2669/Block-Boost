@@ -283,6 +283,6 @@ window.addEventListener("resize",()=>{drawTray();if(drag)drawGhost();});
 window.addEventListener("pagehide",()=>{if(!game.gameOver)persist();feedback.stop();});
 if(!save.progress)persist();
 paint();
-if("serviceWorker" in navigator && location.protocol.startsWith("http")){
+if(!globalThis.AndroidBridge && "serviceWorker" in navigator && location.protocol.startsWith("http")){
   window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
 }

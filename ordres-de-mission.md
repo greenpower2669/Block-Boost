@@ -50,3 +50,11 @@ Instruction de Fab après essai du prototype 0.2.0 : « Oui ça mieux mais on ne
 **Autorisation concrète :** implémenter dans Block Boost des bonus vitesse **visibles**, bonus de pose sans rotation, annonces vocales couplées aux combos, valider via tests tactiles et livrer une nouvelle APK directe. Ne pas modifier VisionMaxRead ni les ressources Djipie. Ni merge main, ni release officielle sans accord.
 
 **Réalisé :** branche `feature/fast-bonus-no-rotation-030`, suite test verte (GitHub run `38958540023`), build Android `38958540134` vert ; binaire signé debug `BlockBoost-0.3.0-bonus-debug.apk` publié sur `temp/blockboost-bonus-0.3.0/temp/android/`, SHA `e14696954dbf30b17fb006fb34ab72daf9a131da1e4e4f27cf319110faf72b65`. App de labo indépendante de 0.2.0 et de son score ; vérifier la sensation Samsung en vrai.
+
+## Demande du 16 octobre 2026 — voix nombreuses et retours tactiles
+
+Fab autorise le code : « Ok code rajoute des phrase en quantité », à la suite des demandes non codées de réduction radicale des répétitions, son de décrochage de la pièce, « dring-biling » quand elle est prête à être posée et retour haptique.
+
+**Réalisation :** 388 nouvelles répliques, historiques de 48 et intervalles de silence ; sons de prise, de passage invalide→valide et retour spécifique de rotation ; vibrations natives Android activables, sans altérer la mécanique à deux doigts ni les bonus de 0.3.0. Branches de référence inchangées.
+
+**Preuve :** CI Node/Chrome run `38962905329` et build APK run `38962905413` success ; version expérimentale `fr.greenpower.blockboost.audiolab` 0.4.0 signée debug, fichier `https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-audio-0.4.0/temp/android/BlockBoost-0.4.0-audio-debug.apk`, SHA `304e962393c98a2e356bf5b976e4c74aed55d492ddb1b6b7514a11f22773ed0a`. Aucune release stable ni fusion main ; test Samsung humain restant. Détails : `docs/audio-haptics-phrases-040.md`.

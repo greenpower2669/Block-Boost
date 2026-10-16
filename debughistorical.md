@@ -52,3 +52,11 @@
 - **Compilation finale verte** : run [38962905413](https://github.com/greenpower2669/Block-Boost/actions/runs/38962905413), APK brute créée dans `temp/blockboost-audio-0.4.0/temp/android/`, taille 52 067 octets, SHA-256 `304e962393c98a2e356bf5b976e4c74aed55d492ddb1b6b7514a11f22773ed0a`.
 - Le « dling-biling » est produit par deux oscillateurs Web Audio déclenchés uniquement à la transition invalide→valide avec refroidissement ; `PlacementCueGate` est testé indépendamment du DOM. L'API native haptique passe sur le thread UI. Aucune dépendance réseau.
 - **Limite** : la CI ne valide ni sensation tactile ni volume réel sur le Samsung. La voix est un TTS expressif par modulation du système, pas un modèle vocal émotionnel neuronal.
+
+## 16 octobre 2026 — Diagnostic : haptiques des bonus absentes
+
+Sur 0.4.0, le pont `AndroidBridge.haptic` n'exposait que `grab / valid / rotate / drop / clear / combo`. Les événements `speed / extra` jouaient des sons mais n'invoquaient aucun retour haptique spécifique. Les commandes `clear` ou `drop` restaient des appels `WebView.performHapticFeedback` ponctuels, incapables d'émettre une vibration continue et d'amplitude contrôlée.
+
+Correction 0.5.0 : ajout `HapticWaveEngine` (Android VibrationEffect, permission VIBRATE), `rewardHaptic` (motifs selon gain réel), `clearingTargets` + `proximityStrength` pour guidance selon positions qui complètent effectivement une ligne. Arrêt immédiat si état non guidable, plus garde-fou d'arrêt 750 ms sans message. Les tests JavaScript couvrent positions légales, doubles effacements, rotation, scores/bonus et appel natif de récompense.
+
+Preuves : [Chrome / Node vert](https://github.com/greenpower2669/Block-Boost/actions/runs/38970378913), [APK Android vert](https://github.com/greenpower2669/Block-Boost/actions/runs/38970267717), binaire 57 692 octets, SHA-256 `94f44de8f569841a5ce91061dda22cb73b6cca0e6d035c7c5ed1213c598ee790`, [APK directe](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-haptic-0.5.0/temp/android/BlockBoost-0.5.0-haptic-debug.apk). L'app Android cible est `fr.greenpower.blockboost.hapticlab`, indépendante des anciennes. La validation sensorielle Samsung reste manuelle.

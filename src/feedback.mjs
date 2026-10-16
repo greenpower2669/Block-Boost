@@ -91,6 +91,42 @@ export class Feedback {
       rotate:[12,30,12],drop:22,clear:[20,35,28],combo:[25,35,25]}[kind];
     if(pattern!==undefined)try{globalThis.navigator?.vibrate?.(pattern);}catch{}
   }
+  guideHaptic(level) {
+    const desired=this.getSettings().haptics===false?0:Math.max(0,Math.min(4,level|0));
+    const now=Date.now();
+    if(desired===this.guidanceLevel && now-(this.guidanceLast||0)<220)return;
+    this.guidanceLevel=desired;this.guidanceLast=now;
+    if(globalThis.AndroidBridge?.guidance) {
+      try{globalThis.AndroidBridge.guidance(desired);return;}catch{}
+    }
+    // Browser fallback: capped pulses, never a repeating waveform.
+    try {
+      if(!globalThis.navigator?.vibrate)return;
+      if(desired===0)globalThis.navigator.vibrate(0);
+      else globalThis.navigator.vibrate([0,35+desired*22]);
+    }catch{}
+  }
+  stopGuidance() {
+    this.guidanceLevel=0;this.guidanceLast=Date.now();
+    try{globalThis.AndroidBridge?.stopHaptics?.();}catch{}
+    try{globalThis.navigator?.vibrate?.(0);}catch{}
+  }
+  rewardHaptic(kind) {
+    if(this.getSettings().haptics===false){this.stopGuidance();return;}
+    this.stopGuidance();
+    if(!kind)return;
+    if(globalThis.AndroidBridge?.reward) {
+      try{globalThis.AndroidBridge.reward(kind);return;}catch{}
+    }
+    // Short, finite Web/PWA fallback sequences; no infinite vibration.
+    const map={
+      drop:[35],extra:[55,70,90],speed:[50,60,80],
+      speedHigh:[65,55,115],speedExtra:[45,45,65,45,95],
+      line:[70,55,100],lineBonus:[75,45,125],
+      combo:[65,50,80,50,105],comboBonus:[70,40,90,40,130]
+    };
+    try{globalThis.navigator?.vibrate?.(map[kind]||0);}catch{}
+  }
   speak(kind,priority=1,force=false) {
     const mascot={...(MASCOTS[this.getMascot()]||MASCOTS.pompom),id:this.getMascot()};
     const now=Date.now();
@@ -141,6 +177,7 @@ export class Feedback {
     }catch{this.priority=0;}
   }
   stop(){
+    this.stopGuidance();
     try{globalThis.speechSynthesis?.cancel();}catch{}
     try{globalThis.AndroidBridge?.stop?.();}catch{}
     this.nativeSpeakingUntil=0;

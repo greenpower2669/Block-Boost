@@ -56,3 +56,17 @@ Voir [docs/description-gameplay-mascottes-voix-fx-et-score-local.md](docs/descri
 - [ ] Ne pas merger main, publier release stable ou utiliser une clé Play sans autorisation.
 
 **APK directe 0.2.0 :** https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-emotion-0.2.0/temp/android/BlockBoost-0.2.0-emotion-debug.apk.
+
+## 2026-10-16 — Bonus vitesse visibles et EXTRA sans rotation (0.3.0)
+
+- [x] Ajouter le calcul ×4→×0 et sa chronométrie à partir de la sélection.
+- [x] Faire apparaître le multiplicateur de vitesse pendant la manipulation puis dans une grande annonce au placement.
+- [x] Ajouter `EXTRA SANS ROTATION` même à vitesse ×0, sans modifier les points ordinaires.
+- [x] Annoncer vocalement ×2/×3/×4 et l'extra avec anti-répétition.
+- [x] Vérifier les paliers, l'absence d'extra après rotation, le score et la sauvegarde par tests Node + Chrome multitactile (run 38958540023 vert).
+- [x] Compiler APK test 0.3.0, publier un fichier **APK sans ZIP** sur une branche temporaire et contrôler SHA256 (run 38958540134 vert).
+- [ ] Tester à la main la lisibilité des annonces, fluidité, sons et détection du deuxième doigt sur Samsung.
+- [ ] Équilibrer les durées et bonus en fonction des retours utilisateur.
+- [ ] Garder main et publications stables intacts sans nouvel accord.
+
+APK brute : https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-bonus-0.3.0/temp/android/BlockBoost-0.3.0-bonus-debug.apk

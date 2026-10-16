@@ -15,6 +15,10 @@ on:
       - 'assets/**'
       - '.github/workflows/android-apk.yml'
 
+concurrency:
+  group: blockboost-apk-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: write
 
@@ -73,7 +77,12 @@ jobs:
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git checkout -b temp/blockboost-bonus-0.3.0
+          if git ls-remote --exit-code origin refs/heads/temp/blockboost-bonus-0.3.0 >/dev/null; then
+            git fetch origin temp/blockboost-bonus-0.3.0
+            git checkout -b temp/blockboost-bonus-0.3.0 FETCH_HEAD
+          else
+            git checkout -b temp/blockboost-bonus-0.3.0
+          fi
           mkdir -p temp/android
           cp android/dist/BlockBoost-0.3.0-bonus-debug.apk temp/android/
           cp android/dist/BlockBoost-0.3.0-bonus-debug.sha256 temp/android/
@@ -84,7 +93,7 @@ jobs:
             "Elle s'installe séparément de Block Boost 0.1.0 et Émotion 0.2.0 ; sauvegardes indépendantes." \
             "Aucun merge main, aucune publication Google Play." > temp/android/README.md
           git add temp/android
-          git commit -m "artifact(android): livrer APK émotion 0.2.0 en lien direct"
+          git diff --cached --quiet || git commit -m "artifact(android): livrer APK bonus 0.3.0 en lien direct"
           git push origin HEAD:refs/heads/temp/blockboost-bonus-0.3.0
           git ls-remote --exit-code origin refs/heads/temp/blockboost-bonus-0.3.0
           echo "## 🎙️ Block Boost Bonus 0.3.0 — APK directe" >> "$GITHUB_STEP_SUMMARY"

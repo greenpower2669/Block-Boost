@@ -54,7 +54,7 @@ export class Feedback {
       osc.type="sine";osc.frequency.setValueAtTime(freq,now);
       osc.frequency.exponentialRampToValueAtTime(Math.max(150,freq*1.4),now+duration);
       gain.gain.setValueAtTime(.0001,now);
-      gain.gain.exponentialRampToValueAtTime(volume*(this.currentSpeech?.speaking ? .3 : 1),now+.015);
+      gain.gain.exponentialRampToValueAtTime(volume*((this.currentSpeech?.speaking || Date.now() < (this.nativeSpeakingUntil||0)) ? .3 : 1),now+.015);
       gain.gain.exponentialRampToValueAtTime(.0001,now+duration);
       osc.connect(gain);gain.connect(this.ctx.destination);osc.start(now);osc.stop(now+duration+.01);
     }catch{}
@@ -82,7 +82,16 @@ export class Feedback {
     clearTimeout(this.captionTimeout);clearTimeout(this.emotionTimeout);
     this.captionTimeout=setTimeout(()=>this.onCaption(""),3700);
     this.emotionTimeout=setTimeout(()=>this.onEmotion("idle"),1200);
-    if(!this.getSettings().voice || !("speechSynthesis" in globalThis))return;
+    if(!this.getSettings().voice)return;
+    if(globalThis.AndroidBridge?.speak){
+      try{
+        // Native Android TextToSpeech is offline-capable and uses the installed French voice.
+        globalThis.AndroidBridge.speak(phrase, mascot.voicePitch);
+        this.nativeSpeakingUntil=Date.now()+Math.max(1600,phrase.length*85);
+        return;
+      }catch{ /* Fall back to the browser voice if available. */ }
+    }
+    if(!("speechSynthesis" in globalThis))return;
     try{
       globalThis.speechSynthesis.cancel();
       const utterance=new SpeechSynthesisUtterance(phrase);
@@ -99,6 +108,8 @@ export class Feedback {
   }
   stop(){
     try{globalThis.speechSynthesis?.cancel();}catch{}
+    try{globalThis.AndroidBridge?.stop?.();}catch{}
+    this.nativeSpeakingUntil=0;
     clearTimeout(this.captionTimeout);clearTimeout(this.emotionTimeout);
     this.priority=0;
   }

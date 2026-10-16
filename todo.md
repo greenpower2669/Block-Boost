@@ -1,40 +1,34 @@
 # Block Boost — TODO vivant
 
-> 16/10/2026 : dépôt initial de **documents**, aucune fonctionnalité du jeu n'est encore implémentée. La branche de travail n'est pas fusionnée sur `main`.
+> 16/10/2026 : **prototype Web/PWA codé sur `feature/block-boost-playable-rotation-v1`**, non fusionné dans `main`. Ce n'est pas encore une application Android native.
 
-## Priorité 0 — cadrage
-- [x] Écrire la description fonctionnelle détaillée (référence vidéo + propositions).
-- [x] Créer une mémoire courte `brain.md` et un index `brainmap.md`.
-- [ ] Confirmer la technologie cible et la structure du projet.
-- [ ] Spécifier et valider mathématiquement la formule des points, les conditions de combo, le tirage et la gestion de l'impasse.
+## Réalisé — prototype initial
+- [x] Décrire le gameplay, les animaux, les voix, les FX et la sauvegarde locale.
+- [x] Créer `brain.md`, `brainmap.md`, `debughistorical.md`, `ordres-de-mission.md`.
+- [x] Implémenter plateau 8 × 8, trois formes, glisser-déposer tactile et sélection par tap.
+- [x] Ajouter rotation 90° par deuxième doigt, touche R et bouton de secours.
+- [x] Implémenter validation de pose, suppression lignes/colonnes et croisements sans gravité.
+- [x] Définir formule de score prototype et règle de combo ; tester leur cohérence.
+- [x] Détecter une impasse seulement en l'absence de coup légal.
+- [x] Effets visuels lumineux de réussite, score, combos et étincelles.
+- [x] Six compagnons temporaires en emoji animés avec phrases en français.
+- [x] Voix système `speechSynthesis`, sous-titres, petites notes FX locales, limitation des annonces.
+- [x] Sauvegarde locale du record, de la partie en cours, des réglages et du compagnon.
+- [x] Version installable comme PWA avec icône SVG et cache hors ligne.
+- [x] CI tests moteur et test automatisé Chrome de la rotation à deux doigts, de la pose et de la persistance après reload.
 
-## Priorité 1 — gameplay
-- [ ] Programmer et tester le plateau 8 × 8.
-- [ ] Programmer la réserve de trois formes, la saisie et la pose tactile.
-- [ ] Tester collisions, alignements horizontaux/verticaux, croix et absence de gravité.
-- [ ] Tester la détection réelle de l'impasse et le calcul du score.
+## À faire — qualité et produit final
+- [ ] Test manuel du geste à deux doigts, de la vitesse et du cadrage sur Samsung Android 16.
+- [ ] Concevoir de vrais sprites et petites animations pour les six animaux (emoji actuels provisoires).
+- [ ] Fournir des voix françaises embarquées/offline de qualité et enregistrer une politique de sélection vocale.
+- [ ] Affiner le mixage avec ducking réel des FX et tester les cas de voix chevauchées.
+- [ ] Réaliser des tests visuels de gameplay et des scénarios de longues parties sur téléphone.
+- [ ] Ajouter éventuellement des animations de compteurs plus riches et un historique personnel consultable.
+- [ ] Adapter ou empaqueter le jeu pour Android natif si souhaité ; fabriquer des `.apk` et `.aab` correctement nommés, icône définitive, signature contrôlée.
+- [ ] Tester les sauvegardes sous forte contrainte (quota, éviction de cache, fermeture brusque) et les migrations futures.
+- [ ] Faire valider la formule des points et les choix artistiques.
+- [ ] Ne pas fusionner `main`, créer de release ou publier sans accord explicite.
 
-## Priorité 2 — FX et voix couplés
-- [ ] Concevoir les ressources visuelles originales (blocs, halo, particules, couronne).
-- [ ] Créer et intégrer les animaux choisis ; idle, réaction, parole, fête, déception douce.
-- [ ] Produire les phrases audio originales en français, stockées localement, et leurs sous-titres.
-- [ ] Synchroniser GameplayEvent → FX + masque sonore + texte + parole de mascotte.
-- [ ] Ajouter priorités, cooldown, anti-répétition, une voix à la fois, ducking audio.
-- [ ] Ajouter options voix/FX/musique, accessibilité et réduction des animations.
+## Source de vérité
 
-## Priorité 3 — progression hors ligne
-- [ ] Implémenter un stockage local durable avec schéma versionné.
-- [ ] Sauvegarder le record personnel, le score précédent, statistiques minimales et compagnon choisi.
-- [ ] Option : checkpoint et restauration de partie, petit historique.
-- [ ] Tester fermeture forcée, redémarrage, jeu en mode avion, sauvegarde corrompue et absence de régression du meilleur score.
-- [ ] Afficher score final, record et mention « Nouveau record » seulement si exact.
-
-## Priorité 4 — qualité et publication
-- [ ] Vérifier ergonomie portrait Android : navigation système, gros textes, zones tactiles.
-- [ ] Tester les performances et le son sur téléphone réel.
-- [ ] Si distribution Android autorisée : générer des fichiers `.apk` et `.aab` correctement nommés avec icône cohérente.
-- [ ] Obtenir validation expresse avant merge vers `main`, release ou publication.
-
-## Référence
-
-Voir [description canonique](docs/description-gameplay-mascottes-voix-fx-et-score-local.md).
+Voir [docs/description-gameplay-mascottes-voix-fx-et-score-local.md](docs/description-gameplay-mascottes-voix-fx-et-score-local.md) et [brain.md](brain.md).

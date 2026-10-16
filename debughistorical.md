@@ -44,3 +44,11 @@
 - Test Chrome renforcé : un premier glisser à **deux doigts** gagne son coefficient vitesse mais **pas** d'extra. Une seconde pose **sans rotation** affiche `EXTRA SANS ROTATION`, augmente le score et reste sauvegardée après rechargement.
 - Suite JavaScript 22 scénarios verte, CI globale [38958540023](https://github.com/greenpower2669/Block-Boost/actions/runs/38958540023) verte ; Android [38958540134](https://github.com/greenpower2669/Block-Boost/actions/runs/38958540134) vert ; APK directe https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-bonus-0.3.0/temp/android/BlockBoost-0.3.0-bonus-debug.apk.
 - 42 688 octets, SHA256 `e14696954dbf30b17fb006fb34ab72daf9a131da1e4e4f27cf319110faf72b65` stocké dans `temp/android/BlockBoost-0.3.0-bonus-debug.sha256`. APK signée debug, pas Google Play. Aucune validation humaine du rendu Samsung.
+
+## 16/10/2026 — Retours sonores/haptiques et 388 répliques
+
+- Premier build en cours d'implémentation : tests rouges à cause de la règle déjà présente dans `tests/bonus.test.mjs` exigeant que l'annonce du **sans rotation** contienne explicitement « rotation » ou « direct ». Certaines nouvelles phrases étaient grammaticalement appropriées mais pas explicites ; filtrage de la banque corrigé pour annoncer le bonus de façon vérifiable. Aucun contournement de test.
+- GitHub Actions **validation finale verte** : run [38962905329](https://github.com/greenpower2669/Block-Boost/actions/runs/38962905329), tests Node + scénario tactile Chrome.
+- **Compilation finale verte** : run [38962905413](https://github.com/greenpower2669/Block-Boost/actions/runs/38962905413), APK brute créée dans `temp/blockboost-audio-0.4.0/temp/android/`, taille 52 067 octets, SHA-256 `304e962393c98a2e356bf5b976e4c74aed55d492ddb1b6b7514a11f22773ed0a`.
+- Le « dling-biling » est produit par deux oscillateurs Web Audio déclenchés uniquement à la transition invalide→valide avec refroidissement ; `PlacementCueGate` est testé indépendamment du DOM. L'API native haptique passe sur le thread UI. Aucune dépendance réseau.
+- **Limite** : la CI ne valide ni sensation tactile ni volume réel sur le Samsung. La voix est un TTS expressif par modulation du système, pas un modèle vocal émotionnel neuronal.

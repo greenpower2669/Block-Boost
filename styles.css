@@ -114,3 +114,8 @@ body.reduce-motion *,body.reduce-motion *::before,body.reduce-motion *::after{an
 .combo-flash.active{animation:comboFlash 1.65s ease-out forwards}
 @media(max-height:720px){.bonus-hud{min-height:36px;margin-top:1px}.bonus-live{padding:2px 6px}
   .bonus-earned{min-height:13px;font-size:11px}.tray-wrap{margin-top:4px}}
+
+/* Guidance does not steal touch events, and remains compact on short screens. */
+.haptic-sonar{font-size:clamp(10px,2.9vw,13px);font-weight:850;min-height:0;line-height:1.15;
+ text-align:center;color:#c9fffd;letter-spacing:.1px;text-shadow:0 0 8px #59defa7a;pointer-events:none}
+.haptic-sonar:empty{display:none}

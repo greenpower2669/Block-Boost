@@ -86,3 +86,18 @@ Demande explicite après test audio 0.2.0 : rendre visibles et fonctionnels « V
 - Démonstration physique sur Samsung à faire : confirmer force des vibrations, volume des deux notes et fréquence de parole. Aucun merge de `main`, aucune release Play.
 
 Voir `docs/audio-haptics-phrases-040.md`.
+
+## 16 octobre 2026 — Haptique spatiale et bonus 0.5.0
+
+Fab souhaite que le **gain des bonus déclenche réellement une vibration** et que le téléphone vibre progressivement plus fort, de manière prolongée et graduée, à l'approche d'un emplacement permettant d'effacer une ligne / faire un combo.
+
+Réalisation sur `feature/haptic-sonar-combo-bonus-050`, sans toucher à main :
+- `src/haptic-sonar.mjs` cherche uniquement les **poses légales qui effacent immédiatement une ligne** pour la forme et l'orientation courantes ; calcule une proximité 0…4 au fil du doigt. Le combo est un effacement consécutif, donc ces cibles peuvent prolonger le combo existant.
+- `src/main.mjs` maintient le guidage seulement durant le geste, recalculé après rotation ; affichage discret « LIGNE À PORTÉE / COMBO À PORTÉE » ; arrêt si annulation, dépose, redémarrage, arrière-plan ou option éteinte.
+- `HapticWaveEngine.java` : moteur de vibration dédié sur `HandlerThread`, quatre motifs continus cycliques avec puissance/cadence graduées et **watchdog de 750 ms** si plus de requêtes ; arrêt via pont natif `guidance / stopHaptics` et au cycle Android.
+- `rewardHaptic` fait maintenant vibrer les bonus vitesse, EXTRA sans rotation, ligne et combo via des motifs bornés dédiés, séparés de la voix et des FX.
+- Permission normale `android.permission.VIBRATE` (nécessaire pour les formes d'ondes continues) ; **aucune permission INTERNET**. Respect du réglage haptique système, de `haptics` et de la nouvelle préférence `hapticGuidance`.
+- 0.5.0 debug lab `fr.greenpower.blockboost.hapticlab`, s'installe à côté de 0.4.0 avec **scores séparés**.
+- [Tests Node + Chrome réussis](https://github.com/greenpower2669/Block-Boost/actions/runs/38970378913), [Compilation Android réussie](https://github.com/greenpower2669/Block-Boost/actions/runs/38970267717).
+- [APK directe sans ZIP](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-haptic-0.5.0/temp/android/BlockBoost-0.5.0-haptic-debug.apk) (57 692 octets, SHA-256 `94f44de8f569841a5ce91061dda22cb73b6cca0e6d035c7c5ed1213c598ee790`). À essayer réellement sur le Samsung pour calibrer force, cadence, autonomie et arrêt.
+- Spécification `docs/haptic-sonar-050.md`. Aucun merge main ni publication Play.

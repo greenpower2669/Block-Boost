@@ -3,6 +3,7 @@ import {loadSave,writeSave,checkpoint,finish} from "./storage.mjs";
 import {Feedback,MASCOTS} from "./feedback.mjs";
 import {evaluateBonus,speedTier} from "./bonus.mjs";
 import {PlacementCueGate} from "./placement-cues.mjs";
+import {clearingTargets,proximityStrength,rewardHaptic} from "./haptic-sonar.mjs";
 
 const $=id=>document.getElementById(id);
 const boardEl=$("board"),trayEl=$("tray"),ghostEl=$("drag-ghost"),surface=$("surface");
@@ -11,6 +12,29 @@ let game=save.progress?.game||newGame();
 let selected=null,drag=null,flashTimer=null,confettiTimer=null,finishing=false;
 let selectedAt=null,selectedTurns=0;
 const cueGate=new PlacementCueGate(540);
+let targetPositions=[];
+let currentGuidance=0;
+function clearSonar(){
+  targetPositions=[];currentGuidance=0;
+  feedback.stopGuidance();
+  const status=$("haptic-sonar");
+  if(status)status.textContent="";
+}
+function computeSonar(index){
+  const piece=game.pieces[index];
+  targetPositions=piece&&!piece.used?clearingTargets(game.board,piece.coords):[];
+  currentGuidance=0;
+}
+function updateSonar(x,y){
+  const level=drag&&drag.moved&&targetPositions.length&&save.settings.hapticGuidance!==false ?
+    proximityStrength(targetPositions,x,y):0;
+  currentGuidance=level;
+  feedback.guideHaptic(level);
+  const status=$("haptic-sonar");
+  if(status) status.textContent=level ?
+    (game.combo>0?"🔥 COMBO À PORTÉE · ":"✨ LIGNE À PORTÉE · ")+
+    ["","loin","plus près","presque","PRÊT !"][level] : "";
+}
 function selectPiece(index){
   if(selected!==index || selectedAt===null){
     selectedAt=performance.now();
@@ -32,7 +56,10 @@ function updateBonusLive(){
   node.textContent="⚡ VITESSE ×"+tier.multiplier+" · "+(selectedTurns===0?"⭐ EXTRA POSSIBLE":"↻ "+selectedTurns+" rotation"+(selectedTurns>1?"s":""));
   node.classList.add("running");
 }
-setInterval(()=>{if(selected!==null)updateBonusLive();},125);
+setInterval(()=>{
+  if(selected!==null)updateBonusLive();
+  if(drag && drag.moved && currentGuidance>0)feedback.guideHaptic(currentGuidance);
+},125);
 const feedback=new Feedback(()=>save.settings,()=>save.mascot,
   caption=>{$("mascot-caption").textContent=caption||"À toi de jouer !";},
   emotion=>{$("mascot-face").className="mascot-face"+(emotion!=="idle"?" "+emotion:"");});
@@ -52,6 +79,7 @@ function showMascot(){
   $("voice-setting").checked=save.settings.voice;$("fx-setting").checked=save.settings.fx;
   $("motion-setting").checked=save.settings.reducedMotion;
   $("haptics-setting").checked=save.settings.haptics!==false;
+  $("guidance-setting").checked=save.settings.hapticGuidance!==false;
   document.body.classList.toggle("reduce-motion",save.settings.reducedMotion);
 }
 function cellDiv(color,x,y,extra=""){
@@ -142,6 +170,7 @@ function drawGhost(){
   ghostEl.replaceChildren(wrap);
   ghostEl.style.left=m.left+"px";ghostEl.style.top=m.top+"px";
   ghostEl.hidden=false;preview(m.x,m.y,m.valid);
+  updateSonar(m.x,m.y);
   if(drag.moved || drag.rotatedCue) {
     const cue=cueGate.update(m.valid,performance.now(),true,Boolean(drag.rotatedCue));
     if(cue){feedback.fx(cue);feedback.haptic(cue);}
@@ -149,13 +178,15 @@ function drawGhost(){
   drag.rotatedCue=false;
 }
 function resetDrag(){
-  drag=null;cueGate.reset();ghostEl.hidden=true;ghostEl.replaceChildren();
+  drag=null;cueGate.reset();clearSonar();
+  ghostEl.hidden=true;ghostEl.replaceChildren();
   for(const c of boardEl.children)c.classList.remove("preview-good","preview-bad");
 }
 function rotateSelected(){
   const index=drag?.index??selected;
   if(index===null||game.gameOver||game.pieces[index]?.used)return;
   game=rotatePiece(game,index);selectedTurns++;
+  if(drag)computeSonar(index);
   feedback.fx("rotate");feedback.haptic("rotate");
   persist();drawTray();updateBonusLive();
   if(drag){drag.rotatedCue=true;drawGhost();}
@@ -166,7 +197,7 @@ function beginDrag(index,e){
   selectPiece(index);
   drag={index,pointer:e.pointerId,startX:e.clientX,startY:e.clientY,
     x:e.clientX,y:e.clientY,proposed:null,moved:false,rotatedCue:false};
-  cueGate.reset();
+  cueGate.reset();computeSonar(index);
   feedback.ensureAudio();feedback.fx("grab");feedback.haptic("grab");
   drawTray();drawGhost();
   try{surface.setPointerCapture(e.pointerId);}catch{}
@@ -179,7 +210,7 @@ function insertAt(index,x,y){
     feedback.fx("invalid");feedback.onCaption("Essaie dans un espace libre !");
     return false;
   }
-  feedback.haptic(res.event.lines>0?"clear":"drop");
+  feedback.rewardHaptic(rewardHaptic(res.event,bonus));
   game=res.game;selected=null;selectedAt=null;selectedTurns=0;
   const isRecord=game.score>runStartBest;
   if(game.gameOver){
@@ -252,7 +283,7 @@ function endGame(newRecord){
 }
 function restart(confirmActive=false){
   if(confirmActive&&!game.gameOver&&game.moves>0&&!window.confirm("Recommencer cette partie ? Le record restera enregistré."))return;
-  feedback.stop();finishing=false;
+  feedback.stop();clearSonar();finishing=false;
   if($("end-dialog").open)$("end-dialog").close();
   game=newGame();selected=null;selectedAt=null;selectedTurns=0;resetDrag();
   $("bonus-earned").textContent="";updateBonusLive();
@@ -317,21 +348,28 @@ document.addEventListener("contextmenu",e=>{
 $("rotate-button").addEventListener("click",()=>{
   if(!drag)rotateSelected(); // secondary touch pointerdown already rotated during an active drag
 });
-$("settings-button").addEventListener("click",()=>{feedback.ensureAudio();$("settings-dialog").showModal();});
+$("settings-button").addEventListener("click",()=>{
+  clearSonar();feedback.ensureAudio();$("settings-dialog").showModal();
+});
 $("mascot-choice").addEventListener("change",e=>{
   save={...save,mascot:e.target.value};persistSettings();showMascot();
   feedback.speak("welcome",1,true);
 });
-for(const [id,key] of [["voice-setting","voice"],["fx-setting","fx"],["motion-setting","reducedMotion"],["haptics-setting","haptics"]]){
+for(const [id,key] of [["voice-setting","voice"],["fx-setting","fx"],["motion-setting","reducedMotion"],["haptics-setting","haptics"],["guidance-setting","hapticGuidance"]]){
   $(id).addEventListener("change",e=>{
     save={...save,settings:{...save.settings,[key]:e.target.checked}};
-    persistSettings();showMascot();if(key==="voice"&&!e.target.checked)feedback.stop();
+    persistSettings();showMascot();
+    if(key==="voice"&&!e.target.checked)feedback.stop();
+    if((key==="haptics"||key==="hapticGuidance")&&!e.target.checked)feedback.stopGuidance();
   });
 }
 $("new-game").addEventListener("click",()=>restart(true));
 $("retry-button").addEventListener("click",()=>restart(false));
 window.addEventListener("resize",()=>{drawTray();if(drag)drawGhost();});
 window.addEventListener("pagehide",()=>{if(!game.gameOver)persist();feedback.stop();});
+document.addEventListener("visibilitychange",()=>{
+  if(document.hidden)feedback.stopGuidance();
+});
 if(!save.progress)persist();
 paint();updateBonusLive();
 if(!globalThis.AndroidBridge && "serviceWorker" in navigator && location.protocol.startsWith("http")){

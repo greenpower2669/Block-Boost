@@ -35,7 +35,7 @@ Le jeu recherche un équilibre : réflexion calme pendant les placements ; réco
 
 ### Décisions à expliciter avant programmation
 
-- Rotation : **non démontrée** dans la vidéo, donc **désactivée par défaut** pour conserver le principe original.
+- Rotation : **non démontrée dans la vidéo de référence**, mais **ajoutée à Block Boost sur demande explicite de Fab le 16/10/2026**. Quand un doigt maintient une pièce en déplacement, chaque nouvel appui du deuxième doigt déclenche un quart de tour horaire ; le premier doigt conserve le contrôle de la dépose. Contrôle alternatif : touche R (ordinateur) et bouton ↻ ; une rotation n'accorde aucun point.
 - Score : attribuer des points de placement et des bonus de suppression selon une formule stable, documentée et couverte par tests ; ne pas recopier des valeurs déduites d'un seul enregistrement.
 - Combo : choisir et formaliser une seule définition (par exemple : coups consécutifs qui effacent au moins une ligne) ; réinitialiser le compteur dans les conditions explicitement documentées.
 - Tirage : définir une génération reproductible en tests et éviter les distributions injouables non intentionnelles ; ne pas introduire d'avantage caché lié au choix de l'animal.
@@ -252,7 +252,18 @@ Le moteur ne doit **pas** dépendre du rendu, des mascottes ou de l'audio : joue
 14. Les nouvelles fonctions n'introduisent ni régression tactile, ni effets de lumière agressifs, ni ralentissement visible.
 15. Si une application Android est produite : artefacts correctement nommés `.apk` (installation/test) et `.aab` (publication), icône adaptée ; **aucune build ni publication n'est autorisée par ce document**.
 
-## 11. Provenance et périmètre
+## 11. Première implémentation Web/PWA (16 octobre 2026)
+
+L'implémentation de cette spécification a commencé sur la branche `feature/block-boost-playable-rotation-v1`. C'est un **prototype Web/PWA en HTML/CSS/JavaScript**, sans framework d'exécution et sans application Android native à ce stade.
+
+- Code : `src/engine.mjs` (plateau, rotations et score), `src/main.mjs` (interface et Pointer Events multitactiles), `src/storage.mjs` (stockage local), `src/feedback.mjs` (six mascottes et feedback vocal/sonore).
+- Fonctionnels dans cette première version : pose tactile, trois formes, lignes et colonnes, combo, bonus, rotation deuxième doigt de 90°, score et record local, reprise de partie, six mascottes emoji animées, sous-titres, parole de synthèse du navigateur si disponible, FX générés localement, options voix/FX/animations, PWA et cache hors ligne.
+- **Règle effectivement programmée :** 5 points par carré posé, plus `80 × nombreDeLignes² × multiplicateurCombo` lors d'un effacement ; le multiplicateur vaut le nombre de coups consécutifs ayant effacé au moins une ligne, revient à zéro après un coup ordinaire. L'intersection ligne/colonne n'est retirée qu'une fois.
+- **Limites :** illustrations finales de mascottes non créées (emoji temporaires), voix françaises dépendant des voix disponibles sur le téléphone/navigateur et non garanties hors ligne, aucun paquet Android `.apk` ou `.aab`, ergonomie Samsung non testée physiquement.
+- Tests : moteur JavaScript via `node --test` et navigateur Chrome simulant deux doigts, la pose d'une pièce après rotation, puis la persistance après rechargement. Voir workflow CI.
+- Pas de fusion vers `main`, pas de publication de release. Les ajouts ci-dessus ne modifient en rien les observations factuelles du jeu de référence.
+
+## 12. Provenance et périmètre
 
 - **Observé** : la référence vidéo `Blck.mp4`, fournie dans la conversation du 16 octobre 2026.
 - **Proposé par Fab** : mascottes d'animaux mignons qui encouragent, voix liées aux FX et sauvegarde locale des scores.

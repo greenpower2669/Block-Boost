@@ -48,11 +48,19 @@ try{
   assert.ok((await page.locator("#bonus-live").textContent()).includes("EXTRA"));
   assert.ok(!(await page.locator("#bonus-earned").textContent()).includes("EXTRA SANS ROTATION"),
     "A rotated piece must not receive the no-rotation EXTRA");
+  // A second piece is placed WITHOUT rotation, through the accessible tap flow.
+  await page.locator(".piece-slot").nth(1).click();
+  await page.locator(".cell").first().click();
+  const extraText=await page.locator("#bonus-earned").textContent();
+  assert.match(extraText,/EXTRA SANS ROTATION/, "Unrotated placement must display EXTRA");
+  assert.match(extraText,/VITESSE ×[0-4]/);
+  const scoreAfterExtra=Number((await page.locator("#score").textContent()).replace(/\s/g,""));
+  assert.ok(scoreAfterExtra>score,"EXTRA and normal points must increase score");
   await page.reload({waitUntil:"networkidle"});
   const restored=Number((await page.locator("#score").textContent()).replace(/\s/g,""));
-  assert.equal(restored,score,"Score including the speed multiplier should persist after reload");
+  assert.equal(restored,scoreAfterExtra,"Speed and no-rotation points must persist after reload");
   const record=Number((await page.locator("#record").textContent()).replace(/\s/g,""));
-  assert.equal(record,score);
+  assert.equal(record,scoreAfterExtra);
   assert.deepEqual(errors,[],"Browser should not report uncaught errors");
   console.log("✅ Tactile à deux doigts, bonus visible, EXTRA absent après rotation et restauration locale : OK");
 }finally{

@@ -1,6 +1,6 @@
-const CACHE="blockboost-speed-v3-20261016";
+const CACHE="blockboost-voicehaptics-v4-20261016";
 const FILES=["./","./index.html","./styles.css","./src/engine.mjs","./src/storage.mjs",
-  "./src/feedback.mjs","./src/bonus.mjs","./src/voice-director.mjs","./src/main.mjs","./manifest.webmanifest","./assets/icon.svg"];
+  "./src/feedback.mjs","./src/bonus.mjs","./src/placement-cues.mjs","./src/phrase-bank.mjs","./src/voice-director.mjs","./src/main.mjs","./manifest.webmanifest","./assets/icon.svg"];
 self.addEventListener("install",event=>{
   event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(FILES)).then(()=>self.skipWaiting()));
 });

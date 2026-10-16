@@ -24,3 +24,13 @@ Toute évolution substantielle des règles ou passage à l'implémentation doit 
 **Limite d'autorisation conservée :** ne pas merger `main`, ne pas publier de release ni signer d'APK/AAB sans nouvel accord ; les réalisations sont livrées sur branche de développement et PR de validation. Les tests dans Chrome ne prouvent pas l'ergonomie physique Samsung.
 
 Voir `brain.md`, `todo.md`, et la spécification complète.
+
+## Demande complémentaire du 16 octobre 2026 — dézipper l'APK sur GitHub
+
+**Instruction de Fab :** « Demande à Git de faire un dézipage directement dans un répertoire temporaire sur le Git lui-même. Donc fais-le par action Git [...] directement accessible par un lien. »
+
+**Réalisation autorisée et exécutée :** GitHub Actions a téléchargé puis décompressé l'artefact APK déjà validé, vérifié son empreinte SHA-256, et créé une branche temporaire dédiée `temp/blockboost-apk-0.1.0` comportant le vrai fichier binaire `temp/android/BlockBoost-0.1.0-debug.apk`.
+
+- Téléchargement direct : https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-apk-0.1.0/temp/android/BlockBoost-0.1.0-debug.apk
+- Workflow vert : https://github.com/greenpower2669/Block-Boost/actions/runs/38933516757
+- Branche source `main` inchangée ; pas de release, pas de fusion, pas de signature d'édition Play.

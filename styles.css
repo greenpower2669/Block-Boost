@@ -98,3 +98,19 @@ button,select{font:inherit}button{cursor:pointer}button:focus-visible,select:foc
  .tray{height:76px}.instruction{margin-top:6px}.piece-slot{padding:4px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 body.reduce-motion *,body.reduce-motion *::before,body.reduce-motion *::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+
+/* Visible speed meter and readable layered celebration, sized for Android portrait. */
+.bonus-hud{width:min(91vw,430px);display:flex;flex-direction:column;gap:3px;align-items:center;
+  margin:4px auto 0;min-height:48px;justify-content:center}
+.bonus-live{border-radius:12px;padding:5px 10px;border:1px solid #f9d98277;
+  color:#ffe47d;background:#27285aa0;font-weight:950;font-size:clamp(12px,3.3vw,15px);
+  letter-spacing:.2px;text-align:center;min-height:29px;width:100%}
+.bonus-live.running{border-color:#7cead5;background:#28447e;color:#ddfff9}
+.bonus-earned{font-size:clamp(11px,3vw,13px);font-weight:800;color:#ffee96;
+  min-height:17px;max-width:100%;text-align:center;line-height:1.25}
+.combo-flash{top:31%;font-size:clamp(21px,6vw,33px);line-height:1.17;white-space:pre-line;
+  padding:10px 2px;background:#121a50c5;border-radius:15px;max-width:100%;
+  -webkit-text-stroke:.3px #452870}
+.combo-flash.active{animation:comboFlash 1.65s ease-out forwards}
+@media(max-height:720px){.bonus-hud{min-height:36px;margin-top:1px}.bonus-live{padding:2px 6px}
+  .bonus-earned{min-height:13px;font-size:11px}.tray-wrap{margin-top:4px}}

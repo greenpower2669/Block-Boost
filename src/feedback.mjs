@@ -68,6 +68,8 @@ export class Feedback {
     if(event==="rotate")this.chirp(450,.10,.05);
     if(event==="clear") {this.chirp(530,.17,.09);this.chirp(780,.23,.075);}
     if(event==="combo") {this.chirp(650,.22,.10);this.chirp(930,.30,.08);}
+    if(event==="speed") {this.chirp(730,.14,.095);this.chirp(1020,.21,.07);}
+    if(event==="extra") this.chirp(880,.18,.06);
     if(event==="record") {this.chirp(620,.26,.09);this.chirp(930,.32,.09);this.chirp(1200,.37,.09);}
   }
   speak(kind,priority=1,force=false) {

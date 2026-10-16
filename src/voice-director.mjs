@@ -10,7 +10,11 @@ export const EMOTIONS={
   big:{mood:"surprise",priority:3},
   combo:{mood:"combo",priority:4},
   record:{mood:"celebrate",priority:5},
-  over:{mood:"consolation",priority:5}
+  over:{mood:"consolation",priority:5},
+  speed2:{mood:"surprise",priority:3},
+  speed3:{mood:"combo",priority:3},
+  speed4:{mood:"celebrate",priority:4},
+  noRotation:{mood:"encourage",priority:2}
 };
 export const EXTRA_LINES={
   welcome:["À toi de jouer !","Regardons ce qu'on peut créer !","C'est parti pour une jolie partie !",
@@ -23,6 +27,10 @@ export const EXTRA_LINES={
          "Ça chauffe, continue !","On ne t'arrête plus !","Quel rythme !","Encore mieux !"],
   record:["Un nouveau record, fantastique !","Bravo, tu viens de battre ton meilleur score !",
           "C'est un exploit, regarde ce record !","Waouh, c'est ton nouveau sommet !"],
+  speed2:["Turbo ! Bonus vitesse fois deux !","Super réflexe ! Multiplicateur deux !","Vitesse fois deux, ça rapporte !"],
+  speed3:["Fusée ! Vitesse fois trois !","Triple bonus de rapidité !","Incroyable, ça va vite !"],
+  speed4:["Éclair ! Vitesse fois quatre !","Quatre fois le bonus ! Fantastique !","Quelle rapidité ! Bonus quatre !","Waouh ! Super éclair !"],
+  noRotation:["Extra ! Sans aucune rotation !","Bien joué ! Bonus sans rotation !","Bravo, placement direct récompensé !"],
   over:["Une belle partie, on réessaie ?","Bien joué ! On fera encore mieux ensemble.",
         "J'ai adoré jouer avec toi !","Ce n'est que partie remise !"]
 };

@@ -63,3 +63,9 @@ Cette version utilise le moteur de voix locale Android sur un **thread audio dé
 **Important : ce n'est pas encore une voix émotionnelle neuronale !** Les profils changent la hauteur, le rythme et les phrases ; la lecture de vrais clips expressifs est préparée mais aucun clip n'est encore inclus. Application de test séparée `fr.greenpower.blockboost.emotionlab`, avec sauvegardes indépendantes de la 0.1.0. Pas de publication stable, pas de validation physique Samsung.
 
 Plus d'informations : [spécification 0.2.0](docs/block-boost-emotion-multithread-020.md). [Compilation GitHub Actions réussie](https://github.com/greenpower2669/Block-Boost/actions/runs/38956309047).
+
+## 2026-10-16 — Bonus vitesse visibles et EXTRA sans rotation (0.3.0)
+
+Nouvelle version de test avec **multiplicateur vitesse VISIBLE ×4→×0** et **EXTRA SANS ROTATION**, annoncés en grand sur la grille, avec nouveaux commentaires vocaux. On démarre le chrono à la sélection d'une pièce. Vitesse : ×4 sous 2 s, ×3 jusqu'à 4 s, ×2 jusqu'à 7 s, ×1 jusqu'à 11 s, ×0 ensuite. Le score classique ne tombe jamais à zéro : le coefficient s'applique seulement au **bonus** `5 × casesPièce × coefficient`. L'extra, indépendant, donne `5 × casesPièce` sans aucune rotation.
+
+**📲 [Télécharger l'APK Android 0.3.0 directement, sans ZIP](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-bonus-0.3.0/temp/android/BlockBoost-0.3.0-bonus-debug.apk)** — 42 688 octets, SHA256 `e14696954dbf30b17fb006fb34ab72daf9a131da1e4e4f27cf319110faf72b65`. App `fr.greenpower.blockboost.bonuslab` installée à côté des versions 0.1/0.2, avec records distincts. Tests [Chrome/Node](https://github.com/greenpower2669/Block-Boost/actions/runs/38958540023) et [Android](https://github.com/greenpower2669/Block-Boost/actions/runs/38958540134) verts ; **test tactile réel Samsung restant**. Détails [dans la spécification](docs/bonus-vitesse-extra-sans-rotation-030.md). Pas de merge main ni release.

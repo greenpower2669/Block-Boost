@@ -42,3 +42,11 @@ Instruction actuelle : « Integre le son de la voix mais dans block boost avec u
 **Périmètre :** agir dans Block Boost (et pas dans VisionMaxRead) ; rendre les réactions plus vivantes, introduire une orchestration audio asynchrone séparée de l'UI, préserver jeu hors ligne et anti-répétition, préparer une APK debug test directement téléchargeable par lien GitHub. Une vraie voix émotionnelle neuronale ou des clips joués demanderaient une génération et une validation distinctes ; ne pas déclarer cette partie réalisée par des variations de pitch/rate seules.
 
 **Livré :** branche `feature/emotional-voice-multithread-020`, APK debug 0.2.0, Actions vérifiées et publication temporaire directe `temp/blockboost-emotion-0.2.0`. Ne pas fusionner main ni publier une release stable. L'app de labo a une identité Android séparée et ses propres scores. Voir `docs/block-boost-emotion-multithread-020.md`.
+
+## 2026-10-16 — Bonus vitesse visibles et EXTRA sans rotation (0.3.0)
+
+Instruction de Fab après essai du prototype 0.2.0 : « Oui ça mieux mais on ne voit pas de x2 vitess ou * x4 ou extra, bonus de non rotation! Tu vois, viens on essaie avec des pieds main6 ».
+
+**Autorisation concrète :** implémenter dans Block Boost des bonus vitesse **visibles**, bonus de pose sans rotation, annonces vocales couplées aux combos, valider via tests tactiles et livrer une nouvelle APK directe. Ne pas modifier VisionMaxRead ni les ressources Djipie. Ni merge main, ni release officielle sans accord.
+
+**Réalisé :** branche `feature/fast-bonus-no-rotation-030`, suite test verte (GitHub run `38958540023`), build Android `38958540134` vert ; binaire signé debug `BlockBoost-0.3.0-bonus-debug.apk` publié sur `temp/blockboost-bonus-0.3.0/temp/android/`, SHA `e14696954dbf30b17fb006fb34ab72daf9a131da1e4e4f27cf319110faf72b65`. App de labo indépendante de 0.2.0 et de son score ; vérifier la sensation Samsung en vrai.

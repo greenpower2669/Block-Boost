@@ -24,7 +24,11 @@
 - [ ] Affiner le mixage avec ducking réel des FX et tester les cas de voix chevauchées.
 - [ ] Réaliser des tests visuels de gameplay et des scénarios de longues parties sur téléphone.
 - [ ] Ajouter éventuellement des animations de compteurs plus riches et un historique personnel consultable.
-- [ ] Adapter ou empaqueter le jeu pour Android natif si souhaité ; fabriquer des `.apk` et `.aab` correctement nommés, icône définitive, signature contrôlée.
+- [x] Empaqueter le prototype Web dans une app Android Java/WebView avec icône adaptative et créer `BlockBoost-0.1.0-debug.apk` signée debug.
+- [x] Par GitHub Actions, dézipper l'artefact et publier l'APK brut dans `temp/android/` sur la branche `temp/blockboost-apk-0.1.0` pour accès direct sans ZIP.
+- [ ] Tester l'installation et le gameplay de l'APK sur Samsung Android 16.
+- [ ] Si publication Play décidée ensuite, produire un `.aab` de release avec signature de publication validée séparément ; ne jamais utiliser la clé debug pour Play.
+- [ ] Remplacer l'icône provisoire et compléter les tests d'ergonomie réelle.
 - [ ] Tester les sauvegardes sous forte contrainte (quota, éviction de cache, fermeture brusque) et les migrations futures.
 - [ ] Faire valider la formule des points et les choix artistiques.
 - [ ] Ne pas fusionner `main`, créer de release ou publier sans accord explicite.
@@ -32,3 +36,9 @@
 ## Source de vérité
 
 Voir [docs/description-gameplay-mascottes-voix-fx-et-score-local.md](docs/description-gameplay-mascottes-voix-fx-et-score-local.md) et [brain.md](brain.md).
+
+## Lien de test Android direct
+
+- [APK sans ZIP](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-apk-0.1.0/temp/android/BlockBoost-0.1.0-debug.apk)
+- [GitHub Action de décompression et publication](https://github.com/greenpower2669/Block-Boost/actions/runs/38933516757)
+- SHA-256 : `49e963e01c075a2014b1889c54a236fec86b56587b328bfede3e2bea0688b98c`

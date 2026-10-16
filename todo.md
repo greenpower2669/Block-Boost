@@ -85,3 +85,17 @@ APK brute : https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/bl
 - [ ] Vérifier au casque et sur haut-parleur les sons de prise/pose et l'équilibre avec les voix.
 - [ ] Mesurer l'impression de répétition durant une longue partie et ajuster si nécessaire.
 - [ ] Aucun merge main ni release officielle sans autorisation.
+
+## 16 octobre 2026 — Guidage vibratoire progressif et célébration des bonus
+
+- [x] Repérer les poses réelles qui effaceraient immédiatement une ligne sans fausses cibles bloquées.
+- [x] Calculer la proximité 0 à 4 vers ces positions et recalculer après rotation.
+- [x] Faire vibrer par cycles plus rapprochés et plus puissants à mesure que le joueur s'en approche.
+- [x] Créer des motifs haptiques distincts pour VITESSE, EXTRA sans rotation, ligne et combo (y compris cumul).
+- [x] Couper la vibration continue au lâcher, abandon, arrière-plan, changement de partie et coupure du réglage ; sécurité 750 ms sans heartbeat.
+- [x] Ajouter l'option guidage haptique indépendamment du réglage vibrations ponctuelles.
+- [x] Tests logique et Chrome / Android verts : [validation](https://github.com/greenpower2669/Block-Boost/actions/runs/38970378913) et [APK](https://github.com/greenpower2669/Block-Boost/actions/runs/38970267717).
+- [x] APK directe GitHub publiée dans `temp/blockboost-haptic-0.5.0/temp/android/` : https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-haptic-0.5.0/temp/android/BlockBoost-0.5.0-haptic-debug.apk.
+- [ ] Vérifier sur le Samsung le niveau réellement perceptible de chaque vibration et le comportement batterie/température.
+- [ ] Confirmer l'arrêt tactile lors de gestes annulés et d'un basculement d'application.
+- [ ] Ajuster amplitudes/paliers après mesure humaine ; pas de merge main sans validation.

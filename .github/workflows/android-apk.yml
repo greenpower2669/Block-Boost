@@ -1,4 +1,4 @@
-name: 🐾 Block Boost — APK Android debug et voix expressives
+name: 🐾 Block Boost — APK Festival Android
 
 on:
   workflow_dispatch:
@@ -17,6 +17,7 @@ on:
       - 'styles.css'
       - 'src/**'
       - 'assets/**'
+      - 'tests/**'
       - '.github/workflows/android-apk.yml'
 
 concurrency:
@@ -62,6 +63,9 @@ jobs:
           cp android/app/build/outputs/apk/debug/app-debug.apk android/dist/BlockBoost-0.7.0-festival-debug.apk
           unzip -l android/dist/BlockBoost-0.7.0-festival-debug.apk | grep -F 'assets/www/index.html'
           unzip -l android/dist/BlockBoost-0.7.0-festival-debug.apk | grep -F 'assets/www/src/main.mjs'
+          unzip -l android/dist/BlockBoost-0.7.0-festival-debug.apk | grep -F 'assets/www/src/festival.mjs'
+          unzip -l android/dist/BlockBoost-0.7.0-festival-debug.apk | grep -F 'assets/www/src/kenney-audio.mjs'
+          unzip -l android/dist/BlockBoost-0.7.0-festival-debug.apk | grep -F 'assets/www/assets/kenney-manifest.json'
           unzip -l android/dist/BlockBoost-0.7.0-festival-debug.apk | grep -F 'classes.dex'
           sha256sum android/dist/BlockBoost-0.7.0-festival-debug.apk | tee android/dist/BlockBoost-0.7.0-festival-debug.sha256
 

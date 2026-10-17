@@ -39,9 +39,10 @@ test("Disco renders 20 distinct yaw-only spherical views into a sprite sheet",()
  drawDiscoFrame(ctx,Math.PI/5,168);positions1.push(...ctx.calls.slice(0,8));
  assert.notDeepEqual(positions0,positions1,"yaw must change actual mirror tile projection");
 });
-test("Sprite animation is a wrapped 2D frame blit, not an X/Y/Z CSS transform",()=>{
+test("Sprite animation blits only frames on a looping 2D atlas",()=>{
  const ctx=fakeContext(),atlas={size:168,frames:20,sheet:{}};
- drawDiscoSpriteFrame(ctx,22,atlas);
- assert.equal(ctx.calls.filter(c=>c[0]==="blit").length,0,
-   "Call signature must keep atlas as second argument, not index");
+ drawDiscoSpriteFrame(ctx,atlas,22);
+ const blits=ctx.calls.filter(c=>c[0]==="blit");
+ assert.equal(blits.length,1);
+ assert.deepEqual(blits[0].slice(2),[2*168,0,168,168,0,0,168,168]);
 });

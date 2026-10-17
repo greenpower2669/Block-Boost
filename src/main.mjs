@@ -109,7 +109,7 @@ const feedback=new Feedback(()=>save.settings,()=>save.mascot,
   caption=>{$("mascot-caption").textContent=caption||"À toi de jouer !";},
   emotion=>{$("mascot-face").className="mascot-face"+(emotion!=="idle"?" "+emotion:"");});
 const festival=new FestivalDirector($("festival-stage"),{
-  fx:key=>feedback.fx("festival-"+key),
+  fx:key=>feedback.fx(key==="bubbles-pop"?"bubbles-pop":"festival-"+key),
   reduceMotion:()=>save.settings.reducedMotion
 });
 

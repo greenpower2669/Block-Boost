@@ -124,3 +124,5 @@ APK brute : https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/bl
 - [ ] Tester sur Samsung la fluidité visuelle, la qualité des 12 effets, le mixage et le confort haptique/visuel.
 - [ ] Confirmer l'état final de la CI Android, binaire direct, SHA et date de build.
 - [ ] Aucun merge main ni release stable avant accord de Fab.
+
+**Livraison CI 0.7.0 achevée (17 octobre)** : tests [39036754891](https://github.com/greenpower2669/Block-Boost/actions/runs/39036754891) verts ; Android [39036754874](https://github.com/greenpower2669/Block-Boost/actions/runs/39036754874) vert avec retentatives Maven. [APK brute sans ZIP](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-festival-0.7.0/temp/android/BlockBoost-0.7.0-festival-debug.apk), 132 604 octets, SHA-256 `a87766eff2accb67ce139545563bb681c4c335c6eb068952a487924a04b13be5`. La vérification physique et artistique sur Samsung reste ouverte. Le point « Confirmer l'état final de la CI Android » est **clos**.

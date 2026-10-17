@@ -136,3 +136,11 @@ Contrat complet : [docs/bubbles-cross10-licensed-audio-100.md](docs/bubbles-cros
 
 
 **BILAN FINAL ACTUALISÉ (17/10/2026) :** après correction des pops audio dans src/main.mjs, tests Node/Chrome [39067717083](https://github.com/greenpower2669/Block-Boost/actions/runs/39067717083) **verts** et APK publique [39067712581](https://github.com/greenpower2669/Block-Boost/actions/runs/39067712581) **verte**. Quota de stockage d'artifacts GitHub atteint sur Djipie ; upload-artifact rendu facultatif, la publication de l'APK .apk seule en branche privée n'en dépend plus. CI Djipie privée finale [39068208556](https://github.com/greenpower2669/Djipie/actions/runs/39068208556) **SUCCESS**. [APK PRIVÉE FINALE 0.10 avec 11 sons](https://github.com/greenpower2669/Djipie/blob/temp/blockboost-bubbles-private-0.10.0/temp/android/BlockBoost-0.10.0-bubbles-private-debug.apk), **438375 octets**, SHA256 `99bbe28c08be72f8cf57d08a32457c0d9b7d2f7ced1f6ceeff22b44f601baa57`. Ce SHA remplace tous les SHA antérieurs des compilations d'essai. Lien privé (connexion GitHub requise). Aucun merge main ni Play release.
+
+## 🪩 Block Boost 0.11 — retour de la boule à facettes
+
+Boule disco visible sur les **gros jackpots**, bulles/projecteurs du bas pour les **doubles lignes ordinaires**, spectacle **Boule + Bulles** pour le croisement simultané ligne-colonne ×10. Le score reste lisible devant les effets, Bass Drop 3 et les pops sont étagés pour ne pas s'écraser. Aucun changement du calcul du score ×10.
+
+[Documentation détaillée](docs/restore-disco-bubbles-cross-011.md) · [PR #12 brouillon](https://github.com/greenpower2669/Block-Boost/pull/12) · [tests Chrome+Node verts](https://github.com/greenpower2669/Block-Boost/actions/runs/39071874406) · [APK publique CC0 compilée](https://github.com/greenpower2669/Block-Boost/actions/runs/39071874411).
+
+L'APK complète Sonniss 0.11 doit être validée et livrée **dans Block Boost** sur branche TEMP ; Djipie reste la bibliothèque de sons. Aucune fusion main.

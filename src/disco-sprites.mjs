@@ -108,5 +108,5 @@ export function drawDiscoSpriteFrame(ctx,atlas,index) {
   if(!ctx||!atlas||!Number.isFinite(index))return;
   const i=((Math.floor(index)%atlas.frames)+atlas.frames)%atlas.frames;
   ctx.clearRect(0,0,atlas.size,atlas.size);
-  ctx.drawImage(atlas.sheet,i*atlas.size,0,atlas.size,0,0,atlas.size,atlas.size);
+  ctx.drawImage(atlas.sheet,i*atlas.size,0,atlas.size,atlas.size,0,0,atlas.size,atlas.size);
 }

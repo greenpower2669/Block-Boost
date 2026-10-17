@@ -9,35 +9,35 @@ function sample(lines=1,combo=1,gained=120){
    clearedCells:Array.from({length:lines*8},(_,i)=>[Math.floor(i/8),i%8]),
    noRotationBonus:0};
 }
-test("six named families are available; small clear is not always the same rainbow",()=>{
+test("seven named families are available; small clear is not always the same rainbow",()=>{
  assert.deepEqual(Object.keys(FESTIVAL_THEMES).sort(),
-   ["forest","crystal","electric","fireworks","galaxy","disco"].sort());
+   ["forest","crystal","electric","fireworks","galaxy","disco","bubbles"].sort());
  assert.equal(chooseFestival(sample(1,1,80),{speedMultiplier:0,noRotationBonus:0}).theme,"forest");
  assert.equal(chooseFestival(sample(1,1,80),{speedMultiplier:0,noRotationBonus:0},"forest").theme,"crystal");
  assert.equal(chooseFestival(sample(1,1,80),bonus).theme,"electric");
  assert.equal(chooseFestival(sample(1,1,80),{speedMultiplier:0,noRotationBonus:5}).theme,"crystal");
- assert.equal(chooseFestival(sample(2,1,380),{speedMultiplier:1}).theme,"fireworks");
+ assert.equal(chooseFestival(sample(2,1,380),{speedMultiplier:1}).theme,"bubbles");
 });
 test("disco ball only emerges on real large combos, many lines or very high points",()=>{
  const disco=chooseFestival(sample(2,2,650),bonus);
- assert.equal(disco.theme,"disco");
+ assert.equal(disco.theme,"bubbles");
  assert.ok(disco.level>=3);
  assert.ok(disco.particles<=58);
- assert.equal(chooseFestival(sample(2,2,650),bonus,"disco").theme,"galaxy");
- assert.equal(chooseFestival(sample(3,1,980),bonus).theme,"disco");
+ assert.equal(chooseFestival(sample(2,2,650),bonus,"disco").theme,"bubbles");
+ assert.equal(chooseFestival(sample(3,1,980),bonus).theme,"bubbles");
  assert.notEqual(chooseFestival(sample(1,1,190),bonus).theme,"disco");
 });
 test("Invalid/no-bonus move does not celebrate; no strobing or scoring mechanics",()=>{
  assert.equal(chooseFestival({type:"invalid",lines:4,gained:4000},bonus).theme,null);
  assert.equal(chooseFestival({type:"placed",lines:0,gained:5},{speedMultiplier:0,noRotationBonus:0}).theme,null);
  assert.equal(previewTheme(0,9,bonus),"");
- assert.equal(previewTheme(2,2,bonus),"disco");
+ assert.equal(previewTheme(2,2,bonus),"bubbles");
 });
 test("preview identifies different visual families by real event shape",()=>{
  assert.equal(previewTheme(1,0,{speedMultiplier:0,noRotationBonus:0}),"forest");
  assert.equal(previewTheme(1,0,{speedMultiplier:0,noRotationBonus:5}),"crystal");
  assert.equal(previewTheme(1,0,{speedMultiplier:4,noRotationBonus:0}),"electric");
- assert.equal(previewTheme(2,0,{speedMultiplier:0,noRotationBonus:0}),"fireworks");
+ assert.equal(previewTheme(2,0,{speedMultiplier:0,noRotationBonus:0}),"bubbles");
  assert.equal(previewTheme(1,3,{speedMultiplier:0,noRotationBonus:0}),"galaxy");
 });
 test("Djipie selected Kenney OGG sound set is real offline audio, without Sonniss",()=>{

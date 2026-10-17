@@ -12,7 +12,8 @@ export const FESTIVAL_THEMES=Object.freeze({
  electric:{name:"Néons électriques",symbol:"ϟ",color:"#54edff",sound:"speed"},
  fireworks:{name:"Feu d'artifice de points",symbol:"✶",color:"#ffd487",sound:"combo"},
  galaxy:{name:"Galaxie en fête",symbol:"✺",color:"#de8aff",sound:"cosmic"},
- disco:{name:"BOULE À FACETTES !",symbol:"✦",color:"#ffdc79",sound:"disco"}
+ disco:{name:"BOULE À FACETTES !",symbol:"✦",color:"#ffdc79",sound:"disco"},
+ bubbles:{name:"BAL DES BULLES !",symbol:"◌",color:"#a3f4ff",sound:"bubbles-create"}
 });
 
 /** Pure intent score. Only earned points/clears can call for a jackpot. */
@@ -31,8 +32,10 @@ export function chooseFestival(event,bonus={},previous="") {
   // merely because a new session first exceeded its personal best.
   const jackpot=(lines>=2&&(combo>=2||gained>=500))||
     lines>=3||combo>=4||gained>=850;
+  const bubbleReward=lines>=2;
   let theme;
-  if(jackpot)theme=previous==="disco"?"galaxy":"disco";
+  if(bubbleReward)theme="bubbles";
+  else if(jackpot)theme=previous==="disco"?"galaxy":"disco";
   else if(combo>=3)theme="galaxy";
   else if(lines>=2)theme=previous==="fireworks"?"electric":"fireworks";
   else if(speed>=3)theme=previous==="electric"?"crystal":"electric";
@@ -43,8 +46,9 @@ export function chooseFestival(event,bonus={},previous="") {
   const level=Math.min(5,Math.max(1,1+Math.floor(boosts*.85)));
   return {
     theme,level,score:gained,lines,combo,
-    jackpot:theme==="disco"||theme==="galaxy",
-    durationMs:theme==="disco"?3000:theme==="galaxy"?2700:1900+level*110,
+    bubbles:theme==="bubbles",crossMultiplier:event?.crossMultiplier||1,
+    jackpot:theme==="disco"||theme==="galaxy"||theme==="bubbles",
+    durationMs:theme==="bubbles"?3000:theme==="disco"?3000:theme==="galaxy"?2700:1900+level*110,
     particles:Math.min(58,10+6*level+(theme==="disco"?16:0))
   };
 }
@@ -52,9 +56,8 @@ export function chooseFestival(event,bonus={},previous="") {
 /** Preview hints the visual language without launching a particle show yet. */
 export function previewTheme(lines,combo,bonus={}) {
   if(lines<=0)return "";
-  if(lines>=2 && (combo>=2||bonus.speedMultiplier>=3))return "disco";
+  if(lines>=2)return "bubbles";
   if(combo>=3)return "galaxy";
-  if(lines>=2)return "fireworks";
   if((bonus.speedMultiplier||0)>=3)return "electric";
   if((bonus.noRotationBonus||0)>0)return "crystal";
   return "forest";
@@ -72,6 +75,7 @@ export class FestivalDirector {
     this.reduceMotion=reduceMotion;
     this.rng=rng;
     this.timeout=null;
+    this.popSoundTimeout=null;
     this.frameRequest=null;
     this.spriteSheet=null;
     this.lastTheme="";
@@ -79,6 +83,7 @@ export class FestivalDirector {
   }
   stop(){
     clearTimeout(this.timeout);
+    clearTimeout(this.popSoundTimeout);
     if(this.frameRequest!==null)cancelAnimationFrame(this.frameRequest);
     this.frameRequest=null;
     this.timeout=null;
@@ -146,6 +151,29 @@ export class FestivalDirector {
         fragment.appendChild(ray);
       }
     }
+    if(scene.bubbles){
+      // The spot heads stand at FLOOR LEVEL and shine upwards; the translucent
+      // bubbles rise, expand and burst via bounded CSS animations.
+      if(!small)for(let i=0;i<5;i++){
+        const spot=document.createElement("i");
+        spot.className="bubble-floor-spot";
+        spot.style.setProperty("--floor-x",(8+i*21)+"%");
+        spot.style.setProperty("--floor-angle",(-25+i*12)+"deg");
+        spot.style.setProperty("--floor-delay",(i*.12)+"s");
+        fragment.appendChild(spot);
+      }
+      const total=small?4:Math.min(32,12+scene.level*3);
+      for(let i=0;i<total;i++){
+        const bubble=document.createElement("i");
+        bubble.className="festival-bubble";
+        bubble.style.setProperty("--bubble-x",(8+this.rng()*84)+"%");
+        bubble.style.setProperty("--bubble-size",(15+this.rng()*32)+"px");
+        bubble.style.setProperty("--bubble-delay",(.08+(i%9)*.14)+"s");
+        bubble.style.setProperty("--bubble-drift",((this.rng()-.5)*72)+"px");
+        bubble.style.setProperty("--bubble-duration",(1.18+this.rng()*.85)+"s");
+        fragment.appendChild(bubble);
+      }
+    }
     // Concert spotlights are independent of mirrored disco rays, and always
     // remain behind the legible score banner. Six gentle moving beams.
     if(["disco","galaxy","fireworks","electric"].includes(scene.theme)){
@@ -169,7 +197,7 @@ export class FestivalDirector {
       foreground.setAttribute("aria-hidden","true"); // Existing #combo-flash announces points.
       const heading=document.createElement("strong");
       heading.className="festival-bonus-title";
-      heading.textContent=banner.headline;
+      heading.textContent=scene.bubbles?(scene.crossMultiplier===10?"CROISEMENT ×10 !":"PLUIE DE BULLES !"):banner.headline;
       const points=document.createElement("span");
       points.className="festival-bonus-points";
       points.textContent=banner.points;
@@ -201,6 +229,11 @@ export class FestivalDirector {
     this.stage.style.setProperty("--festival-size",(88+scene.level*21)+"px");
     if(ball)this.animateDisco(ball,Boolean(small));
     this.fx(FESTIVAL_THEMES[scene.theme].sound);
+    if(scene.bubbles&&!small){
+      this.popSoundTimeout=setTimeout(()=>{
+        if(this.current===scene)this.fx("bubbles-pop");
+      },1100);
+    }
     this.timeout=setTimeout(()=>this.stop(),small?850:scene.durationMs);
     return scene;
   }

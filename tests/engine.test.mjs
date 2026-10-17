@@ -54,7 +54,9 @@ test("cross clears row and column, counting intersection once",()=>{
   const r=applyMove(game(board),0,3,3);
   assert.deepEqual(r.event.clearedRows,[3]);assert.deepEqual(r.event.clearedColumns,[3]);
   assert.equal(r.event.clearedCells.length,15);
-  assert.equal(r.event.gained,325);
+  assert.equal(r.event.gained,3205);
+  assert.equal(r.event.crossMultiplier,10);
+  assert.equal(r.event.crossBonus,2880);
   assert.equal(r.game.board.flat().every(v=>v===null),true);
 });
 test("consecutive clears increase combo, ordinary move resets combo",()=>{
@@ -112,4 +114,30 @@ test("storage corruption or unavailable storage does not crash",()=>{
   const bad={getItem(){throw Error("private");},setItem(){throw Error("quota");}};
   assert.equal(loadSave(bad).bestScore,0);
   assert.equal(writeSave(sanitizeSave({version:1}),bad),false);
+});
+
+
+test("Cross x10 only multiplies clearing, not placement, speed or EXTRA",()=>{
+ const board=emptyBoard();
+ for(let n=0;n<SIZE;n++)if(n!==3){board[3][n]="coral";board[n][3]="sky";}
+ const reward={speedBonus:24,noRotationBonus:15,speedMultiplier:4};
+ const r=applyMove(game(board),0,3,3,()=>0,reward);
+ assert.equal(r.event.crossMultiplier,10);
+ assert.equal(r.event.clearPoints,3200);
+ assert.equal(r.event.basePoints,3205);
+ assert.equal(r.event.gained,3205+24+15);
+ assert.equal(r.event.crossBonus,2880);
+ assert.equal(r.event.clearedCells.length,15);
+});
+test("Two completed rows without column remain x1, but flag double-line effect",()=>{
+ const board=emptyBoard();
+ for(let y=0;y<2;y++)for(let x=0;x<7;x++)board[y][x]="mint";
+ const pieces=[{id:0,coords:[[0,0],[0,1]],used:false,color:"sky"},bigger,tri];
+ const r=applyMove(game(board,pieces),0,7,0,()=>0);
+ assert.equal(r.event.lines,2);
+ assert.deepEqual(r.event.clearedRows,[0,1]);
+ assert.deepEqual(r.event.clearedColumns,[]);
+ assert.equal(r.event.crossMultiplier,1);
+ assert.equal(r.event.crossBonus,0);
+ assert.equal(r.event.gained,10+320);
 });

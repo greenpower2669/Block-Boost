@@ -163,3 +163,23 @@ APK brute : https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/bl
 - [x] Compiler APK [CI 39057514186](https://github.com/greenpower2669/Block-Boost/actions/runs/39057514186) verte ; [APK directe](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-concert-0.9.0/temp/android/BlockBoost-0.9.0-concert-debug.apk), 216071 octets, SHA `bfc9fe705b2e75c9e74709da423d61c498750ed8c1720742516761eca26db4a9`.
 - [ ] Vérifier sur le Samsung la hauteur de la barre système, accessibilité réelle du bouton Nouvelle partie, haptique et volume des sons.
 - [ ] Ajuster les niveaux à l'oreille avec Fab et son fils ; aucune fusion main/Play sans validation.
+
+## 17/10/2026 — Bulles / croisement / audio sous licence
+
+- [x] Croisement ligne-colonne simultané ×10 sur points d'effacement uniquement, sans toucher vitesse/EXTRA ; intersection toujours unique.
+- [x] Deux lignes ou colonnes → 5 projecteurs montant du sol, bulles translucides qui grimpent et éclatent, points lisibles, son création + pop.
+- [x] Réserver `DSGNBass Jump Start Drop 3` à la boule à facettes temporairement, jusqu'à choix musical.
+- [x] Route distincte pour 11 sons Sonniss de Djipie privé, avec 1/2/3 poses gagnantes, trio, prise, pose, défaite et bulles.
+- [x] Case voix OFF par défaut, interjections vocales enregistrées de streak 2/3 seulement si ON.
+- [x] Aucun WAV/OGG Sonniss dans le dépôt PUBLIC ; branche et pipeline d'APK sous Djipie privé, SHA contrôlés, binaires encapsulés dans le jeu fini.
+- [x] Tests Node et Chrome, APK fallback public verts : [39067278200](https://github.com/greenpower2669/Block-Boost/actions/runs/39067278200), [39067278164](https://github.com/greenpower2669/Block-Boost/actions/runs/39067278164).
+- [ ] Constater le résultat et le SHA du build privé Djipie avant d'offrir un lien de SON APK ; si échoue, corriger sans prétendre son terminé.
+- [ ] Vérifier sur Samsung les sons vrais, le rythme, le bonus ×10, les bulles et la fin de partie.
+- [ ] Aucun merge main, publication Google Play ou release stable sans validation.
+
+- [x] **CI PRIVÉE SONNISS verte** : [Djipie 39067423786](https://github.com/greenpower2669/Djipie/actions/runs/39067423786) ; 11 OGG compilés dans APK privée seulement, [438355 octets](https://github.com/greenpower2669/Djipie/blob/temp/blockboost-bubbles-private-0.10.0/temp/android/BlockBoost-0.10.0-bubbles-private-debug.apk), SHA `fc8ff2bb0ab94784f9f506a7a240912b00d29afdd041d3a8a4f03b1a3de9a9a0`. GitHub login Djipie requis pour le téléchargement.
+- [x] **CI PUBLIC et Chrome vertes** : [Android 39067278164](https://github.com/greenpower2669/Block-Boost/actions/runs/39067278164), [Node/Chrome 39067278200](https://github.com/greenpower2669/Block-Boost/actions/runs/39067278200) ; [APK de secours CC0](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-bubbles-0.10.0/temp/android/BlockBoost-0.10.0-bubbles-debug.apk), 219209 octets, SHA `dddacdfd9099d4ff82be2175c720a00e55f4a245666065ab62da5f0ee7c44c5a`.
+- [ ] Sur Samsung, vérifier si les deux APK (même applicationId mais clés debug CI distinctes) nécessitent de désinstaller la précédente : avertir avant, sauvegardes de labo potentiellement non conservées.
+
+
+**BILAN FINAL ACTUALISÉ (17/10/2026) :** après correction des pops audio dans src/main.mjs, tests Node/Chrome [39067717083](https://github.com/greenpower2669/Block-Boost/actions/runs/39067717083) **verts** et APK publique [39067712581](https://github.com/greenpower2669/Block-Boost/actions/runs/39067712581) **verte**. Quota de stockage d'artifacts GitHub atteint sur Djipie ; upload-artifact rendu facultatif, la publication de l'APK .apk seule en branche privée n'en dépend plus. CI Djipie privée finale [39068208556](https://github.com/greenpower2669/Djipie/actions/runs/39068208556) **SUCCESS**. [APK PRIVÉE FINALE 0.10 avec 11 sons](https://github.com/greenpower2669/Djipie/blob/temp/blockboost-bubbles-private-0.10.0/temp/android/BlockBoost-0.10.0-bubbles-private-debug.apk), **438375 octets**, SHA256 `99bbe28c08be72f8cf57d08a32457c0d9b7d2f7ced1f6ceeff22b44f601baa57`. Ce SHA remplace tous les SHA antérieurs des compilations d'essai. Lien privé (connexion GitHub requise). Aucun merge main ni Play release.

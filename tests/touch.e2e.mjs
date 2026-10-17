@@ -144,8 +144,7 @@ try{
     "Anticipation is cleared immediately on release");
   assert.equal(await page.locator(".cell.just-solved").count(),8,
     "Actual cleared cells are highlighted after the successful move");
-  // Simulated BIG DOUBLE-LINE COMBO triggers a real rotating disco ball.
-  // Seed after pagehide, otherwise an old save overwrites this test fixture.
+  // BIG DOUBLE-LINE COMBO now awards the BUBBLE concert (not old disco).
   await page.addInitScript(()=>{
     const key="block-boost.local.v1", saved=JSON.parse(localStorage.getItem(key));
     const board=Array.from({length:8},()=>Array(8).fill(null));
@@ -169,26 +168,15 @@ try{
   const discoCDP=await context.newCDPSession(page);
   await discoCDP.send("Input.dispatchTouchEvent",{type:"touchStart",touchPoints:[from]});
   await discoCDP.send("Input.dispatchTouchEvent",{type:"touchMove",touchPoints:[to]});
-  assert.equal(await page.locator(".cell.will-solve").count(),16,
-    "Anticipation must show both fully completed rows");
+  assert.equal(await page.locator(".cell.will-solve").count(),16);
   await discoCDP.send("Input.dispatchTouchEvent",{type:"touchEnd",touchPoints:[]});
-  assert.equal(await page.locator("#festival-stage").getAttribute("data-theme"),"disco",
-    "Double row, active combo and high points must spawn disco scene");
-  assert.equal(await page.locator(".festival-disco-ball").count(),1,
-    "The rotating faceted ball must be rendered for a jackpot");
-  assert.match(await page.locator("#festival-stage").textContent(),/BOULE À FACETTES/);
+  assert.equal(await page.locator("#festival-stage").getAttribute("data-theme"),"bubbles");
+  assert.equal(await page.locator("#festival-stage .bubble-floor-spot").count(),5);
+  assert.ok(await page.locator("#festival-stage .festival-bubble").count()>=12);
   const front=page.locator("#festival-stage .festival-bonus-front");
-  assert.equal(await front.count(),1,"Jackpot bonus must be above the disco ball");
+  assert.equal(await front.count(),1);
   assert.match(await front.textContent(),/POINTS/);
-  assert.match(await front.textContent(),/COMBO/);
-  assert.equal(await page.locator("#festival-stage .concert-spot").count(),6,
-    "Six moving concert spotlights should appear on a disco jackpot");
-  const layering=await page.evaluate(()=>{
-    const stage=document.querySelector("#festival-stage");
-    return {front:getComputedStyle(stage.querySelector(".festival-bonus-front")).zIndex,
-      ball:getComputedStyle(stage.querySelector(".festival-disco-ball")).zIndex};
-  });
-  assert.ok(Number(layering.front)>Number(layering.ball));
+  assert.equal(await page.locator("#festival-stage .concert-spot").count(),0);
   const fullscreen=await page.locator("#festival-stage").evaluate(el=>({
     parent:el.parentElement.tagName,
     position:getComputedStyle(el).position,
@@ -199,30 +187,11 @@ try{
   assert.equal(fullscreen.position,"fixed");
   assert.equal(fullscreen.overflow,"visible");
   assert.equal(fullscreen.radius,"0px");
-  const sprite=page.locator(".festival-disco-ball");
-  assert.equal(await sprite.evaluate(el=>el.tagName),"CANVAS");
-  assert.equal(await sprite.getAttribute("data-rotation-axis"),"vertical-yaw-sprites");
-  assert.equal(await page.locator(".festival-facets").count(),0);
-  const firstFrame=await sprite.evaluate(el=>({
-    index:Number(el.dataset.spriteFrame),
-    pixels:el.toDataURL("image/png")
-  }));
-  await page.waitForFunction(index=>{
-    const el=document.querySelector(".festival-disco-ball");
-    return el&&Number(el.dataset.spriteFrame)!==index;
-  },firstFrame.index,{timeout:1200});
-  const nextFrame=await sprite.evaluate(el=>({
-    index:Number(el.dataset.spriteFrame),
-    pixels:el.toDataURL("image/png")
-  }));
-  assert.notEqual(nextFrame.index,firstFrame.index);
-  assert.notEqual(nextFrame.pixels,firstFrame.pixels);
-
-
+  assert.equal(await page.locator(".festival-disco-ball").count(),0,
+    "Double-line uses bubble concert, disco is reserved for other wins");
   const voices=await page.evaluate(()=>window.__voiceCalls||[]);
-  assert.equal(voices.length,0,"Temporary family voice mute must remain active");
-  assert.ok((await page.locator("#score").textContent()).trim()!=="150",
-    "Jackpot must credit points while showing the scene");
+  assert.equal(voices.length,0,"Voices remain off by default");
+  assert.ok((await page.locator("#score").textContent()).trim()!=="150");
   assert.deepEqual(errors,[],"Browser should not report uncaught errors");
   console.log("✅ Tactile à deux doigts, bonus visible, EXTRA absent après rotation et restauration locale : OK");
 }finally{

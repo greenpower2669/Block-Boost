@@ -75,18 +75,24 @@ export function applyMove(game, pieceIndex, x, y, rng=Math.random, reward=null) 
   }
   const lines=clearedRows.length+clearedColumns.length;
   const combo=lines>0 ? game.combo+1 : 0;
-  const basePoints=piece.coords.length*5 + (lines>0 ? 80*lines*lines*combo : 0);
+  // CROSSING x10 applies ONLY to row/column clearing points, not placement,
+  // speed or no-rotation rewards. Shared intersection counted once as before.
+  const crossMultiplier=clearedRows.length>0&&clearedColumns.length>0?10:1;
+  const clearPoints=lines>0?80*lines*lines*combo*crossMultiplier:0;
+  const crossBonus=clearPoints-(lines>0?80*lines*lines*combo:0);
+  const basePoints=piece.coords.length*5+clearPoints;
   // Rewards are additive. A speed ×0 never multiplies ordinary points by zero.
   const speedBonus=Number.isSafeInteger(reward?.speedBonus)&&reward.speedBonus>=0&&reward.speedBonus<10000?reward.speedBonus:0;
   const noRotationBonus=Number.isSafeInteger(reward?.noRotationBonus)&&reward.noRotationBonus>=0&&reward.noRotationBonus<10000?reward.noRotationBonus:0;
   const gained=basePoints+speedBonus+noRotationBonus;
   let pieces=game.pieces.map((p,i)=>i===pieceIndex ? {...p,used:true} : p);
-  if(pieces.every(p=>p.used)) pieces=pieceBatch(rng);
+  const newBatch=pieces.every(p=>p.used);
+  if(newBatch) pieces=pieceBatch(rng);
   const gameOver=!hasLegalMove(board,pieces);
   const next={...game,board,pieces,score:game.score+gained,combo,
     bestCombo:Math.max(game.bestCombo,combo),moves:game.moves+1,gameOver};
   return {game:next,event:{type:gameOver?"gameOver":lines>0?"clear":"placed",gained,
-    basePoints,speedBonus,noRotationBonus,
+    basePoints,speedBonus,noRotationBonus,crossMultiplier,crossBonus,clearPoints,newBatch,
     speedMultiplier:reward?.speedMultiplier??0,
     lines,combo,clearedRows,clearedColumns,clearedCells:[...cellsToClear].map(s=>s.split(",").map(Number)),
     score:next.score,gameOver}};

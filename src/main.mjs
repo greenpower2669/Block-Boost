@@ -109,7 +109,7 @@ const feedback=new Feedback(()=>save.settings,()=>save.mascot,
   caption=>{$("mascot-caption").textContent=caption||"À toi de jouer !";},
   emotion=>{$("mascot-face").className="mascot-face"+(emotion!=="idle"?" "+emotion:"");});
 const festival=new FestivalDirector($("festival-stage"),{
-  fx:key=>feedback.fx("festival-"+key),
+  fx:key=>feedback.fx(key==="bubbles-pop"?"bubbles-pop":"festival-"+key),
   reduceMotion:()=>save.settings.reducedMotion
 });
 
@@ -268,18 +268,29 @@ function insertAt(index,x,y){
   }else persist();
   paint();
   const event=res.event;
-  flashClear(event.clearedCells,event.lines,event.combo,event.gained,bonus);
+  flashClear(event.clearedCells,event.lines,event.combo,event.gained,{...bonus,crossMultiplier:event.crossMultiplier});
   const festivalScene=festival.play(event,bonus);
   const descriptions=["⚡ VITESSE ×"+bonus.speedMultiplier+" : +"+event.speedBonus];
+  if(event.crossMultiplier===10)descriptions.unshift("🫧 CROISEMENT LIGNE + COLONNE ×10 : +"+event.crossBonus);
   if(event.noRotationBonus)descriptions.push("⭐ EXTRA SANS ROTATION : +"+event.noRotationBonus);
   $("bonus-earned").textContent=descriptions.join(" · ");
+  // Sound priority: a single row/column wins the basic "boing",
+  // 2+ clears get the NEW bubbles creation/pop sequence, and cross x10
+  // adds no extra parallel sound. Streak-announcer clips obey voice toggle.
+  if(event.lines===1)feedback.fx("lineSingle");
+  else if(event.lines===0)feedback.fx("drop");
   if(event.lines>0){
-    feedback.fx(event.combo>=3||event.lines>=2?"combo":"clear");
-  }else feedback.fx("drop");
-  if(bonus.speedMultiplier>=3)feedback.fx("speed");
-  if(event.noRotationBonus)feedback.fx("extra");
-  if(festivalScene?.jackpot)feedback.speak("wow",4);
-  else if(event.combo>=3)feedback.speak("combo",4);
+    if(event.combo===1)setTimeout(()=>feedback.fx("streak1"),170);
+    else if(event.combo===2)feedback.fx("streak2");
+    else if(event.combo===3)feedback.fx("streak3");
+  }
+  if(event.newBatch&&!event.gameOver)setTimeout(()=>feedback.fx("newBatch"),360);
+  if(bonus.speedMultiplier>=3&&event.lines===0)feedback.fx("speed");
+  if(event.noRotationBonus&&event.lines===0)feedback.fx("extra");
+  if(event.combo===2||event.combo===3){
+    // The dedicated recorded-announcer clips replace TTS for those streaks.
+  }else if(festivalScene?.jackpot)feedback.speak("wow",4);
+  else if(event.combo>=4)feedback.speak("combo",4);
   else if(bonus.speedMultiplier>=2)feedback.speak("speed"+bonus.speedMultiplier,3);
   else if(event.lines>=2)feedback.speak("big",3);
   else if(bonus.noRotationBonus>0)feedback.speak("noRotation",2);
@@ -293,6 +304,7 @@ function insertAt(index,x,y){
 }
 function flashClear(cleared,lines,combo,gained,bonus){
   const parts=[];
+  if(bonus.crossMultiplier===10)parts.push("🫧 CROISEMENT ×10 !");
   if(combo>=2)parts.push("✨ COMBO "+combo+" !");
   else if(lines>=2)parts.push("🌟 DOUBLE !");
   parts.push("⚡ VITESSE ×"+bonus.speedMultiplier);
@@ -339,7 +351,7 @@ function flashClear(cleared,lines,combo,gained,bonus){
 function endGame(newRecord){
   if(finishing)return;
   finishing=true;
-  feedback.fx(newRecord?"record":"clear");
+  feedback.fx(newRecord?"record":"loss");
   // The final score may celebrate only if the last played move qualified.
   feedback.speak(newRecord?"record":"over",5,true);
   $("result-title").textContent=newRecord?"🌟 Nouveau record !":"Belle partie !";

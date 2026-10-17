@@ -47,7 +47,8 @@ test("No points/bonuses on invalid move; rewards distinguish combos lines speed 
   assert.equal(rewardHaptic({type:"clear",lines:1,combo:1,noRotationBonus:0},{speedMultiplier:0}),"line");
   assert.equal(rewardHaptic({type:"clear",lines:1,combo:1,noRotationBonus:5},{speedMultiplier:0}),"lineBonus");
   assert.equal(rewardHaptic({type:"clear",lines:1,combo:2,noRotationBonus:0},{speedMultiplier:0}),"combo");
-  assert.equal(rewardHaptic({type:"clear",lines:2,combo:3,noRotationBonus:15},{speedMultiplier:3}),"comboBonus");
+  assert.equal(rewardHaptic({type:"clear",lines:2,combo:3,noRotationBonus:15},{speedMultiplier:3}),"comboDouble");
+  assert.equal(rewardHaptic({type:"clear",lines:3,combo:3,noRotationBonus:15},{speedMultiplier:3}),"comboCascade");
 });
 test("Haptic guidance setting migrates and defaults to true without resetting scores",()=>{
  const d=sanitizeSave({version:1,bestScore:1234,lastScore:100,gamesPlayed:3,bestCombo:2,

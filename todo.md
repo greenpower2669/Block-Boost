@@ -99,3 +99,15 @@ APK brute : https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/bl
 - [ ] Vérifier sur le Samsung le niveau réellement perceptible de chaque vibration et le comportement batterie/température.
 - [ ] Confirmer l'arrêt tactile lors de gestes annulés et d'un basculement d'application.
 - [ ] Ajuster amplitudes/paliers après mesure humaine ; pas de merge main sans validation.
+
+## 17 octobre 2026 — 0.6.0
+
+- [x] Voix temporairement coupées même aux records, sans effacer les textes ni couper FX/haptique.
+- [x] Grille arc-en-ciel en prévisualisation seulement pour un effacement réellement possible, avec intensité blocs/lignes/combos/bonus.
+- [x] Effet lumineux après effacement, compatible mode animations réduites.
+- [x] Six niveaux de guidage vibratoire et nouveaux motifs doubles lignes/cascades.
+- [x] Tests unitaires, tactile Chrome (huit cases brillent avant de s'effacer), sauvegarde et build Android verts : runs 39026234986 et 39026190674.
+- [x] Indexer la Release Djipie/Sons (5 ZIP Sonniss) sans extraction, copie ni redistribution.
+- [ ] Tester sur Samsung : visibilité des halos, confort haptique, silence complet et stabilité.
+- [ ] Revoir les voix avec Fab et son fils après nouvel accord.
+- [ ] Pas de merge main ni publication Play. APK : https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-rainbow-0.6.0/temp/android/BlockBoost-0.6.0-rainbow-debug.apk

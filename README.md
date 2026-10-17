@@ -123,3 +123,11 @@ La boule à facettes utilise désormais **20 images sphériques précalculées**
 Correction Android 16 : espace bas sécurisé et défilement vertical hors cellules/pièces pour atteindre « Nouvelle partie » malgré les boutons système.
 
 **[Télécharger l'APK Android 0.9.0 directement sans ZIP](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-concert-0.9.0/temp/android/BlockBoost-0.9.0-concert-debug.apk)** (216 071 octets, SHA-256 `bfc9fe705b2e75c9e74709da423d61c498750ed8c1720742516761eca26db4a9`). [Tests Chrome/Node verts](https://github.com/greenpower2669/Block-Boost/actions/runs/39057514184) et [compilation Android verte](https://github.com/greenpower2669/Block-Boost/actions/runs/39057514186). App laboratoire `fr.greenpower.blockboost.concertlab`, sauvegardes indépendantes. **Qualité sur Samsung à valider**, pas de merge main ni Play release. [Détail de la mission](docs/concert-bonus-audio-safearea-090.md).
+
+## 🫧 Block Boost Bulles 0.10.0 — croisement ×10, 11 sons privés synchronisés
+
+Nouveau mode visuel pour **2 lignes/colonnes ou plus** : cinq projecteurs au sol, bulles translucides qui s'élèvent et éclatent ; titre et points en surimpression. **Croisement simultané ligne + colonne = ×10 sur les seuls points d'effacement**, sans doubler l'intersection. Disco sphérique mono-axe conservée, le Bass Drop 3 est le son provisoire sélectionné.
+
+Les 11 sons Sonniss de la sonothèque Djipie privée (déclenchements de gameplay et annonceurs optionnels) ne sont **jamais stockés dans ce dépôt public** : intégration exclusivement dans **l'APK de jeu compilée en privé** via le pipeline Djipie `feature/blockboost-bubbles-private-apk-100`. Les builds publiques Web/Android gardent les 24 FX Kenney CC0 hors ligne. Licences respectées, aucune redistribution des sons seuls et aucun entraînement IA.
+
+Contrat complet : [docs/bubbles-cross10-licensed-audio-100.md](docs/bubbles-cross10-licensed-audio-100.md). Tests Node/Chrome [verts 39067278200](https://github.com/greenpower2669/Block-Boost/actions/runs/39067278200), APK Android publique fallback [verte 39067278164](https://github.com/greenpower2669/Block-Boost/actions/runs/39067278164). La version **privée avec sons Sonniss doit être contrôlée séparément** ; ne pas confondre ces deux APK. Aucune fusion main, aucune sortie Play.

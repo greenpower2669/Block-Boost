@@ -27,14 +27,29 @@ try{
   await page.addInitScript(()=>{
     Math.random=()=>0.13;
     window.__hapticCalls=[];
+    window.__voiceCalls=[];
+    window.__voiceStops=0;
     window.AndroidBridge={
-      speak(){},stop(){},haptic(kind){window.__hapticCalls.push(["tap",kind]);},
+      speak(...args){window.__voiceCalls.push(args);},stop(){window.__voiceStops++;},haptic(kind){window.__hapticCalls.push(["tap",kind]);},
       reward(kind){window.__hapticCalls.push(["reward",kind]);},
       guidance(level){window.__hapticCalls.push(["guide",level]);},
       stopHaptics(){window.__hapticCalls.push(["stop"]); }
     };
   });
   await page.goto("http://127.0.0.1:"+port+"/",{waitUntil:"networkidle"});
+  await page.locator("#settings-button").click();
+  assert.equal(await page.locator("#voice-setting").isDisabled(),false);
+  assert.equal(await page.locator("#voice-setting").isChecked(),false);
+  await page.locator("#voice-setting").check();
+  await page.locator("#mascot-choice").selectOption("plume");
+  const said=await page.evaluate(()=>window.__voiceCalls.length);
+  assert.ok(said>0,"Activating voices must speak");
+  await page.locator("#voice-setting").uncheck();
+  assert.ok(await page.evaluate(()=>window.__voiceStops)>0,"Disabling voices must stop speech");
+  await page.locator("#mascot-choice").selectOption("nox");
+  assert.equal(await page.evaluate(()=>window.__voiceCalls.length),said);
+  assert.equal(await page.locator("#haptics-setting").isChecked(),true);
+  await page.locator("#settings-dialog button[value='close']").click();
   const board=await page.locator("#board").boundingBox();
   const slot=await page.locator(".piece-slot").first().boundingBox();
   const getColumns=()=>page.locator(".piece-slot").first().locator(".piece")

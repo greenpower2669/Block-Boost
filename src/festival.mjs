@@ -32,12 +32,15 @@ export function chooseFestival(event,bonus={},previous="") {
   // merely because a new session first exceeded its personal best.
   const jackpot=(lines>=2&&(combo>=2||gained>=500))||
     lines>=3||combo>=4||gained>=850;
+  // Disjoint rewards: ordinary two-line clears = bubbles; big jackpots = disco.
+  // A real same-move row+column cross always celebrates BOTH at once.
+  const cross=lines>=2&&event?.crossMultiplier===10&&
+    (event?.clearedRows?.length||0)>0&&(event?.clearedColumns?.length||0)>0;
   const bubbleReward=lines>=2;
   let theme;
-  if(bubbleReward)theme="bubbles";
-  else if(jackpot)theme=previous==="disco"?"galaxy":"disco";
+  if(cross||jackpot)theme="disco"; // No "galaxy" suppression on repeat jackpots!
+  else if(bubbleReward)theme="bubbles";
   else if(combo>=3)theme="galaxy";
-  else if(lines>=2)theme=previous==="fireworks"?"electric":"fireworks";
   else if(speed>=3)theme=previous==="electric"?"crystal":"electric";
   else if(extra)theme=previous==="crystal"?"forest":"crystal";
   else theme=previous==="forest"?"crystal":"forest";
@@ -46,16 +49,21 @@ export function chooseFestival(event,bonus={},previous="") {
   const level=Math.min(5,Math.max(1,1+Math.floor(boosts*.85)));
   return {
     theme,level,score:gained,lines,combo,
-    bubbles:theme==="bubbles",crossMultiplier:event?.crossMultiplier||1,
+    bubbles:theme==="bubbles"||cross,cross,crossMultiplier:event?.crossMultiplier||1,
     jackpot:theme==="disco"||theme==="galaxy"||theme==="bubbles",
-    durationMs:theme==="bubbles"?3000:theme==="disco"?3000:theme==="galaxy"?2700:1900+level*110,
+    durationMs:theme==="bubbles"||cross?3300:theme==="disco"?3000:theme==="galaxy"?2700:1900+level*110,
     particles:Math.min(58,10+6*level+(theme==="disco"?16:0))
   };
 }
 
 /** Preview hints the visual language without launching a particle show yet. */
-export function previewTheme(lines,combo,bonus={}) {
+export function previewTheme(lines,combo,bonus={},options={}) {
   if(lines<=0)return "";
+  // Preview the SAME reward selection using the predicted earned points.
+  const cross=Boolean(options.cross)&&lines>=2;
+  const jackpot=(lines>=2&&(combo>=2||(options.gained||0)>=500))||
+    lines>=3||combo>=4||(options.gained||0)>=850;
+  if(cross||jackpot)return "disco";
   if(lines>=2)return "bubbles";
   if(combo>=3)return "galaxy";
   if((bonus.speedMultiplier||0)>=3)return "electric";
@@ -76,6 +84,7 @@ export class FestivalDirector {
     this.rng=rng;
     this.timeout=null;
     this.popSoundTimeout=null;
+    this.bubbleCreateTimeout=null;
     this.frameRequest=null;
     this.spriteSheet=null;
     this.lastTheme="";
@@ -84,6 +93,7 @@ export class FestivalDirector {
   stop(){
     clearTimeout(this.timeout);
     clearTimeout(this.popSoundTimeout);
+    clearTimeout(this.bubbleCreateTimeout);
     if(this.frameRequest!==null)cancelAnimationFrame(this.frameRequest);
     this.frameRequest=null;
     this.timeout=null;
@@ -130,7 +140,8 @@ export class FestivalDirector {
     if(!scene.theme)return scene;
     this.lastTheme=scene.theme;
     this.current=scene;
-    this.stage.className="festival-stage festival-"+scene.theme;
+    this.stage.className="festival-stage festival-"+scene.theme+
+      (scene.cross?" festival-cross":"");
     this.stage.dataset.theme=scene.theme;
     const small=this.reduceMotion()||
       globalThis.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
@@ -197,7 +208,8 @@ export class FestivalDirector {
       foreground.setAttribute("aria-hidden","true"); // Existing #combo-flash announces points.
       const heading=document.createElement("strong");
       heading.className="festival-bonus-title";
-      heading.textContent=scene.bubbles?(scene.crossMultiplier===10?"CROISEMENT ×10 !":"PLUIE DE BULLES !"):banner.headline;
+      heading.textContent=scene.cross?"CROISEMENT ×10 !":
+        scene.bubbles?"PLUIE DE BULLES !":banner.headline;
       const points=document.createElement("span");
       points.className="festival-bonus-points";
       points.textContent=banner.points;
@@ -228,11 +240,18 @@ export class FestivalDirector {
     this.stage.style.setProperty("--festival-level",String(scene.level));
     this.stage.style.setProperty("--festival-size",(88+scene.level*21)+"px");
     if(ball)this.animateDisco(ball,Boolean(small));
+    // The combined cross does NOT start two loud samples at the same instant.
+    // Bass Drop 3 launches the disco; magic rises softly afterwards, then pops.
     this.fx(FESTIVAL_THEMES[scene.theme].sound);
+    if(scene.cross){
+      this.bubbleCreateTimeout=setTimeout(()=>{
+        if(this.current===scene)this.fx("bubbles-create");
+      },460);
+    }
     if(scene.bubbles&&!small){
       this.popSoundTimeout=setTimeout(()=>{
         if(this.current===scene)this.fx("bubbles-pop");
-      },1100);
+      },scene.cross?1540:1100);
     }
     this.timeout=setTimeout(()=>this.stop(),small?850:scene.durationMs);
     return scene;

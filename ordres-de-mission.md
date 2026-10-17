@@ -122,3 +122,12 @@ Livraison source sur `feature/bubbles-cross10-licensed-audio-100` uniquement ; s
 Contrat permanent : **Djipie est uniquement source/médiathèque de sons, Block Boost doit livrer son propre APK directement en `.apk` téléchargeable SANS ZIP et sans extraire quoi que ce soit sur le téléphone/PC de Fab.** L'erreur de livrer dans Djipie a été corrigée par transfert binaire Git (SHA de blob identique), sans changer le code ni fusionner main.
 
 [**APK COMPLÈTE 0.10.0 avec 11 sons Sonniss, dans Block Boost**](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-bubbles-full-apk-010/temp/android/BlockBoost-0.10.0-bubbles-full-debug.apk) — 438 375 octets ; SHA256 `99bbe28c08be72f8cf57d08a32457c0d9b7d2f7ced1f6ceeff22b44f601baa57`, commit `e06be4274978d0cd978c90196b1b94876f531dd0` sur branche de livraison `temp/blockboost-bubbles-full-apk-010`. Aucun ZIP à décompresser. Les contenus originaux séparés demeurent dans Djipie ; seule l'APK du jeu compilé est dans Block Boost. Pour les livraisons suivantes, produire dès le départ la version avec sons sur une branche TEMP de **Block-Boost**, pas de Djipie. Aucune fusion main, aucun déploiement Play.
+
+## ORDRE AUTORISÉ 17/10 — Correction restitution boule disco
+
+**Problème utilisateur** « La boule à facetre on ne l'a vois plus ? » ; réponse propose trois niveaux, acceptés « Ok ».
+1. Deux lignes/colonnes ordinaires : bulles et projecteurs au sol.
+2. Gros jackpot : boule à facettes sphérique et Bass Drop 3 provisoire.
+3. Croisement ligne+colonne simultané ×10 : **les DEUX décors en même temps** (boule disco + bulles / projecteurs) ; titre et points au premier plan.
+
+Coder sans changer la formule ×10, les sauvegardes, deux doigts, haptique et politique voix OFF par défaut. Tester Node/Chrome + Android puis livrer **APK direct .apk dans le dépôt Block Boost lui-même**, non ZIP, ni APK dans Djipie. Les 11 sons Sonniss restent seulement dans le **binaire APK du jeu fini**, jamais en médiathèque autonome sur dépôt public. Branche `feature/restore-disco-and-cross-bubbles-011` / PR #12 brouillon ; [docs/restore-disco-bubbles-cross-011.md](docs/restore-disco-bubbles-cross-011.md), `main` intouché. Aucun merge ni Play.

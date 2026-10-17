@@ -170,13 +170,15 @@ try{
   await discoCDP.send("Input.dispatchTouchEvent",{type:"touchMove",touchPoints:[to]});
   assert.equal(await page.locator(".cell.will-solve").count(),16);
   await discoCDP.send("Input.dispatchTouchEvent",{type:"touchEnd",touchPoints:[]});
-  assert.equal(await page.locator("#festival-stage").getAttribute("data-theme"),"bubbles");
-  assert.equal(await page.locator("#festival-stage .bubble-floor-spot").count(),5);
-  assert.ok(await page.locator("#festival-stage .festival-bubble").count()>=12);
+  // A real 2-line COMBO 3 is a BIG jackpot again: the disco must be visible.
+  assert.equal(await page.locator("#festival-stage").getAttribute("data-theme"),"disco");
+  assert.equal(await page.locator("#festival-stage .festival-disco-ball").count(),1);
+  assert.equal(await page.locator("#festival-stage .bubble-floor-spot").count(),0);
+  assert.equal(await page.locator("#festival-stage .festival-bubble").count(),0);
+  assert.equal(await page.locator("#festival-stage .concert-spot").count(),6);
   const front=page.locator("#festival-stage .festival-bonus-front");
   assert.equal(await front.count(),1);
   assert.match(await front.textContent(),/POINTS/);
-  assert.equal(await page.locator("#festival-stage .concert-spot").count(),0);
   const fullscreen=await page.locator("#festival-stage").evaluate(el=>({
     parent:el.parentElement.tagName,
     position:getComputedStyle(el).position,
@@ -187,11 +189,36 @@ try{
   assert.equal(fullscreen.position,"fixed");
   assert.equal(fullscreen.overflow,"visible");
   assert.equal(fullscreen.radius,"0px");
-  assert.equal(await page.locator(".festival-disco-ball").count(),0,
-    "Double-line uses bubble concert, disco is reserved for other wins");
   const voices=await page.evaluate(()=>window.__voiceCalls||[]);
   assert.equal(voices.length,0,"Voices remain off by default");
   assert.ok((await page.locator("#score").textContent()).trim()!=="150");
+  // A legal simultaneous ROW + COLUMN awards x10 and renders BOTH effects.
+  // The real game engine (not a mocked festival call) produces this scene.
+  await page.addInitScript(()=>{
+    const key="block-boost.local.v1",saved=JSON.parse(localStorage.getItem(key));
+    const board=Array.from({length:8},()=>Array(8).fill(null));
+    for(let k=0;k<8;k++)if(k!==3){board[3][k]="sun";board[k][3]="mint";}
+    saved.progress={runStartBest:0,game:{
+      board,version:1,score:150,combo:0,bestCombo:0,moves:4,gameOver:false,
+      pieces:[
+        {id:0,coords:[[0,0]],color:"rose",used:false},
+        {id:1,coords:[[0,0]],color:"sky",used:false},
+        {id:2,coords:[[0,0]],color:"mint",used:false}
+      ]
+    }};
+    localStorage.setItem(key,JSON.stringify(saved));
+  });
+  await page.reload({waitUntil:"networkidle"});
+  await page.locator(".piece-slot").first().click();
+  await page.locator(".cell").nth(3*8+3).click();
+  assert.equal(await page.locator("#festival-stage").getAttribute("data-theme"),"disco");
+  assert.equal(await page.locator("#festival-stage .festival-disco-ball").count(),1);
+  assert.equal(await page.locator("#festival-stage .bubble-floor-spot").count(),5);
+  assert.ok(await page.locator("#festival-stage .festival-bubble").count()>=12);
+  assert.match(await page.locator("#festival-stage .festival-bonus-front").textContent(),/CROISEMENT ×10/);
+  assert.match(await page.locator("#bonus-earned").textContent(),/CROISEMENT LIGNE \+ COLONNE ×10/);
+  const crossScore=Number((await page.locator("#score").textContent()).replace(/\s/g,""));
+  assert.ok(crossScore>=3355,"The actual cross must score at least 3205 + prior 150");
   assert.deepEqual(errors,[],"Browser should not report uncaught errors");
   console.log("✅ Tactile à deux doigts, bonus visible, EXTRA absent après rotation et restauration locale : OK");
 }finally{

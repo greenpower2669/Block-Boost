@@ -77,7 +77,8 @@ try{
   assert.equal(record,scoreAfterExtra);
   // Synthetic almost-complete line: the renderer must highlight exactly the
   // eight blocks that a real legal move will clear, never an imaginary line.
-  await page.evaluate(()=>{
+  // Seed on next navigation AFTER pagehide auto-save has run.
+  await page.addInitScript(()=>{
     const key="block-boost.local.v1",saved=JSON.parse(localStorage.getItem(key));
     const board=Array.from({length:8},()=>Array(8).fill(null));
     for(let x=0;x<7;x++)board[0][x]="mint";

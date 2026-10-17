@@ -182,6 +182,21 @@ try{
   assert.equal(await sprite.evaluate(el=>el.tagName),"CANVAS");
   assert.equal(await sprite.getAttribute("data-rotation-axis"),"vertical-yaw-sprites");
   assert.equal(await page.locator(".festival-facets").count(),0);
+  const firstFrame=await sprite.evaluate(el=>({
+    index:Number(el.dataset.spriteFrame),
+    pixels:el.toDataURL("image/png")
+  }));
+  await page.waitForFunction(index=>{
+    const el=document.querySelector(".festival-disco-ball");
+    return el&&Number(el.dataset.spriteFrame)!==index;
+  },firstFrame.index,{timeout:1200});
+  const nextFrame=await sprite.evaluate(el=>({
+    index:Number(el.dataset.spriteFrame),
+    pixels:el.toDataURL("image/png")
+  }));
+  assert.notEqual(nextFrame.index,firstFrame.index);
+  assert.notEqual(nextFrame.pixels,firstFrame.pixels);
+
 
   const voices=await page.evaluate(()=>window.__voiceCalls||[]);
   assert.equal(voices.length,0,"Temporary family voice mute must remain active");

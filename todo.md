@@ -138,3 +138,15 @@ APK brute : https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/bl
 - [x] Tests [39040170369](https://github.com/greenpower2669/Block-Boost/actions/runs/39040170369) et build [39040170375](https://github.com/greenpower2669/Block-Boost/actions/runs/39040170375) **verts** ; [APK directe](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-disco-0.8.0/temp/android/BlockBoost-0.8.0-disco-debug.apk), SHA `2fb995699d1400f9c3081301e92732714e2dbb53a7d33eed6e839f8b0cc8850b`.
 - [ ] Sur Samsung, vérifier apparence de la sphère, halo sans cadre, fluidité et réactivation de la voix française.
 - [ ] Ajuster seulement après retour de Fab et son fils ; pas de merge ou Play sans accord.
+
+## 17/10/2026 — Version 0.8.0 Disco
+
+- [x] Case voix décochée par défaut mais librement réactivable ; états ON et OFF sauvegardés.
+- [x] Couper toute voix en cours sans couper les vibrations/FX lorsque l'on décoche.
+- [x] Remplacer l'effet de fausse double rotation 3D par 20 images sphériques calculées, tournant sur un seul axe vertical.
+- [x] Faire sortir les halos et rayons du rectangle de grille, calque fixed plein écran transparent aux gestes et sans bords nets.
+- [x] Respecter les animations réduites et arrêter les boucles de rendu après le jackpot.
+- [x] Tests Node+Chrome [39040170369](https://github.com/greenpower2669/Block-Boost/actions/runs/39040170369) et Android [39040170375](https://github.com/greenpower2669/Block-Boost/actions/runs/39040170375) verts.
+- [x] Fournir [APK brute 0.8.0 sans ZIP](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-disco-0.8.0/temp/android/BlockBoost-0.8.0-disco-debug.apk) 136 226 octets, SHA256 `2fb995699d1400f9c3081301e92732714e2dbb53a7d33eed6e839f8b0cc8850b`.
+- [ ] Essayer sur le Samsung avec Fab et son fils : la profondeur de la boule, l'absence de rectangle, la fluidité, la voix et l'haptique.
+- [ ] Pas de merge vers main ni de release officielle sans permission.

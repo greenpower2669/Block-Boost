@@ -1,3 +1,4 @@
+import {CONCERT_CUES,chooseJingle} from "./concert-cues.mjs";
 import {KENNEY_AUDIO} from "./kenney-audio.mjs";
 import {VoiceDirector} from "./voice-director.mjs";
 // Audio and mascot direction: independent of the rules engine. No remote services.
@@ -41,6 +42,8 @@ export class Feedback {
     this.director=new VoiceDirector();this.nativeSpeakingUntil=0;
     this.lastByKind=new Map();
     this.kenneyPlayers=new Map();
+    this.kenneySequences=new Map();
+    this.lastMelodyAt=0;
   }
   ensureAudio() {
     if(!this.getSettings().fx) return;
@@ -64,63 +67,81 @@ export class Feedback {
       osc.connect(gain);gain.connect(this.ctx.destination);osc.start(now);osc.stop(now+duration+.01);
     }catch{}
   }
-  /** Djipie/RESSOURCES_PARTAGEES/AUDIO: 12 CC0 Kenney OGGs embedded OFFLINE.
-   * Only sounds from that verified small archive; Sonniss is never included. */
-  playKenney(event) {
+  /** Soft musical notes with short attack/release. Fully original pitch motif,
+   * never a full song. Keeps the user's "dring-biling" under 400ms. */
+  melodicCue(kind){
+    if(!this.getSettings().fx)return false;
+    const notes=CONCERT_CUES[kind];if(!notes)return false;
+    const now=Date.now();
+    // A short global cooldown stops sound stacking on the same placement.
+    if(now-this.lastMelodyAt<165 && kind!=="disco")return false;
+    this.lastMelodyAt=now;
+    this.ensureAudio();if(!this.ctx)return false;
+    const gainScale=kind==="disco"?.027:.021;
+    try{
+      for(const [hz,offset,duration] of notes){
+        const at=this.ctx.currentTime+offset;
+        const oscillator=this.ctx.createOscillator();
+        const gain=this.ctx.createGain();
+        oscillator.type="sine";
+        oscillator.frequency.setValueAtTime(hz,at);
+        gain.gain.setValueAtTime(.0001,at);
+        gain.gain.linearRampToValueAtTime(gainScale,at+.012);
+        gain.gain.exponentialRampToValueAtTime(.0001,at+duration);
+        oscillator.connect(gain);gain.connect(this.ctx.destination);
+        oscillator.start(at);oscillator.stop(at+duration+.01);
+      }
+      return true;
+    }catch{return false;}
+  }
+  /** 24 real small Kenney OGGs exported from Djipie CC0 — never Sonniss. */
+  playKenney(event){
     if(this.getSettings().fx===false || !globalThis.Audio)return false;
     const soundMap={
-      grab:"detach",valid:"ready",validRotate:"ready",rotate:"rotate",
-      drop:"drop",clear:"line",combo:"combo",speed:"speed",extra:"extra",
-      "festival-forest":"forest","festival-crystal":"crystal",
-      "festival-electric":"speed","festival-fireworks":"combo",
-      "festival-galaxy":"cosmic","festival-disco":"disco"
+      grab:["detach","detach2"],valid:["ready","ready2","ready3"],
+      validRotate:["ready2","ready3"],rotate:["rotate","rotate2"],
+      drop:["drop","drop2"],clear:["line","line2","line3"],
+      combo:["combo","combo2","combo3"],speed:["speed","speed2"],
+      extra:["extra","extra2"],record:["combo3","disco2"],
+      "festival-forest":["forest"],"festival-crystal":["crystal","ready3"],
+      "festival-electric":["speed2","rotate2"],
+      "festival-fireworks":["combo2","combo3"],
+      "festival-galaxy":["cosmic","line3"],
+      "festival-disco":["disco","disco2"]
     };
-    const key=soundMap[event],uri=KENNEY_AUDIO[key];
+    const choices=soundMap[event];if(!choices?.length)return false;
+    const index=this.kenneySequences.get(event)||0;
+    this.kenneySequences.set(event,index+1);
+    const key=choices[index%choices.length],uri=KENNEY_AUDIO[key];
     if(!uri)return false;
-    try {
+    try{
       let player=this.kenneyPlayers.get(key);
-      if(!player) {
+      if(!player){
         player=new Audio(uri);
         player.preload="auto";
         if(player.canPlayType && player.canPlayType("audio/ogg")==="")return false;
         this.kenneyPlayers.set(key,player);
       }
-      // Normalize overlapping FX: line + speed + EXTRA + festival can coincide.
-      const simultaneous=[...this.kenneyPlayers.values()]
+      const otherPlaying=[...this.kenneyPlayers.values()]
         .filter(p=>p!==player&&!p.paused).length;
-      player.volume=(key==="disco"?.26:key==="combo"?.22:.18)/
-        (1+simultaneous*.36);
-      player.pause();
-      player.currentTime=0;
-      const promise=player.play();
-      promise?.catch?.(()=>{});
+      player.volume=(key.startsWith("disco")?.23:.165)/(1+otherPlaying*.45);
+      player.pause();player.currentTime=0;
+      player.play()?.catch?.(()=>{});
       return true;
     }catch{return false;}
   }
   fx(event) {
     if(!this.getSettings().fx)return;
-    if(this.playKenney(event)) {
-      // Tiny second chime retains the requested "dring-biling" signature.
-      if(event==="valid"||event==="validRotate")this.chirp(925,.105,.028,.11);
-      return;
-    }
-    if(event==="grab")this.chirp(285,.07,.055); // Detaching a block from tray
-    if(event==="valid") {
-      this.chirp(690,.085,.053);
-      this.chirp(940,.13,.050,.09); // The little "dring-biling" when placement is ready
-    }
-    if(event==="validRotate") {
-      this.chirp(740,.085,.053);
-      this.chirp(1060,.16,.050,.095);
-    }
-    if(event==="drop")this.chirp(310,.075,.07);
-    if(event==="invalid")this.chirp(195,.11,.035);
-    if(event==="rotate")this.chirp(450,.10,.05);
-    if(event==="clear") {this.chirp(530,.17,.09);this.chirp(780,.23,.075);}
-    if(event==="combo") {this.chirp(650,.22,.10);this.chirp(930,.30,.08);}
-    if(event==="speed") {this.chirp(730,.14,.095);this.chirp(1020,.21,.07);}
-    if(event==="extra") this.chirp(880,.18,.06);
-    if(event==="record") {this.chirp(620,.26,.09);this.chirp(930,.32,.09);this.chirp(1200,.37,.09);}
+    const themeJingle=event==="festival-disco"?"disco":null;
+    const melody=themeJingle||chooseJingle(event);
+    const sample=this.playKenney(event);
+    if(melody) this.melodicCue(melody);
+    if(sample)return;
+    // The OGG decoder can be unavailable in browser tests: gentle safe fallback.
+    if(event==="grab")this.chirp(360,.065,.038);
+    else if(event==="invalid")this.chirp(190,.095,.028);
+    else if(event==="rotate")this.chirp(520,.082,.037);
+    else if(event==="record")this.melodicCue("disco");
   }
   haptic(kind) {
     if(this.getSettings().haptics===false)return;

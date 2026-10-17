@@ -150,3 +150,16 @@ APK brute : https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/bl
 - [x] Fournir [APK brute 0.8.0 sans ZIP](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-disco-0.8.0/temp/android/BlockBoost-0.8.0-disco-debug.apk) 136 226 octets, SHA256 `2fb995699d1400f9c3081301e92732714e2dbb53a7d33eed6e839f8b0cc8850b`.
 - [ ] Essayer sur le Samsung avec Fab et son fils : la profondeur de la boule, l'absence de rectangle, la fluidité, la voix et l'haptique.
 - [ ] Pas de merge vers main ni de release officielle sans permission.
+
+## 17 octobre 2026 — Concert 0.9.0
+
+- [x] Placer « JACKPOT / COMBO / +POINTS / VITESSE / EXTRA » **devant** la boule disco, selon valeurs réellement gagnées.
+- [x] Six spots de concert pour disco, trois pour autres scènes, balayage animé léger derrière le score ; respect du mode animations réduites.
+- [x] Exporter **24** vrais effets Kenney CC0 depuis Djipie (au lieu de 12), avec vérification SHA et OggS, sans copier Sonniss ni publier une banque sonore commerciale.
+- [x] Jouer des jingles « dring-biling » de 1 à 4 notes, courts, non agressifs et non déclenchés à chaque pixel.
+- [x] Ajouter interjections Waouh/Hooo/Whaa variées avec l'anti-répétition, uniquement si voix réactivées par l'utilisateur.
+- [x] Adapter Samsung Android 16 : marge basse >=78px, scroll vertical en dehors des cellules/pièces, commandes sous navigation accessibles.
+- [x] Test des sons, bonus, spots, z-index et tactile : [CI 39057514184](https://github.com/greenpower2669/Block-Boost/actions/runs/39057514184) verte.
+- [x] Compiler APK [CI 39057514186](https://github.com/greenpower2669/Block-Boost/actions/runs/39057514186) verte ; [APK directe](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-concert-0.9.0/temp/android/BlockBoost-0.9.0-concert-debug.apk), 216071 octets, SHA `bfc9fe705b2e75c9e74709da423d61c498750ed8c1720742516761eca26db4a9`.
+- [ ] Vérifier sur le Samsung la hauteur de la barre système, accessibilité réelle du bouton Nouvelle partie, haptique et volume des sons.
+- [ ] Ajuster les niveaux à l'oreille avec Fab et son fils ; aucune fusion main/Play sans validation.

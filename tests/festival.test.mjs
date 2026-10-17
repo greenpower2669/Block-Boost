@@ -41,7 +41,7 @@ test("preview identifies different visual families by real event shape",()=>{
  assert.equal(previewTheme(1,3,{speedMultiplier:0,noRotationBonus:0}),"galaxy");
 });
 test("Djipie selected Kenney OGG sound set is real offline audio, without Sonniss",()=>{
- assert.equal(Object.keys(KENNEY_AUDIO).length,12);
+ assert.equal(Object.keys(KENNEY_AUDIO).length,24);
  for(const [key,uri] of Object.entries(KENNEY_AUDIO)){
    assert.match(uri,/^data:audio\/ogg;base64,/);
    const data=Buffer.from(uri.split(",")[1],"base64");

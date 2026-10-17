@@ -20,3 +20,7 @@ Statut 17/10/2026 : **code Web/PWA et APK Android debug 0.8.0 testés en CI sur 
 Le code vivant est réparti dans `src/engine.mjs` (règles/rotation), `src/main.mjs` (tactile), `src/storage.mjs` (score local), `src/feedback.mjs` (voix/animaux/FX), `index.html`, `styles.css`, `sw.js`, `manifest.webmanifest` et `assets/icon.svg`. Les tests vivent dans `tests/` et `.github/workflows/tests.yml`.
 
 Branche courante `feature/voice-toggle-disco-sprites-080`, non fusionnée ; voix à la demande, six univers lumineux, boule disco mono-axe et 12 effets Kenney CC0 depuis Djipie, hors ligne. Lire brain.md/todo.md pour détails. La médiathèque n’est pas une mémoire à parcourir automatiquement.
+
+| **Version actuelle Concert 0.9.0 : texte avant boule, spots, sons, Android** | [docs/concert-bonus-audio-safearea-090.md](docs/concert-bonus-audio-safearea-090.md) |
+
+État au 17/10/2026 : prototype Concert 0.9.0 sur branche `feature/concert-bonus-audio-safearea-090`, tests Node/Chrome et Android verts ; APK brute directe sur `temp/blockboost-concert-0.9.0`. Voix OFF par défaut réactivables ; 24 courts OGG Kenney depuis Djipie ; ne pas parcourir automatiquement la médiathèque. Aucun merge main, aucun test matériel Samsung encore.

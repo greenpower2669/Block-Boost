@@ -7,7 +7,7 @@ const bonus={speedMultiplier:4,noRotationBonus:5};
 function sample(lines=1,combo=1,gained=120){
  return {type:lines?"clear":"placed",lines,combo,gained,
    clearedCells:Array.from({length:lines*8},(_,i)=>[Math.floor(i/8),i%8]),
-   noRotationBonus:5};
+   noRotationBonus:0};
 }
 test("six named families are available; small clear is not always the same rainbow",()=>{
  assert.deepEqual(Object.keys(FESTIVAL_THEMES).sort(),

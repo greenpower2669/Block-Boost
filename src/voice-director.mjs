@@ -15,9 +15,15 @@ export const EMOTIONS={
   speed2:{mood:"surprise",priority:3},
   speed3:{mood:"combo",priority:3},
   speed4:{mood:"celebrate",priority:4},
-  noRotation:{mood:"encourage",priority:2}
+  noRotation:{mood:"encourage",priority:2},
+  wow:{mood:"surprise",priority:4}
 };
 export const EXTRA_LINES={
+  wow:["Waouh !","Hooo !","Whaa !","Wouhou !","Oh là là !",
+    "Wooow !","Hé hé, incroyable !","Hooo, magnifique !",
+    "Waouh, quel combo !","Whaaa, ça brille !","Ohhh, bien joué !",
+    "Wouaaah !","Hop là, quelle fête !","Whaaa, tu as vu ça ?",
+    "Waouh, quel spectacle !","Hooo, superbe !"],
   welcome:["À toi de jouer !","Regardons ce qu'on peut créer !","C'est parti pour une jolie partie !",
            "À nous les belles combinaisons !"],
   clear:["Bien joué, ça se libère !","Et hop, une belle ligne !","Ça brille !",

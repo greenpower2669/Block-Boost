@@ -50,6 +50,15 @@ try{
   assert.equal(await page.evaluate(()=>window.__voiceCalls.length),said);
   assert.equal(await page.locator("#haptics-setting").isChecked(),true);
   await page.locator("#settings-dialog button[value='close']").click();
+  const safeArea=await page.evaluate(()=>{
+    const shell=document.querySelector(".app-shell");
+    return {android:document.body.classList.contains("android-host"),
+      bottom:parseFloat(getComputedStyle(shell).paddingBottom),
+      scrollable:document.documentElement.scrollHeight>=innerHeight};
+  });
+  assert.equal(safeArea.android,true,"AndroidBridge should enable native-safe spacing");
+  assert.ok(safeArea.bottom>=78,"The footer must reserve Samsung nav bar space");
+  assert.equal(safeArea.scrollable,true);
   const board=await page.locator("#board").boundingBox();
   const slot=await page.locator(".piece-slot").first().boundingBox();
   const getColumns=()=>page.locator(".piece-slot").first().locator(".piece")
@@ -168,6 +177,18 @@ try{
   assert.equal(await page.locator(".festival-disco-ball").count(),1,
     "The rotating faceted ball must be rendered for a jackpot");
   assert.match(await page.locator("#festival-stage").textContent(),/BOULE À FACETTES/);
+  const front=page.locator("#festival-stage .festival-bonus-front");
+  assert.equal(await front.count(),1,"Jackpot bonus must be above the disco ball");
+  assert.match(await front.textContent(),/POINTS/);
+  assert.match(await front.textContent(),/COMBO/);
+  assert.equal(await page.locator("#festival-stage .concert-spot").count(),6,
+    "Six moving concert spotlights should appear on a disco jackpot");
+  const layering=await page.evaluate(()=>{
+    const stage=document.querySelector("#festival-stage");
+    return {front:getComputedStyle(stage.querySelector(".festival-bonus-front")).zIndex,
+      ball:getComputedStyle(stage.querySelector(".festival-disco-ball")).zIndex};
+  });
+  assert.ok(Number(layering.front)>Number(layering.ball));
   const fullscreen=await page.locator("#festival-stage").evaluate(el=>({
     parent:el.parentElement.tagName,
     position:getComputedStyle(el).position,

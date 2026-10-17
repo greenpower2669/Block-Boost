@@ -120,6 +120,43 @@ try{
     "Anticipation is cleared immediately on release");
   assert.equal(await page.locator(".cell.just-solved").count(),8,
     "Actual cleared cells are highlighted after the successful move");
+  // Simulated BIG DOUBLE-LINE COMBO triggers a real rotating disco ball.
+  // Seed after pagehide, otherwise an old save overwrites this test fixture.
+  await page.addInitScript(()=>{
+    const key="block-boost.local.v1", saved=JSON.parse(localStorage.getItem(key));
+    const board=Array.from({length:8},()=>Array(8).fill(null));
+    for(let y=0;y<2;y++)for(let x=0;x<7;x++)board[y][x]="sun";
+    saved.progress={runStartBest:0,game:{
+      board,version:1,score:150,combo:2,bestCombo:2,moves:6,gameOver:false,
+      pieces:[
+        {id:0,coords:[[0,0],[0,1]],color:"rose",used:false},
+        {id:1,coords:[[0,0]],color:"sky",used:false},
+        {id:2,coords:[[0,0]],color:"mint",used:false}
+      ]
+    }};
+    localStorage.setItem(key,JSON.stringify(saved));
+  });
+  await page.reload({waitUntil:"networkidle"});
+  const b3=await page.locator("#board").boundingBox();
+  const slot3=await page.locator(".piece-slot").first().boundingBox();
+  const step=(b3.width-14-7*3)/8;
+  const from={id:5,x:slot3.x+slot3.width/2,y:slot3.y+slot3.height/2};
+  const to={id:5,x:b3.x+7+7*(step+3)+step*.5,y:b3.y+7+2.65*step};
+  const discoCDP=await context.newCDPSession(page);
+  await discoCDP.send("Input.dispatchTouchEvent",{type:"touchStart",touchPoints:[from]});
+  await discoCDP.send("Input.dispatchTouchEvent",{type:"touchMove",touchPoints:[to]});
+  assert.equal(await page.locator(".cell.will-solve").count(),16,
+    "Anticipation must show both fully completed rows");
+  await discoCDP.send("Input.dispatchTouchEvent",{type:"touchEnd",touchPoints:[]});
+  assert.equal(await page.locator("#festival-stage").getAttribute("data-theme"),"disco",
+    "Double row, active combo and high points must spawn disco scene");
+  assert.equal(await page.locator(".festival-disco-ball").count(),1,
+    "The rotating faceted ball must be rendered for a jackpot");
+  assert.match(await page.locator("#festival-stage").textContent(),/BOULE À FACETTES/);
+  const voices=await page.evaluate(()=>window.__voiceCalls||[]);
+  assert.equal(voices.length,0,"Temporary family voice mute must remain active");
+  assert.ok((await page.locator("#score").textContent()).trim()!=="150",
+    "Jackpot must credit points while showing the scene");
   assert.deepEqual(errors,[],"Browser should not report uncaught errors");
   console.log("✅ Tactile à deux doigts, bonus visible, EXTRA absent après rotation et restauration locale : OK");
 }finally{

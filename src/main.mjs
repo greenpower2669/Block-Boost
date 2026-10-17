@@ -5,6 +5,7 @@ import {evaluateBonus,speedTier} from "./bonus.mjs";
 import {PlacementCueGate} from "./placement-cues.mjs";
 import {clearingTargets,rewardHaptic} from "./haptic-sonar.mjs";
 import {evaluateSolvePreview,enrichedGuidance} from "./solve-preview.mjs";
+import {FestivalDirector,previewTheme} from "./festival.mjs";
 
 const $=id=>document.getElementById(id);
 const boardEl=$("board"),trayEl=$("tray"),ghostEl=$("drag-ghost"),surface=$("surface");
@@ -17,6 +18,7 @@ let targetPositions=[];
 let currentGuidance=0;
 let lastSpectrumKey="";
 function resetSpectrum(){
+  festival.preview("");
   lastSpectrumKey="";
   boardEl.classList.remove("rainbow-board");
   $("solve-signal").textContent="";
@@ -37,6 +39,7 @@ function previewRainbow(x,y,valid){
   if(lastSpectrumKey===key)return;
   resetSpectrum();
   if(!result.lines)return;
+  festival.preview(previewTheme(result.lines,game.combo,reward));
   lastSpectrumKey=key;
   boardEl.classList.add("rainbow-board");
   for(let i=0;i<result.cells.length;i++){
@@ -104,6 +107,10 @@ setInterval(()=>{
 const feedback=new Feedback(()=>save.settings,()=>save.mascot,
   caption=>{$("mascot-caption").textContent=caption||"À toi de jouer !";},
   emotion=>{$("mascot-face").className="mascot-face"+(emotion!=="idle"?" "+emotion:"");});
+const festival=new FestivalDirector($("festival-stage"),{
+  fx:key=>feedback.fx("festival-"+key),
+  reduceMotion:()=>save.settings.reducedMotion
+});
 
 function number(n){return n.toLocaleString("fr-FR");}
 function persist(){
@@ -263,6 +270,7 @@ function insertAt(index,x,y){
   paint();
   const event=res.event;
   flashClear(event.clearedCells,event.lines,event.combo,event.gained,bonus);
+  festival.play(event,bonus);
   const descriptions=["⚡ VITESSE ×"+bonus.speedMultiplier+" : +"+event.speedBonus];
   if(event.noRotationBonus)descriptions.push("⭐ EXTRA SANS ROTATION : +"+event.noRotationBonus);
   $("bonus-earned").textContent=descriptions.join(" · ");
@@ -332,6 +340,7 @@ function endGame(newRecord){
   if(finishing)return;
   finishing=true;
   feedback.fx(newRecord?"record":"clear");
+  // The final score may celebrate only if the last played move qualified.
   feedback.speak(newRecord?"record":"over",5,true);
   $("result-title").textContent=newRecord?"🌟 Nouveau record !":"Belle partie !";
   $("final-score").textContent=number(game.score);
@@ -342,7 +351,7 @@ function endGame(newRecord){
 }
 function restart(confirmActive=false){
   if(confirmActive&&!game.gameOver&&game.moves>0&&!window.confirm("Recommencer cette partie ? Le record restera enregistré."))return;
-  feedback.stop();clearSonar();finishing=false;
+  feedback.stop();clearSonar();festival.stop();finishing=false;
   if($("end-dialog").open)$("end-dialog").close();
   game=newGame();selected=null;selectedAt=null;selectedTurns=0;resetDrag();resetSpectrum();
   $("bonus-earned").textContent="";updateBonusLive();
@@ -425,7 +434,7 @@ for(const [id,key] of [["voice-setting","voice"],["fx-setting","fx"],["motion-se
 $("new-game").addEventListener("click",()=>restart(true));
 $("retry-button").addEventListener("click",()=>restart(false));
 window.addEventListener("resize",()=>{drawTray();if(drag)drawGhost();});
-window.addEventListener("pagehide",()=>{if(!game.gameOver)persist();feedback.stop();});
+window.addEventListener("pagehide",()=>{if(!game.gameOver)persist();feedback.stop();festival.stop();});
 document.addEventListener("visibilitychange",()=>{
   if(document.hidden)feedback.stopGuidance();
 });

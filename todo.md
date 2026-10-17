@@ -111,3 +111,18 @@ APK brute : https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/bl
 - [ ] Tester sur Samsung : visibilité des halos, confort haptique, silence complet et stabilité.
 - [ ] Revoir les voix avec Fab et son fils après nouvel accord.
 - [ ] Pas de merge main ni publication Play. APK : https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-rainbow-0.6.0/temp/android/BlockBoost-0.6.0-rainbow-debug.apk
+
+## 17/10/2026 — Festival 0.7.0
+
+- [x] Six univers lumineux distincts : forêt, cristal, électrique, feu d'artifice, galaxie, disco.
+- [x] Tonalité des futures lignes réellement effaçables variable selon la famille, pas uniquement un arc-en-ciel permanent.
+- [x] Objet boule à facettes autonome qui sort, grossit, tourne et projette des reflets sur vrai jackpot.
+- [x] Intensité modulée par points, lignes, combos, vitesse et EXTRA ; alternance de certaines familles, sans stroboscope, avec mode animations réduites.
+- [x] Utiliser la bibliothèque Djipie sur une mission sonore : exporter et intégrer **12 sons OGG Kenney CC0**, conserver provenance et empreintes, rester 100 % hors ligne.
+- [x] Garder les voix suspendues ; sauvegarde, rotation deux doigts, guidage haptique et scores non modifiés.
+- [x] Tests Node et Chrome avec apparition réelle de la boule pour double ligne / combo, sources sonores vérifiées par OggS.
+- [ ] Tester sur Samsung la fluidité visuelle, la qualité des 12 effets, le mixage et le confort haptique/visuel.
+- [ ] Confirmer l'état final de la CI Android, binaire direct, SHA et date de build.
+- [ ] Aucun merge main ni release stable avant accord de Fab.
+
+**Livraison CI 0.7.0 achevée (17 octobre)** : tests [39036754891](https://github.com/greenpower2669/Block-Boost/actions/runs/39036754891) verts ; Android [39036754874](https://github.com/greenpower2669/Block-Boost/actions/runs/39036754874) vert avec retentatives Maven. [APK brute sans ZIP](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-festival-0.7.0/temp/android/BlockBoost-0.7.0-festival-debug.apk), 132 604 octets, SHA-256 `a87766eff2accb67ce139545563bb681c4c335c6eb068952a487924a04b13be5`. La vérification physique et artistique sur Samsung reste ouverte. Le point « Confirmer l'état final de la CI Android » est **clos**.

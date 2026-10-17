@@ -1,4 +1,4 @@
-name: 🐾 Block Boost — APK Android debug et voix expressives
+name: 🐾 Block Boost — APK Festival Android
 
 on:
   workflow_dispatch:
@@ -10,12 +10,14 @@ on:
       - feature/audio-haptics-variety-040
       - feature/haptic-sonar-combo-bonus-050
       - feature/silent-rainbow-solves-060
+      - feature/festival-animation-djipie-audio-070
     paths:
       - 'android/**'
       - 'index.html'
       - 'styles.css'
       - 'src/**'
       - 'assets/**'
+      - 'tests/**'
       - '.github/workflows/android-apk.yml'
 
 concurrency:
@@ -27,7 +29,7 @@ permissions:
 
 jobs:
   build-apk:
-    name: Construire et vérifier BlockBoost-0.6.0-rainbow-debug.apk
+    name: Construire et vérifier BlockBoost-0.7.0-festival-debug.apk
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
@@ -47,57 +49,75 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.13'
+          cache-read-only: false
 
       - name: Vérifier les tests du moteur
         run: node --test tests/*.test.mjs
 
-      - name: Compiler et signer avec la clé Android debug
+      - name: Compiler et signer avec la clé Android debug (retentatives réseau Gradle)
         working-directory: android
-        run: gradle --no-daemon --stacktrace :app:assembleDebug
+        run: |
+          set -euo pipefail
+          for attempt in 1 2 3; do
+            echo "Gradle attempt $attempt / 3"
+            if gradle --no-daemon --stacktrace :app:assembleDebug; then
+              echo "Gradle compilation successful"
+              exit 0
+            fi
+            if [ "$attempt" -lt 3 ]; then
+              echo "Dependencies temporarily unavailable; retrying after delay"
+              sleep 25
+            fi
+          done
+          echo "Gradle compilation failed after 3 attempts" >&2
+          exit 1
 
       - name: Vérifier le contenu APK et le nommer
         run: |
           mkdir -p android/dist
-          cp android/app/build/outputs/apk/debug/app-debug.apk android/dist/BlockBoost-0.6.0-rainbow-debug.apk
-          unzip -l android/dist/BlockBoost-0.6.0-rainbow-debug.apk | grep -F 'assets/www/index.html'
-          unzip -l android/dist/BlockBoost-0.6.0-rainbow-debug.apk | grep -F 'assets/www/src/main.mjs'
-          unzip -l android/dist/BlockBoost-0.6.0-rainbow-debug.apk | grep -F 'classes.dex'
-          sha256sum android/dist/BlockBoost-0.6.0-rainbow-debug.apk | tee android/dist/BlockBoost-0.6.0-rainbow-debug.sha256
+          cp android/app/build/outputs/apk/debug/app-debug.apk android/dist/BlockBoost-0.7.0-festival-debug.apk
+          unzip -l android/dist/BlockBoost-0.7.0-festival-debug.apk | grep -F 'assets/www/index.html'
+          unzip -l android/dist/BlockBoost-0.7.0-festival-debug.apk | grep -F 'assets/www/src/main.mjs'
+          unzip -l android/dist/BlockBoost-0.7.0-festival-debug.apk | grep -F 'assets/www/src/festival.mjs'
+          unzip -l android/dist/BlockBoost-0.7.0-festival-debug.apk | grep -F 'assets/www/src/kenney-audio.mjs'
+          unzip -l android/dist/BlockBoost-0.7.0-festival-debug.apk | grep -F 'assets/www/assets/kenney-manifest.json'
+          unzip -l android/dist/BlockBoost-0.7.0-festival-debug.apk | grep -F 'classes.dex'
+          sha256sum android/dist/BlockBoost-0.7.0-festival-debug.apk | tee android/dist/BlockBoost-0.7.0-festival-debug.sha256
 
       - name: Publier l'APK en artifact GitHub (pas de release)
         uses: actions/upload-artifact@v4
         with:
-          name: BlockBoost-0.6.0-rainbow-debug-APK
+          name: BlockBoost-0.7.0-festival-debug-APK
           path: |
-            android/dist/BlockBoost-0.6.0-rainbow-debug.apk
-            android/dist/BlockBoost-0.6.0-rainbow-debug.sha256
+            android/dist/BlockBoost-0.7.0-festival-debug.apk
+            android/dist/BlockBoost-0.7.0-festival-debug.sha256
           if-no-files-found: error
           retention-days: 30
 
       - name: Créer le fichier APK direct sans ZIP sur une branche temporaire
-        if: github.ref_name == 'feature/silent-rainbow-solves-060'
+        if: github.ref_name == 'feature/festival-animation-djipie-audio-070'
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          if git ls-remote --exit-code origin refs/heads/temp/blockboost-rainbow-0.6.0 >/dev/null; then
-            git fetch origin temp/blockboost-rainbow-0.6.0
-            git checkout -b temp/blockboost-rainbow-0.6.0 FETCH_HEAD
+          if git ls-remote --exit-code origin refs/heads/temp/blockboost-festival-0.7.0 >/dev/null; then
+            git fetch origin temp/blockboost-festival-0.7.0
+            git checkout -b temp/blockboost-festival-0.7.0 FETCH_HEAD
           else
-            git checkout -b temp/blockboost-rainbow-0.6.0
+            git checkout -b temp/blockboost-festival-0.7.0
           fi
           mkdir -p temp/android
-          cp android/dist/BlockBoost-0.6.0-rainbow-debug.apk temp/android/
-          cp android/dist/BlockBoost-0.6.0-rainbow-debug.sha256 temp/android/
-          sed -i 's#android/dist/#temp/android/#' temp/android/BlockBoost-0.6.0-rainbow-debug.sha256
-          sha256sum -c temp/android/BlockBoost-0.6.0-rainbow-debug.sha256
-          printf "%s\n" "# Block Boost Lumières 0.6.0 — APK expérimentale" "" \
-            "Cette APK debug suspend temporairement les voix et ajoute une grille arc-en-ciel lors des combinaisons, avec haptique progressive." \
-            "Elle s'installe séparément de Block Boost 0.1.0, Émotion 0.2.0, Bonus 0.3.0 et Audio 0.4.0 ; sauvegardes indépendantes." \
+          cp android/dist/BlockBoost-0.7.0-festival-debug.apk temp/android/
+          cp android/dist/BlockBoost-0.7.0-festival-debug.sha256 temp/android/
+          sed -i 's#android/dist/#temp/android/#' temp/android/BlockBoost-0.7.0-festival-debug.sha256
+          sha256sum -c temp/android/BlockBoost-0.7.0-festival-debug.sha256
+          printf "%s\n" "# Block Boost Festival 0.7.0 — APK expérimentale" "" \
+            "Cette APK debug conserve les voix en pause, ajoute six familles d'animations et 12 sons Kenney CC0 pris dans Djipie." \
+            "Elle s'installe séparément des laboratoires 0.1 à 0.6 ; sauvegardes indépendantes." \
             "Aucune voix jouée, aucun merge main, aucune publication Google Play." > temp/android/README.md
           git add temp/android
-          git diff --cached --quiet || git commit -m "artifact(android): livrer APK rainbow 0.6.0 en lien direct"
-          git push origin HEAD:refs/heads/temp/blockboost-rainbow-0.6.0
-          git ls-remote --exit-code origin refs/heads/temp/blockboost-rainbow-0.6.0
-          echo "## 🎙️ Block Boost Lumières 0.6.0 — APK directe" >> "$GITHUB_STEP_SUMMARY"
-          echo "[Télécharger le fichier APK (pas un ZIP)](https://raw.githubusercontent.com/\${{ github.repository }}/temp/blockboost-rainbow-0.6.0/temp/android/BlockBoost-0.6.0-rainbow-debug.apk)" >> "$GITHUB_STEP_SUMMARY"
+          git diff --cached --quiet || git commit -m "artifact(android): livrer APK Festival 0.7.0 en lien direct"
+          git push origin HEAD:refs/heads/temp/blockboost-festival-0.7.0
+          git ls-remote --exit-code origin refs/heads/temp/blockboost-festival-0.7.0
+          echo "## 🎙️ Block Boost Festival 0.7.0 — APK directe" >> "$GITHUB_STEP_SUMMARY"
+          echo "[Télécharger le fichier APK (pas un ZIP)](https://raw.githubusercontent.com/\${{ github.repository }}/temp/blockboost-festival-0.7.0/temp/android/BlockBoost-0.7.0-festival-debug.apk)" >> "$GITHUB_STEP_SUMMARY"

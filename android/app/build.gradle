@@ -7,11 +7,11 @@ android {
     compileSdk 35
 
     defaultConfig {
-        applicationId 'fr.greenpower.blockboost.rainbowlab'
+        applicationId 'fr.greenpower.blockboost.festivallab'
         minSdk 26
         targetSdk 35
-        versionCode 6
-        versionName '0.6.0'
+        versionCode 7
+        versionName '0.7.0'
     }
 
     buildTypes {

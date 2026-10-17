@@ -65,6 +65,66 @@
       "zip_member": "Audio/open_002.ogg",
       "bytes": 14975,
       "sha256": "24ff224fe2c09c6aed1b41249825382dc74cf324b887ff279d8494912ce2beee"
+    },
+    "detach2": {
+      "zip_member": "Audio/pluck_002.ogg",
+      "bytes": 6941,
+      "sha256": "c977fe249ff42d1c93a552b33abc13a8399df3879fa510475426e5c4bbac1da9"
+    },
+    "ready2": {
+      "zip_member": "Audio/confirmation_002.ogg",
+      "bytes": 14169,
+      "sha256": "33b17a9a9a2397c62b285c52c33a907fdffb476909c99e42dde603f6a7a8b12c"
+    },
+    "ready3": {
+      "zip_member": "Audio/confirmation_003.ogg",
+      "bytes": 9535,
+      "sha256": "3091bf0be0497f825769ee0733ca7bdc3bcd59bd6c6e8f2ba8f93d580ff38022"
+    },
+    "rotate2": {
+      "zip_member": "Audio/switch_005.ogg",
+      "bytes": 7814,
+      "sha256": "e94dfab6fd6558068ab3ea97e22e4b4f16b83ee440e6abf33ec4c4e9fbe8a70e"
+    },
+    "drop2": {
+      "zip_member": "Audio/drop_003.ogg",
+      "bytes": 6288,
+      "sha256": "43d086d50f90493a98cd2e09aa6dbf150d164f1578e1ec768d21cb185571ad87"
+    },
+    "line2": {
+      "zip_member": "Audio/glass_004.ogg",
+      "bytes": 8323,
+      "sha256": "2379b58f953e3d86982aa8cddcae763022c6258e9820171bf905ce58b4e97766"
+    },
+    "line3": {
+      "zip_member": "Audio/glass_005.ogg",
+      "bytes": 6206,
+      "sha256": "1f6c88008d0d9fe449197512811785e1d4638daf408a96a4a02756530e019172"
+    },
+    "combo2": {
+      "zip_member": "Audio/maximize_004.ogg",
+      "bytes": 17723,
+      "sha256": "59c7a24b204be24d2a44a86d1e4d18c2cf51fa0446967a14b2590e8fb3afaf34"
+    },
+    "combo3": {
+      "zip_member": "Audio/maximize_008.ogg",
+      "bytes": 9085,
+      "sha256": "57c074e600e193a303ce781c04c0ccc191c6030f9f106594fd94a65e55435c17"
+    },
+    "speed2": {
+      "zip_member": "Audio/tick_002.ogg",
+      "bytes": 4514,
+      "sha256": "869442f54214be902ec7437f79e400dc91c1bfd90d18a6dd2d5b7e41ffbf457b"
+    },
+    "extra2": {
+      "zip_member": "Audio/select_006.ogg",
+      "bytes": 8101,
+      "sha256": "b44550fa8d3276c072ce7c3c1315d949f7a28a95bc22b3618ad4eea62eac8abe"
+    },
+    "disco2": {
+      "zip_member": "Audio/maximize_009.ogg",
+      "bytes": 7650,
+      "sha256": "b4d56386258b3cc1c8f6e5a22465f8cd65de3d4309e022664050f43151e466cd"
     }
   }
 }

@@ -137,16 +137,16 @@ body.reduce-motion *,body.reduce-motion *::before,body.reduce-motion *::after{an
 .board .cell.will-solve,.board .cell.just-solved{
   position:relative;isolation:isolate;z-index:1;overflow:visible;
   border:2px solid #ffffffd7;
-  box-shadow:inset 0 0 6px #ffffffa0,0 0 calc(3px + var(--energy)*3px) #fff9;
+  box-shadow:inset 0 0 6px #ffffffa0,0 0 var(--energy-blur,9px) #fff9;
 }
 .board .cell.will-solve::after,.board .cell.just-solved::after{
   content:"";position:absolute;inset:-3px;border-radius:6px;
-  pointer-events:none;opacity:calc(.36 + var(--energy)*.11);
+  pointer-events:none;opacity:var(--energy-alpha,.5);
   background:conic-gradient(
-   from calc(var(--rainbow-index)*1deg),
+   from var(--rainbow-index,0deg),
    #ff558c,#ffcc60,#dfff75,#42e8df,#8b9dff,#ee80ff,#ff558c
   );
-  box-shadow:0 0 calc(4px + var(--energy)*3px) #b2f9ffcc;
+  box-shadow:0 0 var(--energy-blur,9px) #b2f9ffcc;
   mix-blend-mode:screen;
 }
 .board .cell.will-solve::after{

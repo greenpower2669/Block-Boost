@@ -18,20 +18,38 @@ test("seven named families are available; small clear is not always the same rai
  assert.equal(chooseFestival(sample(1,1,80),{speedMultiplier:0,noRotationBonus:5}).theme,"crystal");
  assert.equal(chooseFestival(sample(2,1,380),{speedMultiplier:1}).theme,"bubbles");
 });
-test("disco ball only emerges on real large combos, many lines or very high points",()=>{
- const disco=chooseFestival(sample(2,2,650),bonus);
- assert.equal(disco.theme,"bubbles");
- assert.ok(disco.level>=3);
- assert.ok(disco.particles<=58);
- assert.equal(chooseFestival(sample(2,2,650),bonus,"disco").theme,"bubbles");
- assert.equal(chooseFestival(sample(3,1,980),bonus).theme,"bubbles");
- assert.notEqual(chooseFestival(sample(1,1,190),bonus).theme,"disco");
+test("large jackpots restore the disco, ordinary doubles remain bubbles",()=>{
+ const quiet=chooseFestival(sample(2,1,330),{speedMultiplier:1});
+ assert.equal(quiet.theme,"bubbles");
+ assert.equal(quiet.bubbles,true);
+ assert.equal(quiet.cross,false);
+ const jackpot=chooseFestival(sample(2,3,990),bonus);
+ assert.equal(jackpot.theme,"disco");
+ assert.equal(jackpot.bubbles,false);
+ assert.equal(jackpot.jackpot,true);
+ // A repeat jackpot must NOT downgrade the ball to galaxy.
+ assert.equal(chooseFestival(sample(2,3,990),bonus,"disco").theme,"disco");
+ assert.equal(chooseFestival(sample(3,1,980),bonus).theme,"disco");
+ assert.ok(jackpot.level>=3);
+ assert.ok(jackpot.particles<=58);
+});
+test("cross x10 launches disco AND translucent bubbles on the same scene",()=>{
+ const event={...sample(2,1,3245),crossMultiplier:10,
+   clearedRows:[3],clearedColumns:[3]};
+ const scene=chooseFestival(event,bonus);
+ assert.equal(scene.theme,"disco");
+ assert.equal(scene.cross,true);
+ assert.equal(scene.bubbles,true);
+ assert.equal(scene.crossMultiplier,10);
+ assert.equal(scene.jackpot,true);
+ assert.equal(previewTheme(2,1,bonus,{cross:true,gained:3245}),"disco");
+ assert.equal(previewTheme(2,1,{speedMultiplier:1},{cross:false,gained:330}),"bubbles");
 });
 test("Invalid/no-bonus move does not celebrate; no strobing or scoring mechanics",()=>{
  assert.equal(chooseFestival({type:"invalid",lines:4,gained:4000},bonus).theme,null);
  assert.equal(chooseFestival({type:"placed",lines:0,gained:5},{speedMultiplier:0,noRotationBonus:0}).theme,null);
  assert.equal(previewTheme(0,9,bonus),"");
- assert.equal(previewTheme(2,2,bonus),"bubbles");
+ assert.equal(previewTheme(2,2,bonus,{gained:650}),"disco");
 });
 test("preview identifies different visual families by real event shape",()=>{
  assert.equal(previewTheme(1,0,{speedMultiplier:0,noRotationBonus:0}),"forest");

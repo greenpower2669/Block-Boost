@@ -92,7 +92,7 @@ export class Feedback {
     if(pattern!==undefined)try{globalThis.navigator?.vibrate?.(pattern);}catch{}
   }
   guideHaptic(level) {
-    const desired=this.getSettings().haptics===false?0:Math.max(0,Math.min(4,level|0));
+    const desired=this.getSettings().haptics===false?0:Math.max(0,Math.min(6,level|0));
     const now=Date.now();
     if(desired===this.guidanceLevel && now-(this.guidanceLast||0)<220)return;
     this.guidanceLevel=desired;this.guidanceLast=now;
@@ -128,6 +128,8 @@ export class Feedback {
     try{globalThis.navigator?.vibrate?.(map[kind]||0);}catch{}
   }
   speak(kind,priority=1,force=false) {
+    // Voice pause requested by Fab and his son; visual feedback + FX remain active.
+    return;
     const mascot={...(MASCOTS[this.getMascot()]||MASCOTS.pompom),id:this.getMascot()};
     const now=Date.now();
     const currentlySpeaking=Boolean(this.currentSpeech?.speaking) ||

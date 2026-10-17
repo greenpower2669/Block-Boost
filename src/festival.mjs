@@ -4,6 +4,7 @@
  * Voices remain disabled as requested; FX use Kenney CC0 assets.
  */
 import {createDiscoSpriteSheet,drawDiscoSpriteFrame} from "./disco-sprites.mjs";
+import {jackpotBanner} from "./concert-cues.mjs";
 
 export const FESTIVAL_THEMES=Object.freeze({
  forest:{name:"Lucioles nocturnes",symbol:"✦",color:"#69e6a3",sound:"forest"},
@@ -144,6 +145,39 @@ export class FestivalDirector {
         ray.style.setProperty("--ray-delay",((i%4)*.07)+"s");
         fragment.appendChild(ray);
       }
+    }
+    // Concert spotlights are independent of mirrored disco rays, and always
+    // remain behind the legible score banner. Six gentle moving beams.
+    if(["disco","galaxy","fireworks","electric"].includes(scene.theme)){
+      const count=small?0:scene.theme==="disco"?6:3;
+      for(let i=0;i<count;i++){
+        const spot=document.createElement("i");
+        spot.className="concert-spot";
+        spot.style.setProperty("--spot-x",(i%2===0?"7%":"93%"));
+        spot.style.setProperty("--spot-origin",i%2===0?"left":"right");
+        spot.style.setProperty("--spot-angle",(i%2===0?24:-24)+(i-2.5)*9+"deg");
+        spot.style.setProperty("--spot-delay",(i*.14)+"s");
+        spot.style.setProperty("--spot-color",
+          ["#ffb8eeaa","#91efffc2","#ffe9a8b8","#bdadffaf"][i%4]);
+        fragment.appendChild(spot);
+      }
+    }
+    if(scene.jackpot){
+      const banner=jackpotBanner(event,bonus);
+      const foreground=document.createElement("div");
+      foreground.className="festival-bonus-front";
+      foreground.setAttribute("aria-hidden","true"); // Existing #combo-flash announces points.
+      const heading=document.createElement("strong");
+      heading.className="festival-bonus-title";
+      heading.textContent=banner.headline;
+      const points=document.createElement("span");
+      points.className="festival-bonus-points";
+      points.textContent=banner.points;
+      const details=document.createElement("span");
+      details.className="festival-bonus-details";
+      details.textContent=banner.details;
+      foreground.append(heading,points,details);
+      fragment.appendChild(foreground);
     }
     const maxParticles=small?Math.min(scene.particles,5):scene.particles;
     for(let i=0;i<maxParticles;i++){

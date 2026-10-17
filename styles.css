@@ -175,3 +175,155 @@ body.reduce-motion .board .cell.just-solved::after{
   .board .cell.will-solve::after,.board .cell.just-solved,
   .board .cell.just-solved::after{animation:none!important;transform:none!important}
 }
+
+
+/* ── FESTIVAL 0.7: SIX DISTINCT FAMILIES. Safe overlays: no touch interception. ── */
+.board-wrap[data-preview-theme="forest"] .board.rainbow-board{box-shadow:0 0 15px #50eeb182,0 0 27px #2c8c8a55}
+.board-wrap[data-preview-theme="crystal"] .board.rainbow-board{box-shadow:0 0 16px #dcb3ff99,0 0 31px #9ccefa77}
+.board-wrap[data-preview-theme="electric"] .board.rainbow-board{box-shadow:0 0 18px #36fcffbb,0 0 33px #fff29d66}
+.board-wrap[data-preview-theme="fireworks"] .board.rainbow-board{box-shadow:0 0 22px #ffc9749e,0 0 32px #e48cf080}
+.board-wrap[data-preview-theme="galaxy"] .board.rainbow-board{box-shadow:0 0 24px #bb84ffbb,0 0 39px #72c6ffa8}
+.board-wrap[data-preview-theme="disco"] .board.rainbow-board{box-shadow:0 0 23px #ffbffcdd,0 0 38px #fff095a3}
+.festival-stage{
+  position:absolute;inset:0;z-index:14;pointer-events:none;overflow:hidden;
+  border-radius:14px;isolation:isolate;
+  --festival-a:#72e3ac;--festival-b:#c3ff9d;--festival-c:#50c5dc;
+}
+.festival-stage:empty{display:none}
+.festival-stage.festival-forest{--festival-a:#6df2ae;--festival-b:#d6fda0;--festival-c:#2ed8df}
+.festival-stage.festival-crystal{--festival-a:#e2a0ff;--festival-b:#8bf5fb;--festival-c:#a6b8ff}
+.festival-stage.festival-electric{--festival-a:#3ef6fd;--festival-b:#faff98;--festival-c:#6289ff}
+.festival-stage.festival-fireworks{--festival-a:#ffdb89;--festival-b:#ff74a5;--festival-c:#bd82ff}
+.festival-stage.festival-galaxy{--festival-a:#b6a1ff;--festival-b:#62e9ff;--festival-c:#f3a3fa}
+.festival-stage.festival-disco{--festival-a:#ffe98b;--festival-b:#7ffff3;--festival-c:#ff8fd6}
+.festival-stage::before{
+  content:"";position:absolute;inset:0;opacity:.36;z-index:-1;
+  background:radial-gradient(ellipse at 50% 45%,var(--festival-a),transparent 67%);
+  animation:festival-breath 2.3s ease-in-out 1 both;
+}
+.festival-stage.festival-forest::before{
+  background:radial-gradient(ellipse at 50% 68%,#134e5ca0,#10294a40 55%,transparent 80%);
+  opacity:.75;
+}
+.festival-stage.festival-crystal::before{
+  background:conic-gradient(from 30deg at 50% 55%,transparent 0deg,#c891f977 95deg,
+    transparent 135deg,#72deef8c 225deg,transparent 290deg,#bc9cff70 360deg);
+  opacity:.45;
+}
+.festival-stage.festival-electric::before{
+  background:repeating-linear-gradient(118deg,transparent 0 17px,#72eff950 18px 20px,
+    transparent 21px 47px);
+  opacity:.42;
+}
+.festival-stage.festival-fireworks::before{
+  background:radial-gradient(circle at 30% 30%,#ffb8a36b,transparent 40%),
+    radial-gradient(circle at 70% 67%,#8db7ff8a,transparent 50%);
+  opacity:.62;
+}
+.festival-stage.festival-galaxy::before{
+  background:conic-gradient(from 38deg at 50% 50%,#7856b57a,#447fa88c,#c056b37f,#6649bc7f,#7856b57a);
+  opacity:.6;animation:festival-galaxy-turn 7s linear infinite;
+}
+.festival-stage.festival-disco::before{
+  background:conic-gradient(from 15deg at 50% 50%,#ffa1e255,#58e9ff6e,#fce88b73,
+    #a28dff7a,#ffa1e255);
+  opacity:.54;animation:festival-galaxy-turn 3.2s linear infinite;
+}
+.festival-mote{
+  position:absolute;z-index:1;left:50%;top:49%;width:6px;height:6px;
+  margin:-3px;border-radius:50%;background:var(--festival-a);
+  box-shadow:0 0 10px 3px var(--festival-c);
+  opacity:0;animation:festival-fly 1.85s ease-out var(--particle-delay,0s) 1 both;
+}
+.festival-mote:nth-of-type(3n){background:var(--festival-b);box-shadow:0 0 10px 3px var(--festival-b)}
+.festival-mote:nth-of-type(5n){background:var(--festival-c);border-radius:2px}
+.festival-forest .festival-mote{width:4px;height:4px;box-shadow:0 0 7px 3px var(--festival-b);
+  animation-name:festival-firefly;animation-duration:2.4s}
+.festival-crystal .festival-mote{border-radius:1px;transform:rotate(45deg)}
+.festival-electric .festival-mote{width:3px;height:13px;border-radius:2px}
+.festival-galaxy .festival-mote{width:4px;height:4px;border-radius:50%}
+.festival-disco .festival-mote{border-radius:2px}
+.festival-label{
+  position:absolute;z-index:18;bottom:6%;left:50%;transform:translateX(-50%);
+  padding:7px 12px;max-width:91%;color:#fffbe0;background:#161b4dc9;
+  border:1px solid var(--festival-a);border-radius:16px;white-space:nowrap;
+  text-align:center;font-size:clamp(11px,3.1vw,16px);font-weight:950;
+  letter-spacing:.3px;text-shadow:0 1px 5px #050a32;
+  box-shadow:0 0 10px var(--festival-a),0 0 18px #09082330;
+  animation:festival-label-in 1.95s ease-in-out both;
+}
+.festival-disco .festival-label{bottom:1%;color:#fff8d6;font-size:clamp(15px,4.1vw,21px);
+  border-color:#ffe98b;box-shadow:0 0 19px #fa80cb}
+.festival-disco-ball{
+  position:absolute;left:50%;top:9%;z-index:15;
+  width:var(--festival-size,112px);height:var(--festival-size,112px);margin-left:calc(var(--festival-size,112px) / -2);
+  border-radius:50%;overflow:hidden;isolation:isolate;
+  border:2px solid #fff8;
+  background:radial-gradient(circle at 30% 20%,#fffefd,#d5ebff 19%,#7f92bb 52%,#282851 80%,#090e33 100%);
+  box-shadow:inset -15px -16px 20px #080e3f9f,inset 10px 9px 15px #fff8,
+    0 0 20px #f7f0ffa3,0 0 35px #f6aee1a0;
+  animation:festival-ball-drop 2.9s cubic-bezier(.2,.8,.3,1) both;
+}
+.festival-facets{
+  position:absolute;inset:-8%;border-radius:50%;
+  background:
+    repeating-linear-gradient(0deg,transparent 0 10px,#131f4770 11px 12px),
+    repeating-linear-gradient(90deg,transparent 0 11px,#101b4b75 12px 13px),
+    conic-gradient(from 0deg,#fefefe,#7bdefa,#b08cfd,#fff9a0,#ffd4ef,#fefefe);
+  background-blend-mode:multiply,normal,normal;opacity:.92;
+  mask-image:radial-gradient(circle,black 55%,transparent 79%);
+  animation:festival-ball-spin 1.55s linear infinite;
+}
+.festival-disco-ball::after{
+  content:"";position:absolute;inset:0;border-radius:50%;
+  background:radial-gradient(circle at 28% 21%,#ffffffdd 0,transparent 29%);
+  mix-blend-mode:screen;
+}
+.festival-ray{
+  position:absolute;z-index:0;left:50%;top:27%;
+  width:10px;height:55%;transform-origin:50% 0;
+  background:linear-gradient(to bottom,#ffffffb5,#fff6a6a3,transparent 90%);
+  filter:blur(4px);opacity:.55;
+  transform:rotate(var(--ray-angle,0deg));
+  animation:festival-ray-turn 2.6s linear var(--ray-delay,0s) infinite;
+}
+@keyframes festival-ball-spin{to{transform:rotateY(360deg) rotate(360deg)}}
+@keyframes festival-ball-drop{
+  0%{opacity:0;transform:translateY(-100px) scale(.25) rotate(-28deg)}
+  18%{opacity:1;transform:translateY(0) scale(1) rotate(0)}
+  75%{opacity:1;transform:translateY(8px) scale(1.08)}
+  100%{opacity:0;transform:translateY(-30px) scale(.95)}
+}
+@keyframes festival-ray-turn{to{transform:rotate(calc(var(--ray-angle,0deg) + 115deg))}}
+@keyframes festival-fly{
+  0%{opacity:0;transform:rotate(var(--particle-angle,0deg)) translateX(0) scale(.3)}
+  22%{opacity:1}72%{opacity:.9}
+  100%{opacity:0;transform:rotate(var(--particle-angle,0deg))
+    translateX(var(--particle-distance,80px)) scale(var(--particle-scale,1))}
+}
+@keyframes festival-firefly{
+  0%{opacity:0;transform:rotate(var(--particle-angle,0deg)) translateX(0) scale(.3)}
+  40%{opacity:.86}
+  100%{opacity:0;transform:rotate(var(--particle-angle,0deg))
+    translateX(var(--particle-distance,80px)) scale(1.15)}
+}
+@keyframes festival-galaxy-turn{to{transform:rotate(360deg)}}
+@keyframes festival-breath{0%{opacity:0}40%{opacity:.55}100%{opacity:0}}
+@keyframes festival-label-in{
+  0%{opacity:0;transform:translate(-50%,13px) scale(.9)}
+  20%{opacity:1;transform:translate(-50%,0) scale(1)}
+  75%{opacity:1}
+  100%{opacity:0;transform:translate(-50%,-13px) scale(.95)}
+}
+@media(prefers-reduced-motion:reduce){
+  .festival-stage *,.festival-stage::before{animation:none!important}
+  .festival-mote,.festival-ray{display:none}
+  .festival-label{opacity:1}
+  .festival-disco-ball{transform:none;opacity:1}
+}
+body.reduce-motion .festival-stage *,body.reduce-motion .festival-stage::before{
+  animation:none!important
+}
+body.reduce-motion .festival-mote,body.reduce-motion .festival-ray{display:none}
+body.reduce-motion .festival-label{opacity:1}
+body.reduce-motion .festival-disco-ball{transform:none;opacity:1}

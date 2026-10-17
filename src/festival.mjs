@@ -112,7 +112,7 @@ export class FestivalDirector {
       const mote=document.createElement("span");
       mote.className="festival-mote";
       mote.style.setProperty("--particle-angle",(i*137.5+this.rng()*12)+"deg");
-      mote.style.setProperty("--particle-distance",(16+this.rng()*36)+"%");
+      mote.style.setProperty("--particle-distance",(44+this.rng()*110)+"px");
       mote.style.setProperty("--particle-delay",((i%8)*.07)+"s");
       mote.style.setProperty("--particle-scale",(.6+this.rng()*1.4).toFixed(2));
       fragment.appendChild(mote);
@@ -126,6 +126,7 @@ export class FestivalDirector {
     fragment.appendChild(label);
     this.stage.appendChild(fragment);
     this.stage.style.setProperty("--festival-level",String(scene.level));
+    this.stage.style.setProperty("--festival-size",(70+scene.level*15)+"px");
     this.fx(FESTIVAL_THEMES[scene.theme].sound);
     this.timeout=setTimeout(()=>this.stop(),small?850:scene.durationMs);
     return scene;

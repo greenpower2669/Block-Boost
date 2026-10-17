@@ -183,3 +183,13 @@ APK brute : https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/bl
 
 
 **BILAN FINAL ACTUALISÉ (17/10/2026) :** après correction des pops audio dans src/main.mjs, tests Node/Chrome [39067717083](https://github.com/greenpower2669/Block-Boost/actions/runs/39067717083) **verts** et APK publique [39067712581](https://github.com/greenpower2669/Block-Boost/actions/runs/39067712581) **verte**. Quota de stockage d'artifacts GitHub atteint sur Djipie ; upload-artifact rendu facultatif, la publication de l'APK .apk seule en branche privée n'en dépend plus. CI Djipie privée finale [39068208556](https://github.com/greenpower2669/Djipie/actions/runs/39068208556) **SUCCESS**. [APK PRIVÉE FINALE 0.10 avec 11 sons](https://github.com/greenpower2669/Djipie/blob/temp/blockboost-bubbles-private-0.10.0/temp/android/BlockBoost-0.10.0-bubbles-private-debug.apk), **438375 octets**, SHA256 `99bbe28c08be72f8cf57d08a32457c0d9b7d2f7ced1f6ceeff22b44f601baa57`. Ce SHA remplace tous les SHA antérieurs des compilations d'essai. Lien privé (connexion GitHub requise). Aucun merge main ni Play release.
+
+## 17 octobre — Retour disco, 0.11
+- [x] Gros jackpots → revenir à la boule à facettes même en cas de jackpot répété ; la galaxie ne l'évince plus.
+- [x] Doubles effacements normaux sans jackpot → toujours bulles et cinq projecteurs au sol.
+- [x] Croisement ligne+colonne ×10 → **boule + bulles + projecteurs** dans le même spectacle, texte score en avant, FX Bass Drop puis création puis pops décalés.
+- [x] Aperçu valide fidèle au choix des récompenses.
+- [x] Tests Node/Chrome [verts 39071874406](https://github.com/greenpower2669/Block-Boost/actions/runs/39071874406) et APK publique [CI verte 39071874411](https://github.com/greenpower2669/Block-Boost/actions/runs/39071874411).
+- [ ] Terminer et constater la nouvelle compilation **privée 0.11 avec les 11 sons approuvés**, puis livrer directement l'APK brute sous **greenpower2669/Block-Boost**, pas sous Djipie.
+- [ ] Vérifier sur Samsung visibilité de la boule, lisibilité du score, son et rythme, mode réduit.
+- [ ] Pas de merge main ni sortie Play sans autorisation.

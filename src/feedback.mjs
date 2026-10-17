@@ -1,3 +1,4 @@
+import {PRIVATE_AUDIO_FILES} from "./private-audio.mjs";
 import {CONCERT_CUES,chooseJingle} from "./concert-cues.mjs";
 import {KENNEY_AUDIO} from "./kenney-audio.mjs";
 import {VoiceDirector} from "./voice-director.mjs";
@@ -44,6 +45,7 @@ export class Feedback {
     this.kenneyPlayers=new Map();
     this.kenneySequences=new Map();
     this.lastMelodyAt=0;
+    this.licensedPlayers=new Map();
   }
   ensureAudio() {
     if(!this.getSettings().fx) return;
@@ -94,6 +96,31 @@ export class Feedback {
       return true;
     }catch{return false;}
   }
+  /**
+   * Only the private Djipie Android packaging workflow supplies these sounds.
+   * No redistribution in public source, and only synchronised playback in-game.
+   * The bundled effects are optional: public builds gracefully use Kenney CC0.
+   */
+  playLicensed(event) {
+    if(this.getSettings().fx===false||!globalThis.Audio)return false;
+    if(["streak2","streak3"].includes(event)&&this.getSettings().voice!==true)return false;
+    const rel=PRIVATE_AUDIO_FILES[event];
+    if(!rel)return false;
+    try {
+      let player=this.licensedPlayers.get(event);
+      if(!player) {
+        player=new Audio(new URL(rel,import.meta.url).href);
+        player.preload="auto";
+        this.licensedPlayers.set(event,player);
+      }
+      const voices=["streak2","streak3"].includes(event);
+      const other=[...this.licensedPlayers.values()].filter(p=>p!==player&&!p.paused).length;
+      player.volume=(voices?.27:event==="festival-disco"?.33:.25)/(1+other*.30);
+      player.pause();player.currentTime=0;
+      player.play()?.catch?.(()=>this.playKenney(event));
+      return true;
+    }catch {return false;}
+  }
   /** 24 real small Kenney OGGs exported from Djipie CC0 — never Sonniss. */
   playKenney(event){
     if(this.getSettings().fx===false || !globalThis.Audio)return false;
@@ -103,6 +130,10 @@ export class Feedback {
       drop:["drop","drop2"],clear:["line","line2","line3"],
       combo:["combo","combo2","combo3"],speed:["speed","speed2"],
       extra:["extra","extra2"],record:["combo3","disco2"],
+      newBatch:["ready2","extra2"],loss:["drop2"],streak1:["forest","ready"],
+      streak2:["combo2"],streak3:["combo3"],
+      "festival-bubbles-create":["crystal","ready3"],
+      "bubbles-pop":["line3","combo2"],
       "festival-forest":["forest"],"festival-crystal":["crystal","ready3"],
       "festival-electric":["speed2","rotate2"],
       "festival-fireworks":["combo2","combo3"],
@@ -134,7 +165,7 @@ export class Feedback {
     if(!this.getSettings().fx)return;
     const themeJingle=event==="festival-disco"?"disco":null;
     const melody=themeJingle||chooseJingle(event);
-    const sample=this.playKenney(event);
+    const sample=this.playLicensed(event)||this.playKenney(event);
     if(melody) this.melodicCue(melody);
     if(sample)return;
     // The OGG decoder can be unavailable in browser tests: gentle safe fallback.
@@ -244,6 +275,7 @@ export class Feedback {
   stopVoice(){
     try{globalThis.speechSynthesis?.cancel();}catch{}
     try{globalThis.AndroidBridge?.stop?.();}catch{}
+    for(const key of ["streak2","streak3"]){try{this.licensedPlayers.get(key)?.pause();}catch{}}
     this.nativeSpeakingUntil=0;
     this.currentSpeech=null;
     this.onCaption("");

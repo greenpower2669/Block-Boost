@@ -24,6 +24,8 @@ function resetSpectrum(){
     cell.classList.remove("will-solve","just-solved");
     cell.style.removeProperty("--rainbow-index");
     cell.style.removeProperty("--energy");
+    cell.style.removeProperty("--energy-blur");
+    cell.style.removeProperty("--energy-alpha");
   }
 }
 function previewRainbow(x,y,valid){
@@ -41,8 +43,10 @@ function previewRainbow(x,y,valid){
     const [r,c]=result.cells[i],node=boardEl.children[r*SIZE+c];
     if(!node)continue;
     node.classList.add("will-solve");
-    node.style.setProperty("--rainbow-index",String((i*53+r*17+c*11)%360));
+    node.style.setProperty("--rainbow-index",String((i*53+r*17+c*11)%360)+"deg");
     node.style.setProperty("--energy",String(result.intensity));
+    node.style.setProperty("--energy-blur",(4+result.intensity*3)+"px");
+    node.style.setProperty("--energy-alpha",Math.min(.91,.36+result.intensity*.11).toFixed(2));
   }
   const kind=game.combo>0?"COMBO EN VUE":"EFFACEMENT POSSIBLE";
   $("solve-signal").textContent="🌈 "+kind+" · "+result.lines+
@@ -296,8 +300,10 @@ function flashClear(cleared,lines,combo,gained,bonus){
     const [r,c]=cleared[i],node=boardEl.children[r*SIZE+c];
     if(!node)continue;
     node.classList.add("just-solved");
-    node.style.setProperty("--rainbow-index",String((i*49+c*23+r*15)%360));
+    node.style.setProperty("--rainbow-index",String((i*49+c*23+r*15)%360)+"deg");
     node.style.setProperty("--energy",String(intensity));
+    node.style.setProperty("--energy-blur",(4+intensity*3)+"px");
+    node.style.setProperty("--energy-alpha",Math.min(.94,.42+intensity*.11).toFixed(2));
   }
   const frag=document.createDocumentFragment(),rect=boardEl.getBoundingClientRect();
   if(!save.settings.reducedMotion){

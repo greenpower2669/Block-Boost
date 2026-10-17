@@ -72,3 +72,11 @@ Réalisation sur branche `feature/haptic-sonar-combo-bonus-050` : guide 0..4 ver
 Fab demande que les voix, jugées trop bavardes par son fils, soient suspendues provisoirement. La grille doit s'illuminer de nombreuses couleurs lorsqu'une pièce est prête à finir une ligne/colonne, avec spectacle et haptique croissant selon le nombre de blocs, les combos et les bonus. Les archives Sonniss doivent rester en Release dans Djipie car dépôt depuis téléphone.
 
 Implémenté sur feature/silent-rainbow-solves-060 : silence vocal, calcul prédictif légal, arc-en-ciel des cases réellement supprimables, effets après pose, six niveaux haptiques + motifs multi-lignes. Release « Sons » indexée uniquement, aucun ZIP/sound distribué. Tests verts Node/Chrome 39026234986 et Android 39026190674 ; APK https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-rainbow-0.6.0/temp/android/BlockBoost-0.6.0-rainbow-debug.apk, SHA 09b53fce4a63379e4a5cf0d6369c22f7c926b61897838508fb2efe390fa5f494. Aucune fusion main, aucune publication stable, test Samsung à réaliser.
+
+## Mission du 17 octobre 2026 — animations variées et sons Djipie (0.7)
+
+Fab confirme « Ok, go, les son djipie sont prêt. Sur ton autre dépôt », après son idée de familles de lumières dont forêt nocturne/lucioles, cristaux, néon, feu d'artifice de points, galaxie et une **boule à facettes pour gros bonus qui sort et tourne en grossissant**. Il attend un développement réel, pas seulement une rédaction théorique.
+
+**Autorisé et livré en branche `feature/festival-animation-djipie-audio-070`** : scènes DOM/CSS sans images externes ni blocage tactile, choix selon jeu réel, bonus, combos, jackpot et alternance ; sons Kenney CC0 extraits **sélectivement depuis Djipie** via un workflow dédié dans une branche séparée, 12 effets authentiques dans l'APK hors ligne. **Sonniss en Release : ne pas republier les WAV/ZIP ni les utiliser pour entraîner une IA.** Voix restent suspendues conformément au souhait familial de la version 0.6.0.
+
+Tests unitaires et navigateur y compris jackpot/ball, trace documentée et APK 0.7 expérimentale sans remplacer la précédente. Ne pas merger main, ne pas faire de release ni signer Play sans validation. Voir `docs/festival-themes-djipie-audio-070.md`.

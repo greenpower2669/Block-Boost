@@ -170,8 +170,8 @@ export class Feedback {
     try{globalThis.navigator?.vibrate?.(map[kind]||0);}catch{}
   }
   speak(kind,priority=1,force=false) {
-    // Voice pause requested by Fab and his son; visual feedback + FX remain active.
-    return;
+    // The user controls voices; saved preference defaults to OFF on a fresh install.
+    if(this.getSettings().voice!==true)return;
     const mascot={...(MASCOTS[this.getMascot()]||MASCOTS.pompom),id:this.getMascot()};
     const now=Date.now();
     const currentlySpeaking=Boolean(this.currentSpeech?.speaking) ||
@@ -193,7 +193,6 @@ export class Feedback {
     clearTimeout(this.captionTimeout);clearTimeout(this.emotionTimeout);
     this.captionTimeout=setTimeout(()=>this.onCaption(""),3700);
     this.emotionTimeout=setTimeout(()=>this.onEmotion("idle"),1200);
-    if(!this.getSettings().voice)return;
     if(globalThis.AndroidBridge?.speak){
       try{
         // Native Android TextToSpeech is offline-capable and uses the installed French voice.
@@ -225,6 +224,8 @@ export class Feedback {
     try{globalThis.speechSynthesis?.cancel();}catch{}
     try{globalThis.AndroidBridge?.stop?.();}catch{}
     this.nativeSpeakingUntil=0;
+    this.currentSpeech=null;
+    this.onCaption("");
     clearTimeout(this.captionTimeout);clearTimeout(this.emotionTimeout);
     this.priority=0;
   }

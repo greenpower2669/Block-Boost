@@ -176,3 +176,7 @@ APK brute : https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/bl
 - [ ] Constater le résultat et le SHA du build privé Djipie avant d'offrir un lien de SON APK ; si échoue, corriger sans prétendre son terminé.
 - [ ] Vérifier sur Samsung les sons vrais, le rythme, le bonus ×10, les bulles et la fin de partie.
 - [ ] Aucun merge main, publication Google Play ou release stable sans validation.
+
+- [x] **CI PRIVÉE SONNISS verte** : [Djipie 39067423786](https://github.com/greenpower2669/Djipie/actions/runs/39067423786) ; 11 OGG compilés dans APK privée seulement, [438355 octets](https://github.com/greenpower2669/Djipie/blob/temp/blockboost-bubbles-private-0.10.0/temp/android/BlockBoost-0.10.0-bubbles-private-debug.apk), SHA `fc8ff2bb0ab94784f9f506a7a240912b00d29afdd041d3a8a4f03b1a3de9a9a0`. GitHub login Djipie requis pour le téléchargement.
+- [x] **CI PUBLIC et Chrome vertes** : [Android 39067278164](https://github.com/greenpower2669/Block-Boost/actions/runs/39067278164), [Node/Chrome 39067278200](https://github.com/greenpower2669/Block-Boost/actions/runs/39067278200) ; [APK de secours CC0](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-bubbles-0.10.0/temp/android/BlockBoost-0.10.0-bubbles-debug.apk), 219209 octets, SHA `dddacdfd9099d4ff82be2175c720a00e55f4a245666065ab62da5f0ee7c44c5a`.
+- [ ] Sur Samsung, vérifier si les deux APK (même applicationId mais clés debug CI distinctes) nécessitent de désinstaller la précédente : avertir avant, sauvegardes de labo potentiellement non conservées.

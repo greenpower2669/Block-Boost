@@ -168,6 +168,21 @@ try{
   assert.equal(await page.locator(".festival-disco-ball").count(),1,
     "The rotating faceted ball must be rendered for a jackpot");
   assert.match(await page.locator("#festival-stage").textContent(),/BOULE À FACETTES/);
+  const fullscreen=await page.locator("#festival-stage").evaluate(el=>({
+    parent:el.parentElement.tagName,
+    position:getComputedStyle(el).position,
+    overflow:getComputedStyle(el).overflow,
+    radius:getComputedStyle(el).borderRadius
+  }));
+  assert.equal(fullscreen.parent,"BODY");
+  assert.equal(fullscreen.position,"fixed");
+  assert.equal(fullscreen.overflow,"visible");
+  assert.equal(fullscreen.radius,"0px");
+  const sprite=page.locator(".festival-disco-ball");
+  assert.equal(await sprite.evaluate(el=>el.tagName),"CANVAS");
+  assert.equal(await sprite.getAttribute("data-rotation-axis"),"vertical-yaw-sprites");
+  assert.equal(await page.locator(".festival-facets").count(),0);
+
   const voices=await page.evaluate(()=>window.__voiceCalls||[]);
   assert.equal(voices.length,0,"Temporary family voice mute must remain active");
   assert.ok((await page.locator("#score").textContent()).trim()!=="150",

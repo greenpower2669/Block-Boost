@@ -219,8 +219,8 @@ export class Feedback {
       globalThis.speechSynthesis.speak(utterance);
     }catch{this.priority=0;}
   }
-  stop(){
-    this.stopGuidance();
+  /** Stop speech only — disabling voices must NOT stop haptic guidance or FX. */
+  stopVoice(){
     try{globalThis.speechSynthesis?.cancel();}catch{}
     try{globalThis.AndroidBridge?.stop?.();}catch{}
     this.nativeSpeakingUntil=0;
@@ -228,5 +228,11 @@ export class Feedback {
     this.onCaption("");
     clearTimeout(this.captionTimeout);clearTimeout(this.emotionTimeout);
     this.priority=0;
+    this.lastVoice=0;
+    this.lastByKind.clear();
+  }
+  stop(){
+    this.stopGuidance();
+    this.stopVoice();
   }
 }

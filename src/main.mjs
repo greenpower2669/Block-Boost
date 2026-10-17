@@ -9,6 +9,7 @@ import {FestivalDirector,previewTheme} from "./festival.mjs";
 
 const $=id=>document.getElementById(id);
 const boardEl=$("board"),trayEl=$("tray"),ghostEl=$("drag-ghost"),surface=$("surface");
+if(globalThis.AndroidBridge)document.body.classList.add("android-host");
 let save=loadSave(),runStartBest=save.progress?.runStartBest??save.bestScore;
 let game=save.progress?.game||newGame();
 let selected=null,drag=null,flashTimer=null,confettiTimer=null,finishing=false;
@@ -268,7 +269,7 @@ function insertAt(index,x,y){
   paint();
   const event=res.event;
   flashClear(event.clearedCells,event.lines,event.combo,event.gained,bonus);
-  festival.play(event,bonus);
+  const festivalScene=festival.play(event,bonus);
   const descriptions=["⚡ VITESSE ×"+bonus.speedMultiplier+" : +"+event.speedBonus];
   if(event.noRotationBonus)descriptions.push("⭐ EXTRA SANS ROTATION : +"+event.noRotationBonus);
   $("bonus-earned").textContent=descriptions.join(" · ");
@@ -277,7 +278,8 @@ function insertAt(index,x,y){
   }else feedback.fx("drop");
   if(bonus.speedMultiplier>=3)feedback.fx("speed");
   if(event.noRotationBonus)feedback.fx("extra");
-  if(event.combo>=3)feedback.speak("combo",4);
+  if(festivalScene?.jackpot)feedback.speak("wow",4);
+  else if(event.combo>=3)feedback.speak("combo",4);
   else if(bonus.speedMultiplier>=2)feedback.speak("speed"+bonus.speedMultiplier,3);
   else if(event.lines>=2)feedback.speak("big",3);
   else if(bonus.noRotationBonus>0)feedback.speak("noRotation",2);

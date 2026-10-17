@@ -1,3 +1,4 @@
+import {KENNEY_AUDIO} from "./kenney-audio.mjs";
 import {VoiceDirector} from "./voice-director.mjs";
 // Audio and mascot direction: independent of the rules engine. No remote services.
 export const MASCOTS={
@@ -39,6 +40,7 @@ export class Feedback {
     this.currentSpeech=null;this.captionTimeout=null;this.emotionTimeout=null;
     this.director=new VoiceDirector();this.nativeSpeakingUntil=0;
     this.lastByKind=new Map();
+    this.kenneyPlayers=new Map();
   }
   ensureAudio() {
     if(!this.getSettings().fx) return;
@@ -62,8 +64,42 @@ export class Feedback {
       osc.connect(gain);gain.connect(this.ctx.destination);osc.start(now);osc.stop(now+duration+.01);
     }catch{}
   }
+  /** Djipie/RESSOURCES_PARTAGEES/AUDIO: 12 CC0 Kenney OGGs embedded OFFLINE.
+   * Only sounds from that verified small archive; Sonniss is never included. */
+  playKenney(event) {
+    if(this.getSettings().fx===false || !globalThis.Audio)return false;
+    const soundMap={
+      grab:"detach",valid:"ready",validRotate:"ready",rotate:"rotate",
+      drop:"drop",clear:"line",combo:"combo",speed:"speed",extra:"extra",
+      "festival-forest":"forest","festival-crystal":"crystal",
+      "festival-electric":"speed","festival-fireworks":"combo",
+      "festival-galaxy":"cosmic","festival-disco":"disco"
+    };
+    const key=soundMap[event],uri=KENNEY_AUDIO[key];
+    if(!uri)return false;
+    try {
+      let player=this.kenneyPlayers.get(key);
+      if(!player) {
+        player=new Audio(uri);
+        player.preload="auto";
+        player.volume=key==="disco"?.28:key==="combo"?.24:.19;
+        if(player.canPlayType && player.canPlayType("audio/ogg")==="")return false;
+        this.kenneyPlayers.set(key,player);
+      }
+      player.pause();
+      player.currentTime=0;
+      const promise=player.play();
+      promise?.catch?.(()=>{});
+      return true;
+    }catch{return false;}
+  }
   fx(event) {
     if(!this.getSettings().fx)return;
+    if(this.playKenney(event)) {
+      // Tiny second chime retains the requested "dring-biling" signature.
+      if(event==="valid"||event==="validRotate")this.chirp(925,.105,.028,.11);
+      return;
+    }
     if(event==="grab")this.chirp(285,.07,.055); // Detaching a block from tray
     if(event==="valid") {
       this.chirp(690,.085,.053);

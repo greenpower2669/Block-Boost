@@ -98,3 +98,9 @@ Le pied de page (« Nouvelle partie ») de l'APK 0.8 était masqué derrière la
 Les 24 OGG Kenney sont vérifiés par signatures OggS et manifeste depuis Djipie ; Sonniss reste hors historique/public. Les ding jingles courts viennent du synthétiseur musical du jeu, pas d'un entraînement IA. La voix Waouh n'est jamais forcée si option voix OFF, le texte bonus ne prétend que les points vraiment gagnés.
 
 Tests [39057514184](https://github.com/greenpower2669/Block-Boost/actions/runs/39057514184) et build [39057514186](https://github.com/greenpower2669/Block-Boost/actions/runs/39057514186) **success** ; APK https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-concert-0.9.0/temp/android/BlockBoost-0.9.0-concert-debug.apk, 216 071 octets, SHA256 `bfc9fe705b2e75c9e74709da423d61c498750ed8c1720742516761eca26db4a9`. Aucun merge main ni test physique.
+
+## 17/10/2026 — Correctifs de CI audio 0.10
+
+Pipeline d'intégration Sonniss lancé **dans Djipie privé** sur branche `feature/blockboost-bubbles-private-apk-100` ; la branche publique BlockBoost n'a qu'un manifest `PRIVATE_AUDIO_FILES={}` et 24 Kenney CC0 de remplacement. Les WAV sont récupérés et validés dans espace temporaire, convertis en OGG dans le jeu fini, et supprimés du workspace avant push d'une APK seule.
+
+Premier problème : runner Ubuntu sans `ffmpeg` ; correction workflow installation apt. Deuxième problème : filtre `afade` rejette `d=.4` ; correction valeur explicite `d=0.4`. Aucun changement des sons d'origine / données source. Tests Node échouaient aussi car `tests/festival.test.mjs` attendait 6 familles alors que `bubbles` est la 7e ; corrigé à 7. Tests Node/Chrome et APK publique success le 17/10 : runs 39067278200 / 39067278164. Ne PAS inférer la réussite de la pipeline privée tant que son run n'a pas été constaté.

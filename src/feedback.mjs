@@ -127,7 +127,7 @@ export class Feedback {
     const soundMap={
       grab:["detach","detach2"],valid:["ready","ready2","ready3"],
       validRotate:["ready2","ready3"],rotate:["rotate","rotate2"],
-      drop:["drop","drop2"],clear:["line","line2","line3"],
+      drop:["drop","drop2"],clear:["line","line2","line3"],lineSingle:["line","line2"],
       combo:["combo","combo2","combo3"],speed:["speed","speed2"],
       extra:["extra","extra2"],record:["combo3","disco2"],
       newBatch:["ready2","extra2"],loss:["drop2"],streak1:["forest","ready"],

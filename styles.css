@@ -327,3 +327,25 @@ body.reduce-motion .festival-stage *,body.reduce-motion .festival-stage::before{
 body.reduce-motion .festival-mote,body.reduce-motion .festival-ray{display:none}
 body.reduce-motion .festival-label{opacity:1}
 body.reduce-motion .festival-disco-ball{transform:none;opacity:1}
+
+
+/* A theme changes the actual preview colors, not just the outer halo. */
+.board-wrap[data-preview-theme="forest"] .cell.will-solve::after{
+ background:radial-gradient(circle at 27% 33%,#dfffb5,#6bf5aab8 24%,#2ed6c88a 58%,#194f75a6);
+}
+.board-wrap[data-preview-theme="crystal"] .cell.will-solve::after{
+ background:conic-gradient(from var(--rainbow-index,0deg),#c5faff,#9c9fff,#e2a9ff,#a1edf8,#c5faff);
+}
+.board-wrap[data-preview-theme="electric"] .cell.will-solve::after{
+ background:linear-gradient(135deg,#d8fffe,#1cdaff 42%,#6b83ff 57%,#d5ff7d);
+}
+.board-wrap[data-preview-theme="fireworks"] .cell.will-solve::after{
+ background:conic-gradient(from var(--rainbow-index,0deg),#ffda88,#ff8e8c,#caa1ff,#ffde99);
+}
+.board-wrap[data-preview-theme="galaxy"] .cell.will-solve::after{
+ background:conic-gradient(from var(--rainbow-index,0deg),#b9a3ff,#81d6ff,#6738b5,#f2aafa,#b9a3ff);
+}
+.board-wrap[data-preview-theme="disco"] .cell.will-solve::after{
+ background:repeating-conic-gradient(from var(--rainbow-index,0deg),#fff2a0 0 16deg,
+   #89effa 19deg 30deg,#f7a3d9 33deg 42deg,#d7a2ff 45deg 54deg);
+}

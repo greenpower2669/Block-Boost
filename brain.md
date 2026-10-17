@@ -111,3 +111,15 @@ Le module src/solve-preview.mjs prédit uniquement des effacements réels et lé
 5 ZIP Sonniss GDC 2026 repérés en Release privée Djipie « Sons » (environ 6,9 Go). Références légères dans Djipie/RESSOURCES_PARTAGEES/AUDIO/RELEASES/INDEX.md (branche proposition). Licence : utilisation en jeux finis autorisée, pas de redistribution brute ni entraînement IA. Aucun fichier ZIP/son réintégré en 0.6.0.
 
 CI Node+Chrome run 39026234986 verte, Android 39026190674 vert ; APK debug indépendante 61 018 octets SHA256 09b53fce4a63379e4a5cf0d6369c22f7c926b61897838508fb2efe390fa5f494 : https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-rainbow-0.6.0/temp/android/BlockBoost-0.6.0-rainbow-debug.apk. Aucun merge main ni validation sensorielle Samsung. Voir docs/rainbow-solves-silent-060.md.
+
+## 17 octobre 2026 — Festival 0.7.0 : six familles d'effets + sons Kenney Djipie
+
+Sur accord de Fab, implémentation des styles **forêt nocturne/lucioles**, **cristal/aurore**, **néon/électrique**, **feux d'artifice de points**, **galaxie** et **boule à facettes disco**. `src/festival.mjs` sélectionne selon le gain réellement acquis, nombre de lignes, combo, vitesse et EXTRA, avec réduction des répétitions. La boule à facettes apparaît physiquement dans l'overlay CSS `.festival-disco-ball`, tombe, **grossit selon intensité, tourne** et projette des rayons pour les gros jackpots (p. ex. 2 lignes+combo ou ≥500 pts, 3 lignes, combo≥4, ≥850 pts). Durée bornée 3 s, limite 58 particules, modes animations réduites, pas de stroboscope ; interactions tactiles inchangées.
+
+Les tons **des cases prévisualisant une suppression réelle** changent selon la famille (vert lucioles, cristaux violets, électrique cyan, etc.), et non seulement le halo. Aucun faux effacement ni changement de score.
+
+Sons Djipie : découverte de `feature/bibliotheque-audio-inventaire-v1` avec **447 entrées indexées (100 Kenney, 347 Sonniss)** ; aucune écoute individuelle encore validée. Action `39035758824` sur branche Djipie `feature/export-kenney-blockboost-v1` a produit un petit module réutilisable de **12 vrais effets OGG Kenney CC0**, avec manifestes et empreintes. Copie sélective sous `src/kenney-audio.mjs` (data URI OGG) et `assets/kenney-manifest.json` ; les effets sons du jeu privilégient Kenney, la synthèse audio Web constitue un fallback. Hors ligne, sans dépendance réseau. **Aucun son Sonniss téléchargé/extrait/copé** ; les cinq gros ZIP restent dans la Release Djipie. Licence Kenney CC0 annoncée, provenance/sha conservés ; sélection artistique à valider à l'écoute.
+
+**Voix toujours en pause** sur demande familiale, y compris records ; les 388 phrases restent en code. Les six familles sont sans voix, avec FX/haptiques distincts. Documentation `docs/festival-themes-djipie-audio-070.md`.
+- Tests `tests/festival.test.mjs` et Chrome multigestes validés : familles, vraies signatures OggS, logique jackpot, **boule disco DOM** sur double ligne/combinaison.
+- Nouvelle APK labo `fr.greenpower.blockboost.festivallab` 0.7.0, sauvegardes séparées de 0.6.0 ; build CI Android à contrôler pour lien et SHA exact. Aucune fusion main ni publication Play.

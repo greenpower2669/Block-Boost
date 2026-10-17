@@ -254,31 +254,6 @@ body.reduce-motion .board .cell.just-solved::after{
 }
 .festival-disco .festival-label{bottom:1%;color:#fff8d6;font-size:clamp(15px,4.1vw,21px);
   border-color:#ffe98b;box-shadow:0 0 19px #fa80cb}
-.festival-disco-ball{
-  position:absolute;left:50%;top:9%;z-index:15;
-  width:var(--festival-size,112px);height:var(--festival-size,112px);margin-left:calc(var(--festival-size,112px) / -2);
-  border-radius:50%;overflow:hidden;isolation:isolate;
-  border:2px solid #fff8;
-  background:radial-gradient(circle at 30% 20%,#fffefd,#d5ebff 19%,#7f92bb 52%,#282851 80%,#090e33 100%);
-  box-shadow:inset -15px -16px 20px #080e3f9f,inset 10px 9px 15px #fff8,
-    0 0 20px #f7f0ffa3,0 0 35px #f6aee1a0;
-  animation:festival-ball-drop 2.9s cubic-bezier(.2,.8,.3,1) both;
-}
-.festival-facets{
-  position:absolute;inset:-8%;border-radius:50%;
-  background:
-    repeating-linear-gradient(0deg,transparent 0 10px,#131f4770 11px 12px),
-    repeating-linear-gradient(90deg,transparent 0 11px,#101b4b75 12px 13px),
-    conic-gradient(from 0deg,#fefefe,#7bdefa,#b08cfd,#fff9a0,#ffd4ef,#fefefe);
-  background-blend-mode:multiply,normal,normal;opacity:.92;
-  mask-image:radial-gradient(circle,black 55%,transparent 79%);
-  animation:festival-ball-spin 1.55s linear infinite;
-}
-.festival-disco-ball::after{
-  content:"";position:absolute;inset:0;border-radius:50%;
-  background:radial-gradient(circle at 28% 21%,#ffffffdd 0,transparent 29%);
-  mix-blend-mode:screen;
-}
 .festival-ray{
   position:absolute;z-index:0;left:50%;top:27%;
   width:10px;height:55%;transform-origin:50% 0;
@@ -287,7 +262,6 @@ body.reduce-motion .board .cell.just-solved::after{
   transform:rotate(var(--ray-angle,0deg));
   animation:festival-ray-turn 2.6s linear var(--ray-delay,0s) infinite;
 }
-@keyframes festival-ball-spin{to{transform:rotateY(360deg) rotate(360deg)}}
 @keyframes festival-ball-drop{
   0%{opacity:0;transform:translateY(-100px) scale(.25) rotate(-28deg)}
   18%{opacity:1;transform:translateY(0) scale(1) rotate(0)}
@@ -349,3 +323,90 @@ body.reduce-motion .festival-disco-ball{transform:none;opacity:1}
  background:repeating-conic-gradient(from var(--rainbow-index,0deg),#fff2a0 0 16deg,
    #89effa 19deg 30deg,#f7a3d9 33deg 42deg,#d7a2ff 45deg 54deg);
 }
+
+
+/* v0.8 — FULL-VIEWPORT atmospheric FX, no square board clipping.
+ * Stage is reparented under <body> so ancestor size/overflow cannot cut beams.
+ * Gradient ambient extents are ~2x viewport, fading to full transparency.
+ */
+.festival-stage {
+  position:fixed;inset:0;overflow:visible;clip-path:none;border-radius:0;
+  z-index:40;pointer-events:none;isolation:isolate;
+}
+.festival-stage:empty{display:none}
+.festival-stage::before{
+  content:"";position:absolute;inset:-80vmax;z-index:-1;
+  border-radius:50%;
+  background:radial-gradient(ellipse at center,var(--festival-a) 0%,transparent 62%);
+  opacity:.22;
+  animation:festival-breath 2.35s ease-out both;
+}
+.festival-stage.festival-forest::before {
+  background:radial-gradient(ellipse at center,#25899b88 0%,#20557953 28%,transparent 64%);
+}
+.festival-stage.festival-crystal::before {
+  background:radial-gradient(ellipse at center,#ae88ed8c 0%,#4ac9e34a 28%,transparent 64%);
+}
+.festival-stage.festival-electric::before {
+  background:radial-gradient(ellipse at center,#32d5f591 0%,#7476f64b 28%,transparent 64%);
+}
+.festival-stage.festival-fireworks::before {
+  background:radial-gradient(ellipse at center,#ffab86a3 0%,#8c68ec3e 28%,transparent 64%);
+}
+.festival-stage.festival-galaxy::before {
+  background:radial-gradient(ellipse at center,#8d77eb91 0%,#a65cc34a 28%,transparent 64%);
+}
+.festival-stage.festival-disco::before {
+  background:radial-gradient(ellipse at center,#f8d681c7 0%,#70e2f24d 25%,transparent 63%);
+  opacity:.32;animation:festival-breath 2.35s ease-out both;
+}
+/* Sprite-backed discoball: frames encode only yaw motion, not a CSS 3D spin.
+ * The sphere never flattens, and its compositing box has a transparent background.
+ */
+.festival-disco-ball {
+  position:absolute;z-index:10;left:50%;top:var(--festival-ball-top,19dvh);
+  width:var(--festival-size,160px);height:var(--festival-size,160px);
+  margin-left:calc(var(--festival-size,160px) / -2);
+  overflow:visible;border:0;outline:0;background:transparent;
+  object-fit:contain;
+  border-radius:50%;
+  filter:drop-shadow(0 0 12px #e6f5ffcc) drop-shadow(0 0 28px #e695ec8a);
+  animation:festival-ball-enter 3.0s cubic-bezier(.2,.8,.3,1) both;
+  will-change:transform,opacity;
+}
+.festival-ray {
+  position:absolute;z-index:2;
+  left:50%;top:calc(var(--festival-ball-top,19dvh) + var(--festival-size,160px) / 2);
+  width:clamp(22px,6vw,42px);height:160vmax;
+  transform-origin:50% 0;
+  background:linear-gradient(to bottom,#fffdfdb8 0%,#fff0a16b 12%,#86f6f940 35%,transparent 70%);
+  filter:blur(8px);opacity:.45;
+  border:0;border-radius:40% 40% 100% 100%;
+  transform:rotate(var(--ray-angle,0deg));
+  animation:festival-ray-turn 2.8s linear var(--ray-delay,0s) infinite;
+}
+.festival-label {
+  position:fixed;top:auto;bottom:clamp(75px,13dvh,175px);
+  max-width:min(94vw,410px);white-space:normal;
+}
+.festival-disco .festival-label {bottom:clamp(86px,15dvh,195px)}
+@keyframes festival-ball-enter {
+  0%{opacity:0;transform:translateY(-130px) scale(.3)}
+  15%{opacity:1;transform:translateY(0) scale(1)}
+  72%{opacity:1;transform:translateY(9px) scale(1.08)}
+  100%{opacity:0;transform:translateY(-32px) scale(.93)}
+}
+@keyframes festival-ray-turn {
+  to{transform:rotate(calc(var(--ray-angle,0deg) + 92deg))}
+}
+@media (prefers-reduced-motion:reduce) {
+  .festival-stage .festival-disco-ball,
+  .festival-stage .festival-label{animation:none!important;opacity:1!important;transform:none!important}
+  .festival-stage .festival-ray,.festival-stage .festival-mote{display:none}
+}
+body.reduce-motion .festival-stage .festival-disco-ball,
+body.reduce-motion .festival-stage .festival-label{
+  animation:none!important;opacity:1!important;transform:none!important
+}
+body.reduce-motion .festival-stage .festival-ray,
+body.reduce-motion .festival-stage .festival-mote{display:none}

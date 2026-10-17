@@ -61,9 +61,9 @@ test("One, two and three completed lines produce graduated tactile rewards",()=>
  assert.equal(rewardHaptic({type:"clear",lines:2,combo:2,noRotationBonus:5},reward),"comboDouble");
  assert.equal(rewardHaptic({type:"clear",lines:3,combo:2,noRotationBonus:5},reward),"comboCascade");
 });
-test("Voices are temporarily suspended but no FX or haptics are disabled",()=>{
+test("Voices default to OFF but FX and haptics remain available",()=>{
  let captions=0;
- const feedback=new Feedback(()=>({fx:true,haptics:true,voice:true}),()=>"pompom",()=>captions++,()=>{});
+ const feedback=new Feedback(()=>({fx:true,haptics:true,voice:false}),()=>"pompom",()=>captions++,()=>{});
  feedback.speak("record",5,true);
  assert.equal(captions,0);
  assert.equal(feedback.lastPhrase,"");

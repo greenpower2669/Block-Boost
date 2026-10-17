@@ -27,14 +27,29 @@ try{
   await page.addInitScript(()=>{
     Math.random=()=>0.13;
     window.__hapticCalls=[];
+    window.__voiceCalls=[];
+    window.__voiceStops=0;
     window.AndroidBridge={
-      speak(){},stop(){},haptic(kind){window.__hapticCalls.push(["tap",kind]);},
+      speak(...args){window.__voiceCalls.push(args);},stop(){window.__voiceStops++;},haptic(kind){window.__hapticCalls.push(["tap",kind]);},
       reward(kind){window.__hapticCalls.push(["reward",kind]);},
       guidance(level){window.__hapticCalls.push(["guide",level]);},
       stopHaptics(){window.__hapticCalls.push(["stop"]); }
     };
   });
   await page.goto("http://127.0.0.1:"+port+"/",{waitUntil:"networkidle"});
+  await page.locator("#settings-button").click();
+  assert.equal(await page.locator("#voice-setting").isDisabled(),false);
+  assert.equal(await page.locator("#voice-setting").isChecked(),false);
+  await page.locator("#voice-setting").check();
+  await page.locator("#mascot-choice").selectOption("plume");
+  const said=await page.evaluate(()=>window.__voiceCalls.length);
+  assert.ok(said>0,"Activating voices must speak");
+  await page.locator("#voice-setting").uncheck();
+  assert.ok(await page.evaluate(()=>window.__voiceStops)>0,"Disabling voices must stop speech");
+  await page.locator("#mascot-choice").selectOption("nox");
+  assert.equal(await page.evaluate(()=>window.__voiceCalls.length),said);
+  assert.equal(await page.locator("#haptics-setting").isChecked(),true);
+  await page.locator("#settings-dialog button[value='close']").click();
   const board=await page.locator("#board").boundingBox();
   const slot=await page.locator(".piece-slot").first().boundingBox();
   const getColumns=()=>page.locator(".piece-slot").first().locator(".piece")
@@ -153,6 +168,36 @@ try{
   assert.equal(await page.locator(".festival-disco-ball").count(),1,
     "The rotating faceted ball must be rendered for a jackpot");
   assert.match(await page.locator("#festival-stage").textContent(),/BOULE À FACETTES/);
+  const fullscreen=await page.locator("#festival-stage").evaluate(el=>({
+    parent:el.parentElement.tagName,
+    position:getComputedStyle(el).position,
+    overflow:getComputedStyle(el).overflow,
+    radius:getComputedStyle(el).borderRadius
+  }));
+  assert.equal(fullscreen.parent,"BODY");
+  assert.equal(fullscreen.position,"fixed");
+  assert.equal(fullscreen.overflow,"visible");
+  assert.equal(fullscreen.radius,"0px");
+  const sprite=page.locator(".festival-disco-ball");
+  assert.equal(await sprite.evaluate(el=>el.tagName),"CANVAS");
+  assert.equal(await sprite.getAttribute("data-rotation-axis"),"vertical-yaw-sprites");
+  assert.equal(await page.locator(".festival-facets").count(),0);
+  const firstFrame=await sprite.evaluate(el=>({
+    index:Number(el.dataset.spriteFrame),
+    pixels:el.toDataURL("image/png")
+  }));
+  await page.waitForFunction(index=>{
+    const el=document.querySelector(".festival-disco-ball");
+    return el&&Number(el.dataset.spriteFrame)!==index;
+  },firstFrame.index,{timeout:1200});
+  const nextFrame=await sprite.evaluate(el=>({
+    index:Number(el.dataset.spriteFrame),
+    pixels:el.toDataURL("image/png")
+  }));
+  assert.notEqual(nextFrame.index,firstFrame.index);
+  assert.notEqual(nextFrame.pixels,firstFrame.pixels);
+
+
   const voices=await page.evaluate(()=>window.__voiceCalls||[]);
   assert.equal(voices.length,0,"Temporary family voice mute must remain active");
   assert.ok((await page.locator("#score").textContent()).trim()!=="150",

@@ -101,3 +101,13 @@ Réalisation sur `feature/haptic-sonar-combo-bonus-050`, sans toucher à main :
 - [Tests Node + Chrome réussis](https://github.com/greenpower2669/Block-Boost/actions/runs/38970378913), [Compilation Android réussie](https://github.com/greenpower2669/Block-Boost/actions/runs/38970267717).
 - [APK directe sans ZIP](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-haptic-0.5.0/temp/android/BlockBoost-0.5.0-haptic-debug.apk) (57 692 octets, SHA-256 `94f44de8f569841a5ce91061dda22cb73b6cca0e6d035c7c5ed1213c598ee790`). À essayer réellement sur le Samsung pour calibrer force, cadence, autonomie et arrêt.
 - Spécification `docs/haptic-sonar-050.md`. Aucun merge main ni publication Play.
+
+## 17 octobre 2026 — Lumières 0.6.0, voix suspendues
+
+Fab demande avec l'avis de son fils de mettre **toutes les voix en pause**, sans supprimer les 388 phrases ni les effets sonores. Le moteur Feedback.speak est neutralisé, l'option de voix est grisée.
+
+Le module src/solve-preview.mjs prédit uniquement des effacements réels et légaux (rangées/colonnes, union des cases, sans double compter les intersections). La grille illumine **avant la pose** les cases concernées en arc-en-ciel, puis anime les blocs effectivement effacés. Les effets deviennent plus intenses selon nombre de blocs/lignes, combo actif, vitesse et EXTRA. Six niveaux de vibration, motifs enrichis pour doubles lignes et cascades, animation réduite respectée. Scores et rotation inchangés.
+
+5 ZIP Sonniss GDC 2026 repérés en Release privée Djipie « Sons » (environ 6,9 Go). Références légères dans Djipie/RESSOURCES_PARTAGEES/AUDIO/RELEASES/INDEX.md (branche proposition). Licence : utilisation en jeux finis autorisée, pas de redistribution brute ni entraînement IA. Aucun fichier ZIP/son réintégré en 0.6.0.
+
+CI Node+Chrome run 39026234986 verte, Android 39026190674 vert ; APK debug indépendante 61 018 octets SHA256 09b53fce4a63379e4a5cf0d6369c22f7c926b61897838508fb2efe390fa5f494 : https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-rainbow-0.6.0/temp/android/BlockBoost-0.6.0-rainbow-debug.apk. Aucun merge main ni validation sensorielle Samsung. Voir docs/rainbow-solves-silent-060.md.

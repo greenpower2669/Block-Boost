@@ -53,7 +53,7 @@ public final class HapticWaveEngine {
 
     public void guide(int requestedLevel) {
         if(closed)return;
-        final int desired=Math.max(0,Math.min(4,requestedLevel));
+        final int desired=Math.max(0,Math.min(6,requestedLevel));
         worker.post(() -> {
             if(closed)return;
             heartbeatAt=SystemClock.uptimeMillis();
@@ -69,10 +69,11 @@ public final class HapticWaveEngine {
             if(level==desired)return; // heartbeat: no restarting waveform
             cancelNow();
             level=desired;
-            // Increasing intensity AND frequency: 45→180 / 65→140ms pulses.
-            int[] amplitudes={0,48,90,140,190};
-            long[] pulses={0,55,65,100,140};
-            long[] rests={0,300,185,110,55};
+            // Six bounded levels: richer line+combo rewards can intensify final approach.
+            // Caps protect comfort and battery; hardware may not control amplitude.
+            int[] amplitudes={0,42,76,105,139,172,202};
+            long[] pulses={0,45,55,65,80,100,125};
+            long[] rests={0,310,230,175,120,82,65};
             int amp=vibrator.hasAmplitudeControl()?amplitudes[level]:VibrationEffect.DEFAULT_AMPLITUDE;
             try{
                 vibrator.vibrate(VibrationEffect.createWaveform(
@@ -89,6 +90,18 @@ public final class HapticWaveEngine {
             long[] durations;
             int[] volumes;
             switch(which) {
+                case "comboCascade":
+                    durations=new long[]{0,75,40,85,40,110,40,140};
+                    volumes=new int[]{0,125,0,150,0,175,0,205};break;
+                case "comboDouble":
+                    durations=new long[]{0,65,48,85,48,120};
+                    volumes=new int[]{0,120,0,160,0,192};break;
+                case "lineCascade":
+                    durations=new long[]{0,70,40,95,40,130};
+                    volumes=new int[]{0,120,0,155,0,195};break;
+                case "lineDouble":
+                    durations=new long[]{0,65,55,125};
+                    volumes=new int[]{0,125,0,195};break;
                 case "comboBonus": durations=new long[]{0,75,45,85,45,115};volumes=new int[]{0,130,0,165,0,205};break;
                 case "combo": durations=new long[]{0,65,65,85,55,95};volumes=new int[]{0,110,0,145,0,190};break;
                 case "lineBonus": durations=new long[]{0,65,55,115};volumes=new int[]{0,130,0,190};break;

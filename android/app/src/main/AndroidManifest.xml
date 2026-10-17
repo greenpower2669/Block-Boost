@@ -5,7 +5,7 @@
         android:allowBackup="true"
         android:fullBackupContent="false"
         android:usesCleartextTraffic="false"
-        android:label="Block Boost Haptique"
+        android:label="Block Boost Lumières"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher"
         android:theme="@style/Theme.BlockBoost"

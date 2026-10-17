@@ -60,3 +60,9 @@ Sur 0.4.0, le pont `AndroidBridge.haptic` n'exposait que `grab / valid / rotate 
 Correction 0.5.0 : ajout `HapticWaveEngine` (Android VibrationEffect, permission VIBRATE), `rewardHaptic` (motifs selon gain réel), `clearingTargets` + `proximityStrength` pour guidance selon positions qui complètent effectivement une ligne. Arrêt immédiat si état non guidable, plus garde-fou d'arrêt 750 ms sans message. Les tests JavaScript couvrent positions légales, doubles effacements, rotation, scores/bonus et appel natif de récompense.
 
 Preuves : [Chrome / Node vert](https://github.com/greenpower2669/Block-Boost/actions/runs/38970378913), [APK Android vert](https://github.com/greenpower2669/Block-Boost/actions/runs/38970267717), binaire 57 692 octets, SHA-256 `94f44de8f569841a5ce91061dda22cb73b6cca0e6d035c7c5ed1213c598ee790`, [APK directe](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-haptic-0.5.0/temp/android/BlockBoost-0.5.0-haptic-debug.apk). L'app Android cible est `fr.greenpower.blockboost.hapticlab`, indépendante des anciennes. La validation sensorielle Samsung reste manuelle.
+
+## 17 octobre 2026 — Test prévisualisation 0.6.0
+
+Le premier test Chrome attendait huit cases brillantes mais en observait zéro. Le diagnostic a établi que page.reload déclenchait pagehide, qui écrasait la grille artificielle du test par l'ancienne sauvegarde. Correction du test : initialisation de la grille via page.addInitScript après pagehide et avant le chargement du jeu. Test réellement exécuté sur prévisualisation huit cases avant lâcher, puis animation des huit cases après pose, et devenu vert.
+
+Test Node/Chrome 39026234986 et APK Android 39026190674 verts, taille 61 018 octets, SHA256 09b53fce4a63379e4a5cf0d6369c22f7c926b61897838508fb2efe390fa5f494. Aucun faux effacement visuel si pose invalide. Voix suspendues volontairement ; aucune archive Soniss copiée, uniquement lien de Release. Validation Samsung manuelle toujours à faire.

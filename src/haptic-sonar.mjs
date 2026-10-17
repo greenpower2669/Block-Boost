@@ -44,7 +44,11 @@ export function rewardHaptic(event,bonus) {
   const speed=Number.isFinite(bonus?.speedMultiplier)?bonus.speedMultiplier:0;
   const extra=Number.isFinite(event.noRotationBonus)&&event.noRotationBonus>0;
   const clearing=event.lines>0;
+  if(streak&&event.lines>=3)return "comboCascade";
+  if(streak&&event.lines>=2)return "comboDouble";
   if(streak)return speed>=2||extra?"comboBonus":"combo";
+  if(clearing&&event.lines>=3)return "lineCascade";
+  if(clearing&&event.lines>=2)return "lineDouble";
   if(clearing)return speed>=2||extra?"lineBonus":"line";
   if(speed>=3&&extra)return "speedExtra";
   if(speed>=3)return "speedHigh";

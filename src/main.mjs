@@ -3,7 +3,8 @@ import {loadSave,writeSave,checkpoint,finish} from "./storage.mjs";
 import {Feedback,MASCOTS} from "./feedback.mjs";
 import {evaluateBonus,speedTier} from "./bonus.mjs";
 import {PlacementCueGate} from "./placement-cues.mjs";
-import {clearingTargets,proximityStrength,rewardHaptic} from "./haptic-sonar.mjs";
+import {clearingTargets,rewardHaptic} from "./haptic-sonar.mjs";
+import {evaluateSolvePreview,enrichedGuidance} from "./solve-preview.mjs";
 
 const $=id=>document.getElementById(id);
 const boardEl=$("board"),trayEl=$("tray"),ghostEl=$("drag-ghost"),surface=$("surface");
@@ -14,11 +15,49 @@ let selectedAt=null,selectedTurns=0;
 const cueGate=new PlacementCueGate(540);
 let targetPositions=[];
 let currentGuidance=0;
+let lastSpectrumKey="";
+function resetSpectrum(){
+  lastSpectrumKey="";
+  boardEl.classList.remove("rainbow-board");
+  $("solve-signal").textContent="";
+  for(const cell of boardEl.children){
+    cell.classList.remove("will-solve","just-solved");
+    cell.style.removeProperty("--rainbow-index");
+    cell.style.removeProperty("--energy");
+    cell.style.removeProperty("--energy-blur");
+    cell.style.removeProperty("--energy-alpha");
+  }
+}
+function previewRainbow(x,y,valid){
+  if(!drag || !drag.moved || !valid){resetSpectrum();return;}
+  const piece=game.pieces[drag.index];
+  const reward=evaluateBonus(piece.coords.length,elapsed(),selectedTurns);
+  const result=evaluateSolvePreview(game.board,piece.coords,x,y,game.combo,reward);
+  const key=x+":"+y+":"+result.lines+":"+result.intensity;
+  if(lastSpectrumKey===key)return;
+  resetSpectrum();
+  if(!result.lines)return;
+  lastSpectrumKey=key;
+  boardEl.classList.add("rainbow-board");
+  for(let i=0;i<result.cells.length;i++){
+    const [r,c]=result.cells[i],node=boardEl.children[r*SIZE+c];
+    if(!node)continue;
+    node.classList.add("will-solve");
+    node.style.setProperty("--rainbow-index",String((i*53+r*17+c*11)%360)+"deg");
+    node.style.setProperty("--energy",String(result.intensity));
+    node.style.setProperty("--energy-blur",(4+result.intensity*3)+"px");
+    node.style.setProperty("--energy-alpha",Math.min(.91,.36+result.intensity*.11).toFixed(2));
+  }
+  const kind=game.combo>0?"COMBO EN VUE":"EFFACEMENT POSSIBLE";
+  $("solve-signal").textContent="🌈 "+kind+" · "+result.lines+
+    (result.lines===1?" LIGNE":" LIGNES")+" · "+result.blocks+" BLOCS";
+}
 function clearSonar(){
   targetPositions=[];currentGuidance=0;
   feedback.stopGuidance();
   const status=$("haptic-sonar");
   if(status)status.textContent="";
+  resetSpectrum();
 }
 function computeSonar(index){
   const piece=game.pieces[index];
@@ -26,8 +65,10 @@ function computeSonar(index){
   currentGuidance=0;
 }
 function updateSonar(x,y){
+  const currentPiece=drag?.index!==undefined?game.pieces[drag.index]:null;
+  const reward=currentPiece?evaluateBonus(currentPiece.coords.length,elapsed(),selectedTurns):null;
   const level=drag&&drag.moved&&targetPositions.length&&save.settings.hapticGuidance!==false ?
-    proximityStrength(targetPositions,x,y):0;
+    enrichedGuidance(targetPositions,x,y,game.combo,reward):0;
   currentGuidance=level;
   feedback.guideHaptic(level);
   const status=$("haptic-sonar");
@@ -78,6 +119,8 @@ function showMascot(){
   $("mascot-choice").value=save.mascot;
   $("voice-setting").checked=save.settings.voice;$("fx-setting").checked=save.settings.fx;
   $("motion-setting").checked=save.settings.reducedMotion;
+  $("voice-setting").checked=false;
+  $("voice-setting").disabled=true;
   $("haptics-setting").checked=save.settings.haptics!==false;
   $("guidance-setting").checked=save.settings.hapticGuidance!==false;
   document.body.classList.toggle("reduce-motion",save.settings.reducedMotion);
@@ -170,6 +213,7 @@ function drawGhost(){
   ghostEl.replaceChildren(wrap);
   ghostEl.style.left=m.left+"px";ghostEl.style.top=m.top+"px";
   ghostEl.hidden=false;preview(m.x,m.y,m.valid);
+  previewRainbow(m.x,m.y,m.valid);
   updateSonar(m.x,m.y);
   if(drag.moved || drag.rotatedCue) {
     const cue=cueGate.update(m.valid,performance.now(),true,Boolean(drag.rotatedCue));
@@ -250,9 +294,21 @@ function flashClear(cleared,lines,combo,gained,bonus){
   $("combo-flash").textContent=text;
   $("combo-flash").classList.remove("active");void $("combo-flash").offsetWidth;
   $("combo-flash").classList.add("active");
+  const intensity=Math.min(5,1+Math.floor(Math.max(0,cleared.length-8)/7)+
+    (combo>=2?1:0)+(bonus.speedMultiplier>=3?1:0)+(bonus.noRotationBonus>0?1:0));
+  for(let i=0;i<cleared.length;i++){
+    const [r,c]=cleared[i],node=boardEl.children[r*SIZE+c];
+    if(!node)continue;
+    node.classList.add("just-solved");
+    node.style.setProperty("--rainbow-index",String((i*49+c*23+r*15)%360)+"deg");
+    node.style.setProperty("--energy",String(intensity));
+    node.style.setProperty("--energy-blur",(4+intensity*3)+"px");
+    node.style.setProperty("--energy-alpha",Math.min(.94,.42+intensity*.11).toFixed(2));
+  }
   const frag=document.createDocumentFragment(),rect=boardEl.getBoundingClientRect();
   if(!save.settings.reducedMotion){
-    for(let i=0;i<Math.min(35,11+lines*9);i++){
+    for(let i=0;i<Math.min(68,12+cleared.length*2+combo*3+
+        (bonus.speedMultiplier>=3?9:0)+(bonus.noRotationBonus>0?6:0));i++){
       const node=document.createElement("div"),center=cleared[Math.floor(Math.random()*cleared.length)]||[3,3];
       node.className="spark";
       node.style.setProperty("--px",rect.left+(center[1]+.5)*rect.width/8+"px");
@@ -267,7 +323,10 @@ function flashClear(cleared,lines,combo,gained,bonus){
   }
   clearTimeout(flashTimer);clearTimeout(confettiTimer);
   flashTimer=setTimeout(()=>$("combo-flash").classList.remove("active"),1650);
-  confettiTimer=setTimeout(()=>$("sparkles").replaceChildren(),1400);
+  confettiTimer=setTimeout(()=>{
+    $("sparkles").replaceChildren();
+    for(const node of boardEl.children)node.classList.remove("just-solved");
+  },1550);
 }
 function endGame(newRecord){
   if(finishing)return;
@@ -285,7 +344,7 @@ function restart(confirmActive=false){
   if(confirmActive&&!game.gameOver&&game.moves>0&&!window.confirm("Recommencer cette partie ? Le record restera enregistré."))return;
   feedback.stop();clearSonar();finishing=false;
   if($("end-dialog").open)$("end-dialog").close();
-  game=newGame();selected=null;selectedAt=null;selectedTurns=0;resetDrag();
+  game=newGame();selected=null;selectedAt=null;selectedTurns=0;resetDrag();resetSpectrum();
   $("bonus-earned").textContent="";updateBonusLive();
   runStartBest=save.bestScore;persist();paint();
   feedback.onCaption("Choisis une pièce et amuse-toi !");

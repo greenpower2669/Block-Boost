@@ -92,7 +92,7 @@ export class Feedback {
     if(pattern!==undefined)try{globalThis.navigator?.vibrate?.(pattern);}catch{}
   }
   guideHaptic(level) {
-    const desired=this.getSettings().haptics===false?0:Math.max(0,Math.min(4,level|0));
+    const desired=this.getSettings().haptics===false?0:Math.max(0,Math.min(6,level|0));
     const now=Date.now();
     if(desired===this.guidanceLevel && now-(this.guidanceLast||0)<220)return;
     this.guidanceLevel=desired;this.guidanceLast=now;
@@ -123,11 +123,15 @@ export class Feedback {
       drop:[35],extra:[55,70,90],speed:[50,60,80],
       speedHigh:[65,55,115],speedExtra:[45,45,65,45,95],
       line:[70,55,100],lineBonus:[75,45,125],
-      combo:[65,50,80,50,105],comboBonus:[70,40,90,40,130]
+      combo:[65,50,80,50,105],comboBonus:[70,40,90,40,130],
+      lineDouble:[65,55,125],lineCascade:[65,45,95,45,135],
+      comboDouble:[65,50,85,50,120],comboCascade:[70,40,85,40,110,40,140]
     };
     try{globalThis.navigator?.vibrate?.(map[kind]||0);}catch{}
   }
   speak(kind,priority=1,force=false) {
+    // Voice pause requested by Fab and his son; visual feedback + FX remain active.
+    return;
     const mascot={...(MASCOTS[this.getMascot()]||MASCOTS.pompom),id:this.getMascot()};
     const now=Date.now();
     const currentlySpeaking=Boolean(this.currentSpeech?.speaking) ||

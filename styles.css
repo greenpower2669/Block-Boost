@@ -585,3 +585,25 @@ body.reduce-motion .festival-bubble::after{display:none!important}
     conic-gradient(from var(--rainbow-index,0deg),#9fefff,#d6a8fc,
        #fff2b5,#a2f5df,#9fefff);
 }
+
+
+/* 0.11 — CROSS ×10 is the GRAND FINALE: mirror ball + floor lamps + bubbles.
+   All elements share the same full-screen fixed FX layer; bonus text wins. */
+.festival-stage.festival-cross::before{
+  background:radial-gradient(ellipse at 50% 69%,#edb4ff92 0%,#89eaf857 28%,
+    #b1a8ff23 48%,transparent 73%);
+  opacity:.31;
+}
+.festival-cross .festival-bonus-front{
+  top:clamp(235px,43dvh,530px);
+  z-index:95;
+}
+.festival-cross .festival-bonus-title{
+  color:#fff2b5;
+  text-shadow:0 0 14px #82faff,0 0 20px #e9a5ff,0 3px 5px #070831;
+}
+.festival-cross .festival-disco-ball{z-index:15}
+.festival-cross .festival-bubble{z-index:11;opacity:0}
+.festival-cross .bubble-floor-spot{opacity:.31}
+.festival-cross .festival-ray{opacity:.30}
+.festival-cross .concert-spot{opacity:.25}

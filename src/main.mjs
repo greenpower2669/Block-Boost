@@ -36,11 +36,17 @@ function previewRainbow(x,y,valid){
   const piece=game.pieces[drag.index];
   const reward=evaluateBonus(piece.coords.length,elapsed(),selectedTurns);
   const result=evaluateSolvePreview(game.board,piece.coords,x,y,game.combo,reward);
-  const key=x+":"+y+":"+result.lines+":"+result.intensity;
+  const cross=result.rows.length>0&&result.columns.length>0;
+  const multiplier=cross?10:1;
+  const earned=piece.coords.length*5+
+    80*result.lines*result.lines*(game.combo+1)*multiplier+
+    reward.speedBonus+reward.noRotationBonus;
+  const preview=previewTheme(result.lines,game.combo+1,reward,{cross,gained:earned});
+  const key=x+":"+y+":"+result.lines+":"+result.intensity+":"+preview;
   if(lastSpectrumKey===key)return;
   resetSpectrum();
   if(!result.lines)return;
-  festival.preview(previewTheme(result.lines,game.combo,reward));
+  festival.preview(preview);
   lastSpectrumKey=key;
   boardEl.classList.add("rainbow-board");
   for(let i=0;i<result.cells.length;i++){

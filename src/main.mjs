@@ -126,8 +126,6 @@ function showMascot(){
   $("mascot-choice").value=save.mascot;
   $("voice-setting").checked=save.settings.voice;$("fx-setting").checked=save.settings.fx;
   $("motion-setting").checked=save.settings.reducedMotion;
-  $("voice-setting").checked=false;
-  $("voice-setting").disabled=true;
   $("haptics-setting").checked=save.settings.haptics!==false;
   $("guidance-setting").checked=save.settings.hapticGuidance!==false;
   document.body.classList.toggle("reduce-motion",save.settings.reducedMotion);
@@ -427,7 +425,7 @@ for(const [id,key] of [["voice-setting","voice"],["fx-setting","fx"],["motion-se
   $(id).addEventListener("change",e=>{
     save={...save,settings:{...save.settings,[key]:e.target.checked}};
     persistSettings();showMascot();
-    if(key==="voice"&&!e.target.checked)feedback.stop();
+    if(key==="voice"&&!e.target.checked)feedback.stopVoice?.();
     if((key==="haptics"||key==="hapticGuidance")&&!e.target.checked)feedback.stopGuidance();
   });
 }

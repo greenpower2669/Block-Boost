@@ -82,10 +82,14 @@ export class Feedback {
       if(!player) {
         player=new Audio(uri);
         player.preload="auto";
-        player.volume=key==="disco"?.28:key==="combo"?.24:.19;
         if(player.canPlayType && player.canPlayType("audio/ogg")==="")return false;
         this.kenneyPlayers.set(key,player);
       }
+      // Normalize overlapping FX: line + speed + EXTRA + festival can coincide.
+      const simultaneous=[...this.kenneyPlayers.values()]
+        .filter(p=>p!==player&&!p.paused).length;
+      player.volume=(key==="disco"?.26:key==="combo"?.22:.18)/
+        (1+simultaneous*.36);
       player.pause();
       player.currentTime=0;
       const promise=player.play();

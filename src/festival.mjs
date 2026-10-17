@@ -31,19 +31,18 @@ export function chooseFestival(event,bonus={},previous="") {
   let theme;
   if(jackpot)theme=previous==="disco"?"galaxy":"disco";
   else if(combo>=3)theme="galaxy";
-  else if(lines>=2)theme="fireworks";
-  else if(speed>=3)theme="electric";
-  else if(extra)theme="crystal";
+  else if(lines>=2)theme=previous==="fireworks"?"electric":"fireworks";
+  else if(speed>=3)theme=previous==="electric"?"crystal":"electric";
+  else if(extra)theme=previous==="crystal"?"forest":"crystal";
   else theme=previous==="forest"?"crystal":"forest";
   const boosts=(lines>=2?1:0)+(clearingCells>=15?1:0)+
     (combo>=2?1:0)+(speed>=3?1:0)+(extra?1:0)+(gained>=500?1:0);
   const level=Math.min(5,Math.max(1,1+Math.floor(boosts*.85)));
-  const reduced=0; // used only at render time
   return {
     theme,level,score:gained,lines,combo,
     jackpot:theme==="disco"||theme==="galaxy",
     durationMs:theme==="disco"?3000:theme==="galaxy"?2700:1900+level*110,
-    particles:Math.min(58,10+6*level+(theme==="disco"?16:0)+reduced)
+    particles:Math.min(58,10+6*level+(theme==="disco"?16:0))
   };
 }
 

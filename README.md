@@ -85,3 +85,9 @@ Les bonus de vitesse, EXTRA sans rotation, lignes et combos déclenchent désorm
 Option « Guidage vibratoire progressif vers les lignes et combos » indépendante de l'option vibrations générales. Les bonus et les 388 phrases de 0.4.0 sont conservés.
 
 **[APK 0.5.0 Android à télécharger directement sans ZIP](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-haptic-0.5.0/temp/android/BlockBoost-0.5.0-haptic-debug.apk)**, 57 692 octets, SHA-256 `94f44de8f569841a5ce91061dda22cb73b6cca0e6d035c7c5ed1213c598ee790`. Laboratoire `fr.greenpower.blockboost.hapticlab` avec sauvegardes séparées ; [tests Chrome/Node](https://github.com/greenpower2669/Block-Boost/actions/runs/38970378913) et [Android](https://github.com/greenpower2669/Block-Boost/actions/runs/38970267717) verts. **Test réel Samsung non encore effectué.** Voir [spécification haptique 0.5.0](docs/haptic-sonar-050.md). Aucune fusion sur main.
+
+## 🌈 Block Boost Lumières 0.6.0 (17 octobre 2026)
+
+Voix des mascottes **en pause** ; sons et haptiques conservés. Grille arc-en-ciel AVANT la pose lorsque la pièce terminerait réellement des lignes ou colonnes, intensité selon cases/lignes/combos/bonus, et animations après effacement. Six niveaux de vibration et motifs de cascades, respect animations réduites.
+
+[APK Android 0.6.0 directe sans ZIP](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-rainbow-0.6.0/temp/android/BlockBoost-0.6.0-rainbow-debug.apk) — 61 018 octets, SHA256 09b53fce4a63379e4a5cf0d6369c22f7c926b61897838508fb2efe390fa5f494. CI Node/Chrome 39026234986 et Android 39026190674 **vertes**. App labo fr.greenpower.blockboost.rainbowlab, scores indépendants, aucune validation humaine Android. 5 ZIP Sonniss référencés sur [Djipie Release Sons](https://github.com/greenpower2669/Djipie/releases/tag/Sons), sans extraction ni redistribution. Voir [contrat 0.6](docs/rainbow-solves-silent-060.md).

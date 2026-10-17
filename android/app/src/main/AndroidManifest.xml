@@ -5,7 +5,7 @@
         android:allowBackup="true"
         android:fullBackupContent="false"
         android:usesCleartextTraffic="false"
-        android:label="Block Boost Disco"
+        android:label="Block Boost Concert"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher"
         android:theme="@style/Theme.BlockBoost"

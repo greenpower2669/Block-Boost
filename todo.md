@@ -163,3 +163,16 @@ APK brute : https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/bl
 - [x] Compiler APK [CI 39057514186](https://github.com/greenpower2669/Block-Boost/actions/runs/39057514186) verte ; [APK directe](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-concert-0.9.0/temp/android/BlockBoost-0.9.0-concert-debug.apk), 216071 octets, SHA `bfc9fe705b2e75c9e74709da423d61c498750ed8c1720742516761eca26db4a9`.
 - [ ] Vérifier sur le Samsung la hauteur de la barre système, accessibilité réelle du bouton Nouvelle partie, haptique et volume des sons.
 - [ ] Ajuster les niveaux à l'oreille avec Fab et son fils ; aucune fusion main/Play sans validation.
+
+## 17/10/2026 — Bulles / croisement / audio sous licence
+
+- [x] Croisement ligne-colonne simultané ×10 sur points d'effacement uniquement, sans toucher vitesse/EXTRA ; intersection toujours unique.
+- [x] Deux lignes ou colonnes → 5 projecteurs montant du sol, bulles translucides qui grimpent et éclatent, points lisibles, son création + pop.
+- [x] Réserver `DSGNBass Jump Start Drop 3` à la boule à facettes temporairement, jusqu'à choix musical.
+- [x] Route distincte pour 11 sons Sonniss de Djipie privé, avec 1/2/3 poses gagnantes, trio, prise, pose, défaite et bulles.
+- [x] Case voix OFF par défaut, interjections vocales enregistrées de streak 2/3 seulement si ON.
+- [x] Aucun WAV/OGG Sonniss dans le dépôt PUBLIC ; branche et pipeline d'APK sous Djipie privé, SHA contrôlés, binaires encapsulés dans le jeu fini.
+- [x] Tests Node et Chrome, APK fallback public verts : [39067278200](https://github.com/greenpower2669/Block-Boost/actions/runs/39067278200), [39067278164](https://github.com/greenpower2669/Block-Boost/actions/runs/39067278164).
+- [ ] Constater le résultat et le SHA du build privé Djipie avant d'offrir un lien de SON APK ; si échoue, corriger sans prétendre son terminé.
+- [ ] Vérifier sur Samsung les sons vrais, le rythme, le bonus ×10, les bulles et la fin de partie.
+- [ ] Aucun merge main, publication Google Play ou release stable sans validation.

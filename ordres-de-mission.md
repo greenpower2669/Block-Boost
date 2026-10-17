@@ -82,3 +82,11 @@ Fab confirme « Ok, go, les son djipie sont prêt. Sur ton autre dépôt », apr
 Tests unitaires et navigateur y compris jackpot/ball, trace documentée et APK 0.7 expérimentale sans remplacer la précédente. Ne pas merger main, ne pas faire de release ni signer Play sans validation. Voir `docs/festival-themes-djipie-audio-070.md`.
 
 **Trace de livraison** : branche `feature/festival-animation-djipie-audio-070` avec PR en brouillon, build Android final 39036754874 et validation 39036754891 réussis ; APK directe [0.7.0](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-festival-0.7.0/temp/android/BlockBoost-0.7.0-festival-debug.apk) de 132 604 octets et SHA256 `a87766eff2accb67ce139545563bb681c4c335c6eb068952a487924a04b13be5`. CI a retrouvé les dépendances Maven après retentatives, sans downgrade ni modification des règles du jeu. Ne pas fusionner `main` ni publier officiellement sans validation.
+
+## 17/10/2026 — Accord « Ok gogogo » : correction boule disco / voix
+
+Après l'audit de la 0.7, Fab approuve explicitement les trois changements précédemment discutés : **checkbox voix OFF par défaut mais réactivable**, **supprimer le rectangle visible des FX en les étendant au-delà de l'écran**, et **rotation unique de boule à facettes**, de préférence sprite animé représentant une sphère stable.
+
+Branche `feature/voice-toggle-disco-sprites-080` : implémentation d'une planche Canvas de 20 frames précalculées (projection des miroirs sphériques, axe yaw vertical unique), calque FX fixed reparenté body et halos sans bord, commande vocale activable à volonté mais silencieuse à l'installation. Modes réduits, sons Kenney, haptique et gestuelle existants conservés.
+
+Preuves finales : Node/Chrome [39040170369](https://github.com/greenpower2669/Block-Boost/actions/runs/39040170369) success, Android [39040170375](https://github.com/greenpower2669/Block-Boost/actions/runs/39040170375) success, [APK brute 0.8.0](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-disco-0.8.0/temp/android/BlockBoost-0.8.0-disco-debug.apk), 136 226 octets, SHA-256 `2fb995699d1400f9c3081301e92732714e2dbb53a7d33eed6e839f8b0cc8850b`. Pas de test sensoriel Samsung, fusion main ni publication officielle. Documentation `docs/voice-toggle-disco-sprites-080.md`.

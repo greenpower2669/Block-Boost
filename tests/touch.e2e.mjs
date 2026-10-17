@@ -102,6 +102,15 @@ try{
   const dragCDP=await context.newCDPSession(page);
   await dragCDP.send("Input.dispatchTouchEvent",{type:"touchStart",touchPoints:[origin]});
   await dragCDP.send("Input.dispatchTouchEvent",{type:"touchMove",touchPoints:[target]});
+  const inspection=await page.evaluate(()=>({
+    selected:document.querySelector(".piece-slot.selected")?.dataset.piece,
+    previewGood:document.querySelectorAll(".preview-good").length,
+    previewBad:document.querySelectorAll(".preview-bad").length,
+    status:document.querySelector("#solve-signal")?.textContent,
+    filled:document.querySelectorAll(".cell.filled").length,
+    bonus:document.querySelector("#bonus-live")?.textContent
+  }));
+  console.log("Rainbow touch inspection",JSON.stringify({inspection,b2,s2,target,origin}));
   assert.equal(await page.locator(".cell.will-solve").count(),8,
     "All eight truly completed cells should glow in rainbow before placement");
   assert.match(await page.locator("#solve-signal").textContent(),/1 LIGNE.*8 BLOCS/);

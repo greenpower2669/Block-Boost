@@ -75,6 +75,41 @@ try{
   assert.equal(restored,scoreAfterExtra,"Speed and no-rotation points must persist after reload");
   const record=Number((await page.locator("#record").textContent()).replace(/\s/g,""));
   assert.equal(record,scoreAfterExtra);
+  // Synthetic almost-complete line: the renderer must highlight exactly the
+  // eight blocks that a real legal move will clear, never an imaginary line.
+  await page.evaluate(()=>{
+    const key="block-boost.local.v1",saved=JSON.parse(localStorage.getItem(key));
+    const board=Array.from({length:8},()=>Array(8).fill(null));
+    for(let x=0;x<7;x++)board[0][x]="mint";
+    saved.progress={runStartBest:0,game:{
+      board,version:1,score:0,combo:1,bestCombo:1,moves:5,gameOver:false,
+      pieces:[
+        {id:0,coords:[[0,0]],color:"rose",used:false},
+        {id:1,coords:[[0,0]],color:"sky",used:false},
+        {id:2,coords:[[0,0]],color:"rose",used:false}
+      ]
+    }};
+    localStorage.setItem(key,JSON.stringify(saved));
+  });
+  await page.reload({waitUntil:"networkidle"});
+  assert.equal(await page.locator(".cell.will-solve").count(),0);
+  const b2=await page.locator("#board").boundingBox();
+  const s2=await page.locator(".piece-slot").first().boundingBox();
+  const cellSize=(b2.width-14-7*3)/8;
+  const origin={id:3,x:s2.x+s2.width/2,y:s2.y+s2.height/2};
+  const target={id:3,x:b2.x+7+7*(cellSize+3)+cellSize*.5,
+    y:b2.y+7+1.65*cellSize};
+  const dragCDP=await context.newCDPSession(page);
+  await dragCDP.send("Input.dispatchTouchEvent",{type:"touchStart",touchPoints:[origin]});
+  await dragCDP.send("Input.dispatchTouchEvent",{type:"touchMove",touchPoints:[target]});
+  assert.equal(await page.locator(".cell.will-solve").count(),8,
+    "All eight truly completed cells should glow in rainbow before placement");
+  assert.match(await page.locator("#solve-signal").textContent(),/1 LIGNE.*8 BLOCS/);
+  await dragCDP.send("Input.dispatchTouchEvent",{type:"touchEnd",touchPoints:[]});
+  assert.equal(await page.locator(".cell.will-solve").count(),0,
+    "Anticipation is cleared immediately on release");
+  assert.equal(await page.locator(".cell.just-solved").count(),8,
+    "Actual cleared cells are highlighted after the successful move");
   assert.deepEqual(errors,[],"Browser should not report uncaught errors");
   console.log("✅ Tactile à deux doigts, bonus visible, EXTRA absent après rotation et restauration locale : OK");
 }finally{

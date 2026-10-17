@@ -49,13 +49,28 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.13'
+          cache-read-only: false
 
       - name: Vérifier les tests du moteur
         run: node --test tests/*.test.mjs
 
-      - name: Compiler et signer avec la clé Android debug
+      - name: Compiler et signer avec la clé Android debug (retentatives réseau Gradle)
         working-directory: android
-        run: gradle --no-daemon --stacktrace :app:assembleDebug
+        run: |
+          set -euo pipefail
+          for attempt in 1 2 3; do
+            echo "Gradle attempt $attempt / 3"
+            if gradle --no-daemon --stacktrace :app:assembleDebug; then
+              echo "Gradle compilation successful"
+              exit 0
+            fi
+            if [ "$attempt" -lt 3 ]; then
+              echo "Dependencies temporarily unavailable; retrying after delay"
+              sleep 25
+            fi
+          done
+          echo "Gradle compilation failed after 3 attempts" >&2
+          exit 1
 
       - name: Vérifier le contenu APK et le nommer
         run: |

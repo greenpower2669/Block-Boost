@@ -9,9 +9,9 @@ function sample(lines=1,combo=1,gained=120){
    clearedCells:Array.from({length:lines*8},(_,i)=>[Math.floor(i/8),i%8]),
    noRotationBonus:0};
 }
-test("six named families are available; small clear is not always the same rainbow",()=>{
+test("seven named families are available; small clear is not always the same rainbow",()=>{
  assert.deepEqual(Object.keys(FESTIVAL_THEMES).sort(),
-   ["forest","crystal","electric","fireworks","galaxy","disco"].sort());
+   ["forest","crystal","electric","fireworks","galaxy","disco","bubbles"].sort());
  assert.equal(chooseFestival(sample(1,1,80),{speedMultiplier:0,noRotationBonus:0}).theme,"forest");
  assert.equal(chooseFestival(sample(1,1,80),{speedMultiplier:0,noRotationBonus:0},"forest").theme,"crystal");
  assert.equal(chooseFestival(sample(1,1,80),bonus).theme,"electric");

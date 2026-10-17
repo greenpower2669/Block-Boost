@@ -66,3 +66,11 @@ Preuves : [Chrome / Node vert](https://github.com/greenpower2669/Block-Boost/act
 Le premier test Chrome attendait huit cases brillantes mais en observait zéro. Le diagnostic a établi que page.reload déclenchait pagehide, qui écrasait la grille artificielle du test par l'ancienne sauvegarde. Correction du test : initialisation de la grille via page.addInitScript après pagehide et avant le chargement du jeu. Test réellement exécuté sur prévisualisation huit cases avant lâcher, puis animation des huit cases après pose, et devenu vert.
 
 Test Node/Chrome 39026234986 et APK Android 39026190674 verts, taille 61 018 octets, SHA256 09b53fce4a63379e4a5cf0d6369c22f7c926b61897838508fb2efe390fa5f494. Aucun faux effacement visuel si pose invalide. Voix suspendues volontairement ; aucune archive Soniss copiée, uniquement lien de Release. Validation Samsung manuelle toujours à faire.
+
+## 17/10/2026 — Audio Djipie + festivals 0.7
+
+Source commune identifiée : branche Djipie `feature/bibliotheque-audio-inventaire-v1`, 447 références dont 100 Kenney et 347 Sonniss, analyses auditives individuelles à faire. Les cinq archives Sonniss ne sont pas redistribuées ; nous n'avons copié que 12 Kenney CC0 dans un export textuel indépendant à partir du ZIP d'origine SHA `f2193d072726d6758a5f7871b2dcc54dcce0d5c35c6f0a62f92549b327c81232`, workflow réussi `39035758824`. Copie dans Block Boost uniquement sur branche 0.7, pas dans la mémoire.
+
+Première série de tests Festival rouge : un scénario de ligne simple simulée portait `noRotationBonus:5` sans l'annoncer explicitement, ce qui sélectionnait normalement la famille Cristal au lieu de Forêt. Corrigé **dans le scénario de test**, pas dans les règles de sélection : bonus EXTRA vaut désormais 0 dans le scénario neutre. Après correction, moteur et Chrome verts, y compris double ligne avec combo et sphère disco rendue.
+
+Limiter à 58 particules et 3 s, pointer-events:none, réduire les animations si besoin. Sons réels OGG via WebView audio HTML, volume atténué en cas de superposition, fallback oscillateurs. Voix suspendues. Aucun test sensoriel Samsung ni fusion de branches.

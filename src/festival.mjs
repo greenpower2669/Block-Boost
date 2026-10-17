@@ -3,6 +3,8 @@
  * Lightweight DOM/CSS spectacles. Every scene is bounded and non-interactive.
  * Voices remain disabled as requested; FX use Kenney CC0 assets.
  */
+import {createDiscoSpriteSheet,drawDiscoSpriteFrame} from "./disco-sprites.mjs";
+
 export const FESTIVAL_THEMES=Object.freeze({
  forest:{name:"Lucioles nocturnes",symbol:"✦",color:"#69e6a3",sound:"forest"},
  crystal:{name:"Aurore de cristal",symbol:"✧",color:"#a8a6ff",sound:"crystal"},
@@ -60,15 +62,24 @@ export function previewTheme(lines,combo,bonus={}) {
 export class FestivalDirector {
   constructor(stage,{fx=()=>{},reduceMotion=()=>false,rng=Math.random}={}) {
     this.stage=stage;
+    this.previewBoard=stage.closest(".board-wrap");
+    // Put the entire particle/light layer directly under <body>, outside
+    // board-wrap's rectangular box and any layout or clipping ancestors.
+    // Position:fixed + overflow:visible in CSS make the beams bleed off-screen.
+    document.body.appendChild(stage);
     this.fx=fx;
     this.reduceMotion=reduceMotion;
     this.rng=rng;
     this.timeout=null;
+    this.frameRequest=null;
+    this.spriteSheet=null;
     this.lastTheme="";
     this.current=null;
   }
   stop(){
     clearTimeout(this.timeout);
+    if(this.frameRequest!==null)cancelAnimationFrame(this.frameRequest);
+    this.frameRequest=null;
     this.timeout=null;
     this.current=null;
     this.stage.replaceChildren();
@@ -76,7 +87,36 @@ export class FestivalDirector {
     this.stage.removeAttribute("data-theme");
   }
   preview(theme) {
-    this.stage.parentElement?.setAttribute("data-preview-theme",theme||"");
+    this.previewBoard?.setAttribute("data-preview-theme",theme||"");
+  }
+  animateDisco(canvas,small){
+    const ctx=canvas.getContext("2d");
+    if(!ctx)return;
+    try {
+      // These are real, cached pre-rendered frames, not a CSS 3D transform.
+      if(!this.spriteSheet)this.spriteSheet=createDiscoSpriteSheet(document);
+    }catch(error){
+      canvas.dataset.spriteError="unsupported";
+      return;
+    }
+    const frames=this.spriteSheet.frames;
+    let lastIndex=-1;
+    const draw=index=>{
+      if(index===lastIndex)return;
+      drawDiscoSpriteFrame(ctx,this.spriteSheet,index);
+      canvas.dataset.spriteFrame=String(index);
+      lastIndex=index;
+    };
+    draw(0);
+    if(small)return; // Reduced-motion: show still frame and soft static bloom.
+    const started=performance.now();
+    const tick=now=>{
+      if(!this.current||!canvas.isConnected)return;
+      // ~13 FPS, one axis (yaw), 20-frame loop. No CSS rotateX/rotateY/rotateZ.
+      draw(Math.floor((now-started)/76)%frames);
+      this.frameRequest=requestAnimationFrame(tick);
+    };
+    this.frameRequest=requestAnimationFrame(tick);
   }
   play(event,bonus={}) {
     const scene=chooseFestival(event,bonus,this.lastTheme);
@@ -89,20 +129,19 @@ export class FestivalDirector {
     const small=this.reduceMotion()||
       globalThis.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
     const fragment=document.createDocumentFragment();
+    let ball=null;
     if(scene.theme==="disco") {
-      const ball=document.createElement("div");
+      ball=document.createElement("canvas");
       ball.className="festival-disco-ball";
+      ball.width=168;ball.height=168;
       ball.setAttribute("aria-hidden","true");
-      // Mosaic/checkerboard facets are CSS-only: no background images.
-      const facets=document.createElement("div");
-      facets.className="festival-facets";
-      ball.appendChild(facets);
+      ball.dataset.rotationAxis="vertical-yaw-sprites";
       fragment.appendChild(ball);
-      if(!small)for(let i=0;i<9;i++){
+      if(!small)for(let i=0;i<12;i++){
         const ray=document.createElement("i");
         ray.className="festival-ray";
-        ray.style.setProperty("--ray-angle",(i*40)+"deg");
-        ray.style.setProperty("--ray-delay",((i%3)*.07)+"s");
+        ray.style.setProperty("--ray-angle",(i*30)+"deg");
+        ray.style.setProperty("--ray-delay",((i%4)*.07)+"s");
         fragment.appendChild(ray);
       }
     }
@@ -111,7 +150,7 @@ export class FestivalDirector {
       const mote=document.createElement("span");
       mote.className="festival-mote";
       mote.style.setProperty("--particle-angle",(i*137.5+this.rng()*12)+"deg");
-      mote.style.setProperty("--particle-distance",(44+this.rng()*110)+"px");
+      mote.style.setProperty("--particle-distance",(60+this.rng()*220)+"px");
       mote.style.setProperty("--particle-delay",((i%8)*.07)+"s");
       mote.style.setProperty("--particle-scale",(.6+this.rng()*1.4).toFixed(2));
       fragment.appendChild(mote);
@@ -125,7 +164,8 @@ export class FestivalDirector {
     fragment.appendChild(label);
     this.stage.appendChild(fragment);
     this.stage.style.setProperty("--festival-level",String(scene.level));
-    this.stage.style.setProperty("--festival-size",(70+scene.level*15)+"px");
+    this.stage.style.setProperty("--festival-size",(88+scene.level*21)+"px");
+    if(ball)this.animateDisco(ball,Boolean(small));
     this.fx(FESTIVAL_THEMES[scene.theme].sound);
     this.timeout=setTimeout(()=>this.stop(),small?850:scene.durationMs);
     return scene;

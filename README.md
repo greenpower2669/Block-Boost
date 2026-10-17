@@ -91,3 +91,11 @@ Option « Guidage vibratoire progressif vers les lignes et combos » indépendan
 Voix des mascottes **en pause** ; sons et haptiques conservés. Grille arc-en-ciel AVANT la pose lorsque la pièce terminerait réellement des lignes ou colonnes, intensité selon cases/lignes/combos/bonus, et animations après effacement. Six niveaux de vibration et motifs de cascades, respect animations réduites.
 
 [APK Android 0.6.0 directe sans ZIP](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-rainbow-0.6.0/temp/android/BlockBoost-0.6.0-rainbow-debug.apk) — 61 018 octets, SHA256 09b53fce4a63379e4a5cf0d6369c22f7c926b61897838508fb2efe390fa5f494. CI Node/Chrome 39026234986 et Android 39026190674 **vertes**. App labo fr.greenpower.blockboost.rainbowlab, scores indépendants, aucune validation humaine Android. 5 ZIP Sonniss référencés sur [Djipie Release Sons](https://github.com/greenpower2669/Djipie/releases/tag/Sons), sans extraction ni redistribution. Voir [contrat 0.6](docs/rainbow-solves-silent-060.md).
+
+## 🪩 Block Boost Festival 0.7.0 — animations + 12 sons de Djipie
+
+Six signatures distinctes : **lucioles de forêt nocturne**, cristal/aurore, électrique arcade, pluie de points, galaxie et **boule à facettes tournante qui surgit et grossit** lors d'un vrai jackpot. Les couleurs de la grille varient avant une ligne gagnante, puis les points et le combo orchestrent la célébration. Animations réduites respectées, temps et nombre de particules limités.
+
+**12 vrais sons OGG Kenney CC0** sélectionnés dans [Djipie AUDIO](https://github.com/greenpower2669/Djipie/tree/feature/export-kenney-blockboost-v1/RESSOURCES_PARTAGEES/AUDIO/EXPORTS) et intégrés dans le jeu pour fonctionner hors ligne : sons de prise, pose, combo, vitesse, cristal, disco, etc. Origines et SHA par fichier dans `assets/kenney-manifest.json`. **Aucun fichier Sonniss ni archive Sonniss ajouté à Block Boost** ; ces ressources restent en Release Djipie. Les voix d'animaux restent provisoirement **désactivées**.
+
+Branche `feature/festival-animation-djipie-audio-070` ; APK Android de laboratoire 0.7.0 signée debug, indépendante des versions précédentes et de leurs scores ; statut de build à vérifier dans GitHub Actions avant installation. [Contrat détaillé](docs/festival-themes-djipie-audio-070.md). Aucun merge main ni release.

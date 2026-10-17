@@ -123,7 +123,9 @@ export class Feedback {
       drop:[35],extra:[55,70,90],speed:[50,60,80],
       speedHigh:[65,55,115],speedExtra:[45,45,65,45,95],
       line:[70,55,100],lineBonus:[75,45,125],
-      combo:[65,50,80,50,105],comboBonus:[70,40,90,40,130]
+      combo:[65,50,80,50,105],comboBonus:[70,40,90,40,130],
+      lineDouble:[65,55,125],lineCascade:[65,45,95,45,135],
+      comboDouble:[65,50,85,50,120],comboCascade:[70,40,85,40,110,40,140]
     };
     try{globalThis.navigator?.vibrate?.(map[kind]||0);}catch{}
   }

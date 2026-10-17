@@ -11,7 +11,7 @@ Index léger du projet. Ouvrir **uniquement** les tiroirs utiles.
 | Consignes et autorisations de mission | [ordres-de-mission.md](ordres-de-mission.md) |
 | Version précédente 0.6.0 (voix en pause, arc-en-ciel, haptique) | [docs/rainbow-solves-silent-060.md](docs/rainbow-solves-silent-060.md) |
 | Version précédente 0.7.0 : six fêtes, boule à facettes et 12 sons Kenney de Djipie | [docs/festival-themes-djipie-audio-070.md](docs/festival-themes-djipie-audio-070.md) |
-| **Version actuelle 0.8.0 : voix réactivables, boule mono-axe en 20 frames, halos sans cadre** | [docs/voice-toggle-disco-sprites-080.md](docs/voice-toggle-disco-sprites-080.md) |
+| Version précédente 0.8.0 : voix réactivables, boule mono-axe en 20 frames, halos sans cadre** | [docs/voice-toggle-disco-sprites-080.md](docs/voice-toggle-disco-sprites-080.md) |
 
 Statut 17/10/2026 : **code Web/PWA et APK Android debug 0.8.0 testés en CI sur branche de travail**, sans merge main, sans publication Play ni test humain Samsung. Les voix sont désactivées par défaut, mais activables par le joueur. Ne pas confondre mémoire du projet et méta-mémoire Djipie.
 
@@ -24,3 +24,7 @@ Branche courante `feature/voice-toggle-disco-sprites-080`, non fusionnée ; voix
 | **Version actuelle Concert 0.9.0 : texte avant boule, spots, sons, Android** | [docs/concert-bonus-audio-safearea-090.md](docs/concert-bonus-audio-safearea-090.md) |
 
 État au 17/10/2026 : prototype Concert 0.9.0 sur branche `feature/concert-bonus-audio-safearea-090`, tests Node/Chrome et Android verts ; APK brute directe sur `temp/blockboost-concert-0.9.0`. Voix OFF par défaut réactivables ; 24 courts OGG Kenney depuis Djipie ; ne pas parcourir automatiquement la médiathèque. Aucun merge main, aucun test matériel Samsung encore.
+
+## Version actuelle 0.10 — Bulles et croisement
+
+Voir exclusivement [docs/bubbles-cross10-licensed-audio-100.md](docs/bubbles-cross10-licensed-audio-100.md) pour le contrat de la branche `feature/bubbles-cross10-licensed-audio-100` : croisement ×10, bulles et projecteurs au sol. Les 11 Sonniss sont intégrés **seulement à une APK privée compilée via Djipie**, jamais dans le code public. La médiathèque Djipie n'est pas la mémoire du projet ; aucun accès automatique aux WAV. Statuts de CI privée à vérifier avant d'annoncer l'APK. Aucun merge main.

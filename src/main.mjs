@@ -6,13 +6,15 @@ import {PlacementCueGate} from "./placement-cues.mjs";
 import {clearingTargets,rewardHaptic} from "./haptic-sonar.mjs";
 import {evaluateSolvePreview,enrichedGuidance} from "./solve-preview.mjs";
 import {FestivalDirector,previewTheme} from "./festival.mjs";
+import {FireworksDirector,crossedFireworkMilestones,FIREWORKS_DURATION_MS} from "./fireworks.mjs";
+import {ResultCelebration} from "./result-celebration.mjs";
 
 const $=id=>document.getElementById(id);
 const boardEl=$("board"),trayEl=$("tray"),ghostEl=$("drag-ghost"),surface=$("surface");
 if(globalThis.AndroidBridge)document.body.classList.add("android-host");
 let save=loadSave(),runStartBest=save.progress?.runStartBest??save.bestScore;
 let game=save.progress?.game||newGame();
-let selected=null,drag=null,flashTimer=null,confettiTimer=null,finishing=false;
+let selected=null,drag=null,flashTimer=null,confettiTimer=null,finishing=false,endGameTimer=null;
 let selectedAt=null,selectedTurns=0;
 const cueGate=new PlacementCueGate(540);
 let targetPositions=[];
@@ -119,6 +121,15 @@ const festival=new FestivalDirector($("festival-stage"),{
   reduceMotion:()=>save.settings.reducedMotion
 });
 
+const fireworks=new FireworksDirector($("game-fireworks"),{
+  reduceMotion:()=>save.settings.reducedMotion,
+  onStart:()=>{feedback.stopVictoryMusic();feedback.playFireworksAudio();},
+  onStop:()=>feedback.stopFireworksAudio()
+});
+const resultCelebration=new ResultCelebration($("result-effects"),{
+  reduceMotion:()=>save.settings.reducedMotion,
+  onScene:(scene)=>{if(scene==="fireworks")feedback.playFireworksAudio();}
+});
 function number(n){return n.toLocaleString("fr-FR");}
 function persist(){
   const r=checkpoint(save,game,runStartBest);save=r.save;
@@ -275,7 +286,14 @@ function insertAt(index,x,y){
   paint();
   const event=res.event;
   flashClear(event.clearedCells,event.lines,event.combo,event.gained,{...bonus,crossMultiplier:event.crossMultiplier});
-  const festivalScene=festival.play(event,bonus);
+  const festivals=crossedFireworkMilestones(oldScore,game.score);
+  const showFireworks=festivals.length>0;
+  // Six-second milestones take priority over the regular festival music.
+  const festivalScene=showFireworks?null:festival.play(event,bonus);
+  if(showFireworks){
+    festival.stop();
+    fireworks.play({reached:festivals[0],upto:festivals[1]});
+  }
   const descriptions=["⚡ VITESSE ×"+bonus.speedMultiplier+" : +"+event.speedBonus];
   if(event.crossMultiplier===10)descriptions.unshift("🫧 CROISEMENT LIGNE + COLONNE ×10 : +"+event.crossBonus);
   if(event.noRotationBonus)descriptions.push("⭐ EXTRA SANS ROTATION : +"+event.noRotationBonus);
@@ -307,7 +325,10 @@ function insertAt(index,x,y){
   else if(game.moves===1||game.moves%10===0)feedback.speak("welcome",1);
   if(game.gameOver){
     const newRecord=game.score>runStartBest;
-    window.setTimeout(()=>endGame(newRecord),1850);
+    clearTimeout(endGameTimer);
+    // Let the six-second milestone complete before showing result.
+    endGameTimer=window.setTimeout(()=>endGame(newRecord),
+      showFireworks?FIREWORKS_DURATION_MS+140:1850);
   }
   return game.score!==oldScore;
 }
@@ -360,7 +381,9 @@ function flashClear(cleared,lines,combo,gained,bonus){
 function endGame(newRecord){
   if(finishing)return;
   finishing=true;
-  feedback.fx(newRecord?"record":"loss");
+  festival.stop();fireworks.stop();
+  feedback.stopVictoryMusic();
+  if(!newRecord)feedback.fx("loss");
   // The final score may celebrate only if the last played move qualified.
   feedback.speak(newRecord?"record":"over",5,true);
   $("result-title").textContent=newRecord?"🌟 Nouveau record !":"Belle partie !";
@@ -369,9 +392,15 @@ function endGame(newRecord){
   $("result-mascot").textContent=MASCOTS[save.mascot].emoji+
     (newRecord?" Tu as battu ton record !":" On retente ensemble ?");
   if(!$("end-dialog").open)$("end-dialog").showModal();
+  if(newRecord){
+    feedback.playResultGuitar();
+    resultCelebration.play();
+  }else resultCelebration.stop();
 }
 function restart(confirmActive=false){
   if(confirmActive&&!game.gameOver&&game.moves>0&&!window.confirm("Recommencer cette partie ? Le record restera enregistré."))return;
+  clearTimeout(endGameTimer);endGameTimer=null;
+  resultCelebration.stop();fireworks.stop();
   feedback.stop();clearSonar();festival.stop();finishing=false;
   if($("end-dialog").open)$("end-dialog").close();
   game=newGame();selected=null;selectedAt=null;selectedTurns=0;resetDrag();resetSpectrum();
@@ -449,16 +478,27 @@ for(const [id,key] of [["voice-setting","voice"],["fx-setting","fx"],["motion-se
     save={...save,settings:{...save.settings,[key]:e.target.checked}};
     persistSettings();showMascot();
     if(key==="voice"&&!e.target.checked)feedback.stopVoice?.();
-    if(key==="fx"&&!e.target.checked)feedback.stopVictoryMusic?.();
+    if(key==="fx"&&!e.target.checked){
+      feedback.stopVictoryMusic?.();
+      feedback.stopAllSpecial?.();
+    }
     if((key==="haptics"||key==="hapticGuidance")&&!e.target.checked)feedback.stopGuidance();
   });
 }
 $("new-game").addEventListener("click",()=>restart(true));
 $("retry-button").addEventListener("click",()=>restart(false));
 window.addEventListener("resize",()=>{drawTray();if(drag)drawGhost();});
-window.addEventListener("pagehide",()=>{if(!game.gameOver)persist();feedback.stop();festival.stop();});
+window.addEventListener("pagehide",()=>{
+  if(!game.gameOver)persist();
+  clearTimeout(endGameTimer);
+  resultCelebration.stop();fireworks.stop();
+  feedback.stop();festival.stop();
+});
 document.addEventListener("visibilitychange",()=>{
-  if(document.hidden){feedback.stopGuidance();feedback.stopVictoryMusic?.();}
+  if(document.hidden){
+    feedback.stopGuidance();feedback.stopVictoryMusic?.();
+    feedback.stopAllSpecial?.();
+  }
 });
 if(!save.progress)persist();
 paint();updateBonusLive();

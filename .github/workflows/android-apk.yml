@@ -16,6 +16,7 @@ on:
       - feature/bubbles-cross10-licensed-audio-100
       - feature/restore-disco-and-cross-bubbles-011
       - feature/score-comeback-victory-music-012
+      - feature/final-result-fireworks-013
     paths:
       - 'android/**'
       - 'index.html'
@@ -34,7 +35,7 @@ permissions:
 
 jobs:
   build-apk:
-    name: Construire et vérifier BlockBoost-0.12.0-comeback-victory-debug.apk
+    name: Construire et vérifier BlockBoost-0.13.0-fireworks-debug.apk
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
@@ -80,54 +81,56 @@ jobs:
       - name: Vérifier le contenu APK et le nommer
         run: |
           mkdir -p android/dist
-          cp android/app/build/outputs/apk/debug/app-debug.apk android/dist/BlockBoost-0.12.0-comeback-victory-debug.apk
-          unzip -l android/dist/BlockBoost-0.12.0-comeback-victory-debug.apk | grep -F 'assets/www/index.html'
-          unzip -l android/dist/BlockBoost-0.12.0-comeback-victory-debug.apk | grep -F 'assets/www/src/main.mjs'
-          unzip -l android/dist/BlockBoost-0.12.0-comeback-victory-debug.apk | grep -F 'assets/www/src/festival.mjs'
-          unzip -l android/dist/BlockBoost-0.12.0-comeback-victory-debug.apk | grep -F 'assets/www/src/disco-sprites.mjs'
-          unzip -l android/dist/BlockBoost-0.12.0-comeback-victory-debug.apk | grep -F 'assets/www/src/concert-cues.mjs'
-          unzip -l android/dist/BlockBoost-0.12.0-comeback-victory-debug.apk | grep -F 'assets/www/src/victory-music.mjs'
-          unzip -l android/dist/BlockBoost-0.12.0-comeback-victory-debug.apk | grep -F 'assets/www/src/private-audio.mjs'
-          unzip -l android/dist/BlockBoost-0.12.0-comeback-victory-debug.apk | grep -F 'assets/www/src/kenney-audio.mjs'
-          unzip -l android/dist/BlockBoost-0.12.0-comeback-victory-debug.apk | grep -F 'assets/www/assets/kenney-manifest.json'
-          unzip -l android/dist/BlockBoost-0.12.0-comeback-victory-debug.apk | grep -F 'classes.dex'
-          sha256sum android/dist/BlockBoost-0.12.0-comeback-victory-debug.apk | tee android/dist/BlockBoost-0.12.0-comeback-victory-debug.sha256
+          cp android/app/build/outputs/apk/debug/app-debug.apk android/dist/BlockBoost-0.13.0-fireworks-debug.apk
+          unzip -l android/dist/BlockBoost-0.13.0-fireworks-debug.apk | grep -F 'assets/www/index.html'
+          unzip -l android/dist/BlockBoost-0.13.0-fireworks-debug.apk | grep -F 'assets/www/src/main.mjs'
+          unzip -l android/dist/BlockBoost-0.13.0-fireworks-debug.apk | grep -F 'assets/www/src/festival.mjs'
+          unzip -l android/dist/BlockBoost-0.13.0-fireworks-debug.apk | grep -F 'assets/www/src/disco-sprites.mjs'
+          unzip -l android/dist/BlockBoost-0.13.0-fireworks-debug.apk | grep -F 'assets/www/src/concert-cues.mjs'
+          unzip -l android/dist/BlockBoost-0.13.0-fireworks-debug.apk | grep -F 'assets/www/src/victory-music.mjs'
+          unzip -l android/dist/BlockBoost-0.13.0-fireworks-debug.apk | grep -F 'assets/www/src/fireworks.mjs'
+          unzip -l android/dist/BlockBoost-0.13.0-fireworks-debug.apk | grep -F 'assets/www/src/result-celebration.mjs'
+          unzip -l android/dist/BlockBoost-0.13.0-fireworks-debug.apk | grep -F 'assets/www/src/private-audio.mjs'
+          unzip -l android/dist/BlockBoost-0.13.0-fireworks-debug.apk | grep -F 'assets/www/src/kenney-audio.mjs'
+          unzip -l android/dist/BlockBoost-0.13.0-fireworks-debug.apk | grep -F 'assets/www/assets/kenney-manifest.json'
+          unzip -l android/dist/BlockBoost-0.13.0-fireworks-debug.apk | grep -F 'classes.dex'
+          sha256sum android/dist/BlockBoost-0.13.0-fireworks-debug.apk | tee android/dist/BlockBoost-0.13.0-fireworks-debug.sha256
 
       - name: Publier l'APK en artifact GitHub (quota facultatif)
         continue-on-error: true
         uses: actions/upload-artifact@v4
         with:
-          name: BlockBoost-0.12.0-comeback-victory-debug-APK
+          name: BlockBoost-0.13.0-fireworks-debug-APK
           path: |
-            android/dist/BlockBoost-0.12.0-comeback-victory-debug.apk
-            android/dist/BlockBoost-0.12.0-comeback-victory-debug.sha256
+            android/dist/BlockBoost-0.13.0-fireworks-debug.apk
+            android/dist/BlockBoost-0.13.0-fireworks-debug.sha256
           if-no-files-found: error
           retention-days: 30
 
       - name: Créer le fichier APK direct sans ZIP sur une branche temporaire
-        if: github.ref_name == 'feature/score-comeback-victory-music-012'
+        if: github.ref_name == 'feature/final-result-fireworks-013'
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          if git ls-remote --exit-code origin refs/heads/temp/blockboost-comeback-victory-0.12.0 >/dev/null; then
-            git fetch origin temp/blockboost-comeback-victory-0.12.0
-            git checkout -b temp/blockboost-comeback-victory-0.12.0 FETCH_HEAD
+          if git ls-remote --exit-code origin refs/heads/temp/blockboost-fireworks-0.13.0 >/dev/null; then
+            git fetch origin temp/blockboost-fireworks-0.13.0
+            git checkout -b temp/blockboost-fireworks-0.13.0 FETCH_HEAD
           else
-            git checkout -b temp/blockboost-comeback-victory-0.12.0
+            git checkout -b temp/blockboost-fireworks-0.13.0
           fi
           mkdir -p temp/android
-          cp android/dist/BlockBoost-0.12.0-comeback-victory-debug.apk temp/android/
-          cp android/dist/BlockBoost-0.12.0-comeback-victory-debug.sha256 temp/android/
-          sed -i 's#android/dist/#temp/android/#' temp/android/BlockBoost-0.12.0-comeback-victory-debug.sha256
-          sha256sum -c temp/android/BlockBoost-0.12.0-comeback-victory-debug.sha256
-          printf "%s\n" "# Block Boost Chance+Disco 0.12.0 — APK expérimentale" "" \
+          cp android/dist/BlockBoost-0.13.0-fireworks-debug.apk temp/android/
+          cp android/dist/BlockBoost-0.13.0-fireworks-debug.sha256 temp/android/
+          sed -i 's#android/dist/#temp/android/#' temp/android/BlockBoost-0.13.0-fireworks-debug.sha256
+          sha256sum -c temp/android/BlockBoost-0.13.0-fireworks-debug.sha256
+          printf "%s\n" "# Block Boost Fireworks 0.13.0 — APK expérimentale" "" \
             "Cette APK debug désactive les voix par défaut mais les rend activables, améliore la boule disco et 24 sons Kenney CC0 pris dans Djipie." \
             "Elle s'installe séparément des laboratoires 0.1 à 0.6 ; sauvegardes indépendantes." \
             "Cette build PUBLIQUE ne contient pas les sons Sonniss de Djipie. Aucun merge main ni publication Google Play." > temp/android/README.md
           git add temp/android
-          git diff --cached --quiet || git commit -m "artifact(android): livrer APK Bubbles 0.10.0 en lien direct"
-          git push origin HEAD:refs/heads/temp/blockboost-comeback-victory-0.12.0
-          git ls-remote --exit-code origin refs/heads/temp/blockboost-comeback-victory-0.12.0
-          echo "## 🎙️ Block Boost Chance+Disco 0.12.0 — APK directe" >> "$GITHUB_STEP_SUMMARY"
-          echo "[Télécharger le fichier APK (pas un ZIP)](https://raw.githubusercontent.com/\${{ github.repository }}/temp/blockboost-comeback-victory-0.12.0/temp/android/BlockBoost-0.12.0-comeback-victory-debug.apk)" >> "$GITHUB_STEP_SUMMARY"
+          git diff --cached --quiet || git commit -m "artifact(android): livrer APK Fireworks 0.13.0 en lien direct"
+          git push origin HEAD:refs/heads/temp/blockboost-fireworks-0.13.0
+          git ls-remote --exit-code origin refs/heads/temp/blockboost-fireworks-0.13.0
+          echo "## 🎙️ Block Boost Fireworks 0.13.0 — APK directe" >> "$GITHUB_STEP_SUMMARY"
+          echo "[Télécharger le fichier APK (pas un ZIP)](https://raw.githubusercontent.com/\${{ github.repository }}/temp/blockboost-fireworks-0.13.0/temp/android/BlockBoost-0.13.0-fireworks-debug.apk)" >> "$GITHUB_STEP_SUMMARY"

@@ -42,3 +42,7 @@ Contrat permanent : **Djipie est uniquement source/médiathèque de sons, Block 
 ## Actuel 0.12 — chance quand loin du record + fanfare disco 4s
 
 Lire [docs/comeback-score-victory-music-012.md](docs/comeback-score-victory-music-012.md). Source: `feature/score-comeback-victory-music-012`. APK finale complète avec 11 effets Sonniss dans **Block Boost** sur `temp/blockboost-comeback-victory-full-0.12.0` (442949 octets, SHA-256 `d4ff4b8509c1a840cf3258cc9b31c586acbdfc1aae51b220d8ae065a1e35dd67`). Toujours aucun merge main. Pour la suite utiliser les tiroirs du brain et de cette mission, Djipie reste seulement médiathèque sonore complémentaire.
+
+## Travail actuel (18 octobre) : Block Boost v0.13 pré-release
+
+Branche `feature/final-result-fireworks-013`, effets score 1000/2000… par partie et écran nouveau record : **disco → bulles → fireworks**, jingle guitare Djipie et mix 7 bang + 2 ambiances chacun limité à six secondes ; 21 sons synchronisés uniquement dans APK final privée Djipie, sans fichier sonore séparé dans public. Nouveau package Google Play prévu `fr.greenpower.blockboost`. Voir `brain.md`, `ordres-de-mission.md`, `todo.md`, `debughistorical.md`. Pas encore de fusion main ni de nouvelle release.

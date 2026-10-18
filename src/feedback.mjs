@@ -214,7 +214,7 @@ export class Feedback {
   stopResultGuitar(){this.stopSpecial("result-guitar");}
   playResultGuitar(){
     this.stopResultGuitar();
-    return this.special("result-guitar",.42);
+    return this.special("result-guitar",.42)||this.playVictoryMusic();
   }
   stopFireworksAudio(){
     for(const timer of this.specialTimers)clearTimeout(timer);
@@ -237,7 +237,10 @@ export class Feedback {
     timings.forEach((delay,i)=>{
       const name="fireworks-bang-"+String(i+1).padStart(2,"0");
       this.specialTimers.push(setTimeout(()=>{
-        if(this.fireworkPlaying&&this.getSettings().fx)this.special(name,.25);
+        if(this.fireworkPlaying&&this.getSettings().fx&&!this.special(name,.25)){
+          // Public CC0-only build: soft pitched hit, never a loud synthetic explosion.
+          this.chirp(330+(i%4)*95,.11,.024);
+        }
       },delay));
     });
     this.specialTimers.push(setTimeout(()=>this.stopFireworksAudio(),6000));

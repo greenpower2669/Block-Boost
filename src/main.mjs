@@ -261,7 +261,7 @@ function beginDrag(index,e){
 function insertAt(index,x,y){
   const oldScore=game.score;
   const bonus=evaluateBonus(game.pieces[index].coords.length,elapsed(),selectedTurns);
-  const res=applyMove(game,index,x,y,Math.random,bonus);
+  const res=applyMove(game,index,x,y,Math.random,bonus,{targetScore:runStartBest});
   if(res.event.type==="invalid"){
     feedback.fx("invalid");feedback.onCaption("Essaie dans un espace libre !");
     return false;
@@ -290,7 +290,10 @@ function insertAt(index,x,y){
     else if(event.combo===2)feedback.fx("streak2");
     else if(event.combo===3)feedback.fx("streak3");
   }
-  if(event.newBatch&&!event.gameOver)setTimeout(()=>feedback.fx("newBatch"),360);
+  if(event.newBatch&&!event.gameOver){
+    setTimeout(()=>feedback.fx("newBatch"),360);
+    if(event.assistedBatch)feedback.onCaption("✨ Coup de pouce : des pièces prometteuses !");
+  }
   if(bonus.speedMultiplier>=3&&event.lines===0)feedback.fx("speed");
   if(event.noRotationBonus&&event.lines===0)feedback.fx("extra");
   if(event.combo===2||event.combo===3){
@@ -446,6 +449,7 @@ for(const [id,key] of [["voice-setting","voice"],["fx-setting","fx"],["motion-se
     save={...save,settings:{...save.settings,[key]:e.target.checked}};
     persistSettings();showMascot();
     if(key==="voice"&&!e.target.checked)feedback.stopVoice?.();
+    if(key==="fx"&&!e.target.checked)feedback.stopVictoryMusic?.();
     if((key==="haptics"||key==="hapticGuidance")&&!e.target.checked)feedback.stopGuidance();
   });
 }
@@ -454,7 +458,7 @@ $("retry-button").addEventListener("click",()=>restart(false));
 window.addEventListener("resize",()=>{drawTray();if(drag)drawGhost();});
 window.addEventListener("pagehide",()=>{if(!game.gameOver)persist();feedback.stop();festival.stop();});
 document.addEventListener("visibilitychange",()=>{
-  if(document.hidden)feedback.stopGuidance();
+  if(document.hidden){feedback.stopGuidance();feedback.stopVictoryMusic?.();}
 });
 if(!save.progress)persist();
 paint();updateBonusLive();

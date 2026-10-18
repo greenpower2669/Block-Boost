@@ -607,3 +607,127 @@ body.reduce-motion .festival-bubble::after{display:none!important}
 .festival-cross .bubble-floor-spot{opacity:.31}
 .festival-cross .festival-ray{opacity:.30}
 .festival-cross .concert-spot{opacity:.25}
+
+/* v0.13 FIREWORKS: a bounded, eye-comfortable show. No white full-screen
+ * flash, infinite strobe, or persistent blur on the gameplay grid. */
+.fireworks-layer{
+ position:fixed;inset:0;pointer-events:none;z-index:160;overflow:hidden;isolation:isolate;
+}
+.fireworks-layer[hidden]{display:none!important}
+.firework-burst{
+ position:absolute;left:var(--firework-x);top:var(--firework-y);
+ width:0;height:0;opacity:0;
+ animation:firework-bloom 1200ms ease-out var(--firework-delay) both;
+}
+.firework-spark{
+ position:absolute;left:0;top:0;width:6px;height:6px;border-radius:50%;
+ background:var(--firework-color);box-shadow:0 0 6px var(--firework-color);
+ transform:rotate(var(--spark-angle)) translateX(0);
+ animation:firework-rays 1150ms cubic-bezier(.14,.65,.27,1)
+  var(--firework-delay) both;
+}
+.firework-spark::after{
+ content:"";position:absolute;left:0;top:-1px;width:23px;height:3px;
+ border-radius:50%;background:linear-gradient(to right,var(--firework-color),transparent);
+}
+.fireworks-headline{
+ position:absolute;bottom:max(14dvh,88px);left:50%;transform:translateX(-50%);
+ text-align:center;width:min(92vw,550px);font-size:clamp(21px,5.8vw,36px);
+ color:#fff4b4;text-shadow:0 2px 4px #111437,0 0 12px #6dbbff;
+ font-weight:1000;line-height:1.18;opacity:0;
+ animation:firework-title 6s ease-in-out both;
+}
+@keyframes firework-bloom{
+ 0%,5%{opacity:0}18%,64%{opacity:.92}100%{opacity:0}
+}
+@keyframes firework-rays{
+ 0%{opacity:0;transform:rotate(var(--spark-angle)) translateX(0) scale(.4)}
+ 25%{opacity:.94}
+ 85%{opacity:.63;transform:rotate(var(--spark-angle)) translateX(var(--spark-distance)) scale(1)}
+ 100%{opacity:0;transform:rotate(var(--spark-angle)) translateX(calc(var(--spark-distance) * 1.18)) scale(.5)}
+}
+@keyframes firework-title{
+ 0%{opacity:0}12%,72%{opacity:1}95%,100%{opacity:0}
+}
+/* Result dialog top-layer: effects MUST be children of the dialog; external
+ * body overlays cannot render above native modal top-layer. */
+#end-dialog.result-dialog{overflow:hidden}
+#end-dialog .result{position:relative;isolation:isolate;min-height:360px}
+#end-dialog .result> :not(.result-effects){position:relative;z-index:4}
+#end-dialog .result .result-effects{
+ position:absolute;inset:0;z-index:1;overflow:hidden;pointer-events:none;
+ border-radius:24px;isolation:isolate;
+}
+.result-mirror-ball{
+ position:absolute;width:150px;height:150px;left:calc(50% - 75px);top:3px;
+ z-index:2;filter:drop-shadow(0 0 13px #ffdca8b3);
+ animation:result-mirror-bounce 3.15s ease-in-out both;
+}
+.result-mirror-ray{
+ position:absolute;left:50%;top:75px;width:25px;height:330px;
+ border-radius:40%;transform-origin:50% 0;opacity:.32;
+ background:linear-gradient(to bottom,#fffbcaad,#8fdcff60,transparent);
+ transform:rotate(var(--angle));
+ animation:result-ray-sweep 3.1s ease-in-out infinite alternate;
+}
+@keyframes result-mirror-bounce{
+ 0%{opacity:0;transform:translateY(-65px) scale(.4)}
+ 20%,83%{opacity:1;transform:translateY(0) scale(1.02)}
+ 100%{opacity:0;transform:translateY(-12px) scale(.86)}
+}
+@keyframes result-ray-sweep{
+ from{transform:rotate(calc(var(--angle) - 13deg))}
+ to{transform:rotate(calc(var(--angle) + 16deg))}
+}
+.result-floating-bubble{
+ position:absolute;left:var(--x);bottom:-45px;width:var(--size);height:var(--size);
+ border:1px solid #fcfffccc;border-radius:50%;opacity:0;
+ background:radial-gradient(circle at 27% 24%,#fff9 0%,transparent 40%),
+ conic-gradient(from 30deg,#6fffea55,#9cbaff44,#ffa7ee66,#9eefff44);
+ box-shadow:inset 2px 2px 6px #fff9,0 0 8px #93deff77;
+ animation:result-bubble-pop 1.75s ease-in var(--delay) both;
+}
+@keyframes result-bubble-pop{
+ 0%{opacity:0;transform:translateY(0) scale(.5)}
+ 20%,75%{opacity:.76}
+ 88%{opacity:1;transform:translateY(-320px) scale(1.08)}
+ 100%{opacity:0;transform:translateY(-340px) scale(1.65)}
+}
+.result-floor-spot{
+ position:absolute;bottom:0;left:var(--x);width:33px;height:390px;
+ transform-origin:50% 100%;opacity:.35;
+ background:linear-gradient(to top,#fff9e5cb,#83ccff7a,transparent);
+ clip-path:polygon(42% 100%,58% 100%,100% 0,0 0);
+ animation:result-spot-sweep 2.2s ease-in-out infinite alternate;
+}
+@keyframes result-spot-sweep{
+ from{transform:rotate(calc(var(--angle) - 10deg))}
+ to{transform:rotate(calc(var(--angle) + 13deg))}
+}
+.result-effect-label{
+ position:absolute;top:5px;right:7px;z-index:3;
+ color:#fff1bb;font-size:10px;letter-spacing:.5px;
+ text-shadow:0 0 6px #433eaa,0 1px 3px #161735;
+}
+.result-effects .fireworks-headline{
+ position:absolute;left:50%;bottom:4px;width:100%;font-size:16px;
+}
+.result-effects .firework-spark::after{width:15px}
+.result-effects .firework-burst{z-index:1}
+@media(prefers-reduced-motion:reduce){
+ .fireworks-layer .firework-burst,.result-effects .firework-burst{
+   animation:none!important;opacity:.38
+ }
+ .firework-spark,.result-mirror-ray,.result-floor-spot{display:none!important}
+ .result-mirror-ball{animation:none!important}
+ .result-floating-bubble{animation:none!important;opacity:.4;bottom:25%}
+ .fireworks-headline{animation:none!important;opacity:1}
+}
+body.reduce-motion .fireworks-layer .firework-burst,
+body.reduce-motion .result-effects .firework-burst{animation:none!important;opacity:.38}
+body.reduce-motion .firework-spark,
+body.reduce-motion .result-mirror-ray,
+body.reduce-motion .result-floor-spot{display:none!important}
+body.reduce-motion .result-mirror-ball,
+body.reduce-motion .result-floating-bubble{animation:none!important;opacity:.5}
+body.reduce-motion .fireworks-headline{animation:none!important;opacity:1}

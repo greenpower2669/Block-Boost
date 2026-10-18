@@ -1,4 +1,5 @@
 import {PRIVATE_AUDIO_FILES} from "./private-audio.mjs";
+import {victoryScore,VICTORY_SECONDS} from "./victory-music.mjs";
 import {CONCERT_CUES,chooseJingle} from "./concert-cues.mjs";
 import {KENNEY_AUDIO} from "./kenney-audio.mjs";
 import {VoiceDirector} from "./voice-director.mjs";
@@ -46,6 +47,8 @@ export class Feedback {
     this.kenneySequences=new Map();
     this.lastMelodyAt=0;
     this.licensedPlayers=new Map();
+    this.victoryMaster=null;
+    this.lastVictoryAt=-Infinity;
   }
   ensureAudio() {
     if(!this.getSettings().fx) return;
@@ -93,6 +96,66 @@ export class Feedback {
         oscillator.connect(gain);gain.connect(this.ctx.destination);
         oscillator.start(at);oscillator.stop(at+duration+.01);
       }
+      return true;
+    }catch{return false;}
+  }
+  /** Fades previous tune smoothly. Never stops user-selected voice separately. */
+  stopVictoryMusic(){
+    if(!this.victoryMaster||!this.ctx)return;
+    try {
+      const now=this.ctx.currentTime;
+      this.victoryMaster.gain.cancelScheduledValues(now);
+      this.victoryMaster.gain.setValueAtTime(this.victoryMaster.gain.value,now);
+      this.victoryMaster.gain.exponentialRampToValueAtTime(.0001,now+.07);
+    }catch{}
+    this.victoryMaster=null;
+  }
+  /** Entirely original, four-second multi-part victory jingle.
+   * A single master bus and soft peak limiter keep phone speakers gentle.
+   */
+  playVictoryMusic(){
+    if(!this.getSettings().fx)return false;
+    this.ensureAudio();
+    if(!this.ctx)return false;
+    const now=Date.now();
+    if(now-this.lastVictoryAt<2300)return false; // no repeated overlapping fanfares
+    this.stopVictoryMusic();
+    try {
+      const ctx=this.ctx,t0=ctx.currentTime+.018;
+      const master=ctx.createGain();
+      master.gain.setValueAtTime(.35,t0);
+      const limiter=ctx.createDynamicsCompressor();
+      limiter.threshold.setValueAtTime(-19,t0);
+      limiter.knee.setValueAtTime(20,t0);
+      limiter.ratio.setValueAtTime(8,t0);
+      limiter.attack.setValueAtTime(.008,t0);
+      limiter.release.setValueAtTime(.13,t0);
+      master.connect(limiter);limiter.connect(ctx.destination);
+      const timbres={
+        lead:["triangle",.85,.012],
+        brass:["sawtooth",.42,.016],
+        bass:["sine",.90,.010],
+        tick:["sine",.44,.003],
+        boing:["sine",.75,.010]
+      };
+      for(const n of victoryScore()){
+        const [wave,mix,attack]=timbres[n.track];
+        const at=t0+n.at,end=at+n.length;
+        const oscillator=ctx.createOscillator(),envelope=ctx.createGain();
+        oscillator.type=wave;
+        oscillator.frequency.setValueAtTime(n.hz,at);
+        if(n.slide!==1)oscillator.frequency.exponentialRampToValueAtTime(n.hz*n.slide,end);
+        envelope.gain.setValueAtTime(.0001,at);
+        envelope.gain.linearRampToValueAtTime(n.volume*mix,at+attack);
+        envelope.gain.exponentialRampToValueAtTime(.0001,end);
+        oscillator.connect(envelope);envelope.connect(master);
+        oscillator.start(at);oscillator.stop(end+.012);
+      }
+      // Extra near-silent finish guard: exactly four seconds, no drone.
+      master.gain.setValueAtTime(.35,t0+VICTORY_SECONDS-.065);
+      master.gain.linearRampToValueAtTime(.0001,t0+VICTORY_SECONDS);
+      this.victoryMaster=master;
+      this.lastVictoryAt=now;
       return true;
     }catch{return false;}
   }
@@ -163,6 +226,9 @@ export class Feedback {
   }
   fx(event) {
     if(!this.getSettings().fx)return;
+    // Original 4s fanfare takes the place of the old short Bass Drop / Kenney
+    // sample when WebAudio is available; source WAV is kept as fallback only.
+    if(event==="festival-disco"&&this.playVictoryMusic())return;
     const themeJingle=event==="festival-disco"?"disco":null;
     const melody=themeJingle||chooseJingle(event);
     const sample=this.playLicensed(event)||this.playKenney(event);
@@ -285,6 +351,7 @@ export class Feedback {
     this.lastByKind.clear();
   }
   stop(){
+    this.stopVictoryMusic();
     this.stopGuidance();
     this.stopVoice();
   }

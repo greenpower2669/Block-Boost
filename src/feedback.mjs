@@ -47,6 +47,9 @@ export class Feedback {
     this.kenneySequences=new Map();
     this.lastMelodyAt=0;
     this.licensedPlayers=new Map();
+    this.specialPlayers=new Map();
+    this.specialTimers=[];
+    this.fireworkPlaying=false;
     this.victoryMaster=null;
     this.lastVictoryAt=-Infinity;
   }
@@ -183,6 +186,65 @@ export class Feedback {
       player.play()?.catch?.(()=>this.playKenney(event));
       return true;
     }catch {return false;}
+  }
+  /** Final-result guitar + fireworks from Djipie, mixed only for real events.
+   * No raw files are placed in public source. Private CI injects asset paths.
+   */
+  special(event,volume=.24){
+    if(this.getSettings().fx===false||!globalThis.Audio)return false;
+    const path=PRIVATE_AUDIO_FILES[event];
+    if(!path)return false;
+    try{
+      let audio=this.specialPlayers.get(event);
+      if(!audio){
+        audio=new Audio(new URL(path,import.meta.url).href);
+        audio.preload="auto";
+        this.specialPlayers.set(event,audio);
+      }
+      audio.volume=volume;
+      audio.pause();audio.currentTime=0;
+      audio.play()?.catch?.(()=>{});
+      return true;
+    }catch{return false;}
+  }
+  stopSpecial(event){
+    const p=this.specialPlayers.get(event);
+    if(p)try{p.pause();p.currentTime=0;}catch{}
+  }
+  stopResultGuitar(){this.stopSpecial("result-guitar");}
+  playResultGuitar(){
+    this.stopResultGuitar();
+    return this.special("result-guitar",.42);
+  }
+  stopFireworksAudio(){
+    for(const timer of this.specialTimers)clearTimeout(timer);
+    this.specialTimers=[];
+    for(const name of ["fireworks-bed-amb","fireworks-bed-explosions",
+      ...Array.from({length:7},(_,i)=>"fireworks-bang-"+String(i+1).padStart(2,"0"))])
+      this.stopSpecial(name);
+    this.fireworkPlaying=false;
+  }
+  playFireworksAudio(){
+    this.stopFireworksAudio();
+    if(this.getSettings().fx===false)return false;
+    this.fireworkPlaying=true;
+    // Both ambient beds are converted and hard-trimmed to MAXIMUM six seconds
+    // in Djipie's private compiler, with a short fade-out. The local timer
+    // stops them independently of any faulty file duration/decoder.
+    const start=this.special("fireworks-bed-amb",.105);
+    const layer=this.special("fireworks-bed-explosions",.13);
+    const timings=[140,760,1450,2120,2910,3770,4810];
+    timings.forEach((delay,i)=>{
+      const name="fireworks-bang-"+String(i+1).padStart(2,"0");
+      this.specialTimers.push(setTimeout(()=>{
+        if(this.fireworkPlaying&&this.getSettings().fx)this.special(name,.25);
+      },delay));
+    });
+    this.specialTimers.push(setTimeout(()=>this.stopFireworksAudio(),6000));
+    return start||layer;
+  }
+  stopAllSpecial(){
+    this.stopFireworksAudio();this.stopResultGuitar();
   }
   /** 24 real small Kenney OGGs exported from Djipie CC0 — never Sonniss. */
   playKenney(event){
@@ -352,6 +414,7 @@ export class Feedback {
   }
   stop(){
     this.stopVictoryMusic();
+    this.stopAllSpecial();
     this.stopGuidance();
     this.stopVoice();
   }

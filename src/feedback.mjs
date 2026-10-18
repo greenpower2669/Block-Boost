@@ -118,7 +118,7 @@ export class Feedback {
     this.ensureAudio();
     if(!this.ctx)return false;
     const now=Date.now();
-    if(now-this.lastVictoryAt<2300)return false; // no repeated overlapping fanfares
+    if(now-this.lastVictoryAt<2300)return true; // one fanfare, no overlapping Bass Drop fallback
     this.stopVictoryMusic();
     try {
       const ctx=this.ctx,t0=ctx.currentTime+.018;

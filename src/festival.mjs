@@ -51,7 +51,7 @@ export function chooseFestival(event,bonus={},previous="") {
     theme,level,score:gained,lines,combo,
     bubbles:theme==="bubbles"||cross,cross,crossMultiplier:event?.crossMultiplier||1,
     jackpot:theme==="disco"||theme==="galaxy"||theme==="bubbles",
-    durationMs:theme==="bubbles"||cross?3300:theme==="disco"?3000:theme==="galaxy"?2700:1900+level*110,
+    durationMs:theme==="disco"?4200:theme==="bubbles"?3300:theme==="galaxy"?2700:1900+level*110,
     particles:Math.min(58,10+6*level+(theme==="disco"?16:0))
   };
 }

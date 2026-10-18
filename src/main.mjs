@@ -487,6 +487,11 @@ for(const [id,key] of [["voice-setting","voice"],["fx-setting","fx"],["motion-se
 }
 $("new-game").addEventListener("click",()=>restart(true));
 $("retry-button").addEventListener("click",()=>restart(false));
+$("end-dialog").addEventListener("close",()=>{
+  resultCelebration.stop();
+  feedback.stopResultGuitar?.();
+  feedback.stopFireworksAudio?.();
+});
 window.addEventListener("resize",()=>{drawTray();if(drag)drawGhost();});
 window.addEventListener("pagehide",()=>{
   if(!game.gameOver)persist();

@@ -206,3 +206,13 @@ APK brute : https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/bl
 - [x] Livrer [APK COMPLÈTE 0.12 depuis SON repo Block Boost](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-comeback-victory-full-0.12.0/temp/android/BlockBoost-0.12.0-comeback-victory-full-debug.apk), 442949 octets, SHA256 `d4ff4b8509c1a840cf3258cc9b31c586acbdfc1aae51b220d8ae065a1e35dd67`, sans ZIP ni upload du corpus sonore brut.
 - [ ] Test physique sur Samsung : timbre drôle/chaleureux et complexe de la fanfare, mixage vis-à-vis bulles et annonces, performance du choix chanceux, conservation de l'installation / signature debug.
 - [ ] Ne pas merger main ni lancer Google Play sans validation.
+
+## 0.13 final avant release
+- [x] Palier fireworks de la partie : 1000, 2000 etc ; reset partie zéro et priorité de 6 s.
+- [x] Trois spectacles consécutifs UNIQUEMENT si High Score historique battu sur écran de résultat.
+- [x] 7 bang + 2 ambiances limitées à 6 s, jingle guitare avec repli offline, 11 sons précédents maintenus.
+- [x] Animation douce & respect animations réduites, bouton rejouer et score visibles.
+- [x] Tests Node + Chrome tactiles verts.
+- [ ] Compiler APK finale complète avec 21 effets à partir de TOUT DERNIER commit, puis transférer binaire vers branche TEMP Block Boost, SHA identique.
+- [ ] Essais réels Android 16 son, score, 1000, pause/back, rejouer, persistance.
+- [ ] Après validation expresse Fab : fusion main, AAB signée `fr.greenpower.blockboost` via clé GitHub de production et publication Play Console.

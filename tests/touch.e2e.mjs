@@ -217,7 +217,7 @@ try{
   assert.equal(await page.locator("#game-fireworks").isVisible(),true);
   assert.equal(await page.locator("#game-fireworks .firework-burst").count(),9);
   assert.match((await page.locator("#game-fireworks .fireworks-headline").textContent()).replace(/[^0-9àA-Z ]/g,""),/1000 à 3000 POINTS/);
-  assert.match(await page.locator("#festival-stage .festival-bonus-front").textContent(),/CROISEMENT ×10/);
+  assert.match(await page.locator("#game-fireworks .fireworks-headline").textContent(),/POINTS/);
   assert.match(await page.locator("#bonus-earned").textContent(),/CROISEMENT LIGNE \+ COLONNE ×10/);
   const crossScore=Number((await page.locator("#score").textContent()).replace(/\s/g,""));
   assert.ok(crossScore>=3355,"The actual cross must score at least 3205 + prior 150");

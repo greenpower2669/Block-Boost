@@ -150,7 +150,7 @@ try{
     const board=Array.from({length:8},()=>Array(8).fill(null));
     for(let y=0;y<2;y++)for(let x=0;x<7;x++)board[y][x]="sun";
     saved.progress={runStartBest:0,game:{
-      board,version:1,score:0,combo:2,bestCombo:2,moves:6,gameOver:false,
+      board,version:1,score:0,combo:1,bestCombo:1,moves:6,gameOver:false,
       pieces:[
         {id:0,coords:[[0,0],[0,1]],color:"rose",used:false},
         {id:1,coords:[[0,0]],color:"sky",used:false},

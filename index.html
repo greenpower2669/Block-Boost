@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#191c48">
+  <meta name="description" content="Block Boost : puzzle de blocs, combos lumineux et adorables animaux qui vous encouragent.">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./assets/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./styles.css">
+  <title>Block Boost 🐾</title>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="top">
+      <div class="brand"><span aria-hidden="true">🐾</span> <span>BLOCK<br><b>BOOST</b></span></div>
+      <div class="score-panel" aria-live="off">
+        <span class="score-label">SCORE</span>
+        <strong id="score">0</strong>
+        <span class="record">🏆 RECORD <b id="record">0</b></span>
+      </div>
+      <button class="circle-button" id="settings-button" aria-label="Ouvrir les réglages">⚙️</button>
+    </header>
+    <main id="surface" class="game-surface">
+      <section class="board-wrap" aria-label="Plateau de jeu à huit lignes et huit colonnes">
+        <div id="board" class="board" role="grid" aria-label="Grille de Block Boost"></div>
+        <div id="combo-flash" class="combo-flash" aria-live="polite"></div>
+        <div id="solve-signal" class="solve-signal" aria-live="off"></div>
+        <div id="festival-stage" class="festival-stage" aria-hidden="true"></div>
+      </section>
+      <section class="mascot-row" aria-label="Votre compagnon">
+        <div id="mascot-face" class="mascot-face" aria-hidden="true">🦊</div>
+        <div class="mascot-text">
+          <strong id="mascot-name">Pompom</strong>
+          <div id="mascot-caption" class="mascot-caption" aria-live="polite">Glisse une pièce sur la grille !</div>
+        </div>
+      </section>
+      <section class="bonus-hud" aria-label="Bonus de rapidité et sans rotation" aria-live="off">
+        <div id="bonus-live" class="bonus-live">⚡ VITESSE ×4 à ×0 · ⭐ EXTRA sans rotation</div>
+        <div id="bonus-earned" class="bonus-earned" aria-live="polite"></div>
+        <div id="haptic-sonar" class="haptic-sonar" aria-live="off"></div>
+      </section>
+      <section class="tray-wrap" aria-label="Trois pièces disponibles">
+        <div class="tray-heading">
+          <span>TES PIÈCES</span>
+          <button id="rotate-button" class="tiny-button" aria-label="Tourner la pièce sélectionnée de 90 degrés">↻ Tourner</button>
+        </div>
+        <div id="tray" class="tray" aria-label="Choisis une pièce"></div>
+      </section>
+      <p class="instruction">☝️ Déplace avec un doigt · ✌️ Deuxième doigt : rotation 90°</p>
+      <p id="storage-status" class="storage-status" aria-live="polite" hidden>⚠️ Sauvegarde locale indisponible sur cet appareil.</p>
+    </main>
+    <footer class="footer">
+      <button class="footer-button" id="new-game">↻ Nouvelle partie</button>
+      <span>Réfléchis · Assemble · Brille ✨</span>
+    </footer>
+  </div>
+
+  <div id="drag-ghost" class="drag-ghost" aria-hidden="true" hidden></div>
+  <div id="sparkles" class="sparkles" aria-hidden="true"></div>
+
+  <dialog id="settings-dialog" class="modal">
+    <form method="dialog" class="modal-content">
+      <h2>⚙️ Réglages</h2>
+      <label for="mascot-choice">Ton petit compagnon</label>
+      <select id="mascot-choice">
+        <option value="pompom">🦊 Pompom · Panda roux</option>
+        <option value="plume">🐰 Plume · Lapereau</option>
+        <option value="lilo">🦦 Lilo · Loutre</option>
+        <option value="nox">🦉 Nox · Chouette</option>
+        <option value="moka">🐱 Moka · Chaton</option>
+        <option value="biscotte">🦊 Biscotte · Renardeau</option>
+      </select>
+      <label class="check"><input type="checkbox" id="voice-setting"> Voix des animaux (désactivées par défaut)</label>
+      <label class="check"><input type="checkbox" id="fx-setting" checked> Effets sonores</label>
+      <label class="check"><input type="checkbox" id="motion-setting"> Animations réduites</label>
+      <label class="check"><input type="checkbox" id="haptics-setting" checked> Petites vibrations haptiques</label>
+      <label class="check"><input type="checkbox" id="guidance-setting" checked> Guidage vibratoire progressif vers les lignes et combos</label>
+      <p class="help">Les voix sont désactivées par défaut. Vous pouvez les activer ou les couper ici à tout moment, indépendamment des sons et des vibrations.</p>
+      <p class="help">Record et partie sauvegardés uniquement sur cet appareil. Effacer les données du site peut les supprimer.</p>
+      <button class="primary-button" value="close">C'est parti !</button>
+    </form>
+  </dialog>
+  <dialog id="end-dialog" class="modal result-dialog">
+    <div class="modal-content result">
+      <div class="crown">🏆</div>
+      <h2 id="result-title">Jolie partie !</h2>
+      <p>Ton score</p><strong id="final-score" class="final-score">0</strong>
+      <p>Meilleur score : <b id="final-record">0</b></p>
+      <p id="result-mascot">🦊 On retente ensemble ?</p>
+      <button class="primary-button" id="retry-button">▶ Rejouer</button>
+    </div>
+  </dialog>
+  <script type="module" src="./src/main.mjs"></script>
+</body>
+</html>

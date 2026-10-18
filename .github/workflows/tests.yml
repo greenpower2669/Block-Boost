@@ -1,0 +1,40 @@
+name: Block Boost — validation
+on:
+  push:
+    branches:
+      - "feature/**"
+      - "proposal/**"
+      - main
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Vérifier les modules JavaScript
+        run: |
+          node --check src/engine.mjs
+          node --check src/storage.mjs
+          node --check src/feedback.mjs
+          node --check src/main.mjs
+          node --check sw.js
+      - name: Tests moteur et sauvegardes
+        run: node --test tests/*.test.mjs
+      - name: Installer le pilote de test du navigateur
+        run: npm install --no-audit --no-fund
+      - name: Tester deux doigts dans Chrome (rotation + pose + reprise)
+        run: npm run test:touch
+      - name: Vérifier les fichiers PWA
+        run: |
+          test -s index.html
+          test -s manifest.webmanifest
+          test -s assets/icon.svg
+          test -s styles.css
+          python3 -m json.tool manifest.webmanifest >/dev/null

@@ -1,0 +1,37 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'fr.greenpower.blockboost'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId 'fr.greenpower.blockboost.bubbleslab'
+        minSdk 26
+        targetSdk 35
+        versionCode 12
+        versionName '0.12.0'
+    }
+
+    buildTypes {
+        release { minifyEnabled false }
+        debug { debuggable true }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+// The Web application stays in the repository root as the single source of truth.
+// Copy it into the Android package at build time; no edits to the source files.
+tasks.register('syncWebAssets', Copy) {
+    from(rootProject.projectDir.parentFile) {
+        include 'index.html', 'styles.css', 'manifest.webmanifest', 'sw.js'
+        include 'src/**/*.mjs', 'assets/**'
+    }
+    into(layout.projectDirectory.dir('src/main/assets/www'))
+}
+tasks.named('preBuild').configure { dependsOn(tasks.named('syncWebAssets')) }

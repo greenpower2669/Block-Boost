@@ -1,0 +1,609 @@
+:root {
+  color-scheme:dark;
+  --back:#171940;--back2:#303b81;--panel:#1a234e;--text:#fff6ff;--muted:#c5cde7;
+  --glow:#50ddf4;--cell-gap:3px;
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;min-height:100dvh;color:var(--text);
+  background:radial-gradient(ellipse at 50% 14%,#3f4b99 0%,#292e71 38%,#171940 100%)}
+button,select{font:inherit}button{cursor:pointer}button:focus-visible,select:focus-visible{outline:3px solid #fff9b1;outline-offset:3px}
+[hidden]{display:none!important}
+.app-shell{width:min(100%,520px);min-height:100dvh;margin:auto;display:flex;flex-direction:column;
+  padding:env(safe-area-inset-top) max(12px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left))}
+.top{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;padding:8px 4px 10px}
+.brand{display:flex;align-items:center;gap:5px;font-size:clamp(13px,3vw,18px);font-weight:900;letter-spacing:1px;line-height:1.06}
+.brand>span:first-child{font-size:29px}.brand b{color:#ffda68}
+.score-panel{text-align:center;min-width:125px}.score-label{font-size:11px;font-weight:900;letter-spacing:2.2px;color:#a8dbff}
+#score{font-size:clamp(33px,9vw,53px);line-height:1.03;font-variant-numeric:tabular-nums;display:block;text-shadow:0 2px 9px #052064}
+.record{color:#ffdf74;font-size:12px;font-weight:800}.record b{font-variant-numeric:tabular-nums}
+.circle-button{justify-self:end;border:1px solid #ffffff60;border-radius:50%;color:white;background:#6575b760;
+  width:48px;height:48px;font-size:24px;box-shadow:0 2px 9px #06092e70}
+.game-surface{flex:1;display:flex;flex-direction:column;align-items:center;touch-action:none;user-select:none;-webkit-user-select:none}
+.board-wrap{position:relative;width:min(91vw,430px,53dvh);min-width:0;aspect-ratio:1;max-width:100%}
+.board{display:grid;width:100%;height:100%;grid-template-columns:repeat(8,1fr);
+  grid-template-rows:repeat(8,1fr);gap:var(--cell-gap);padding:5px;background:#131a41;
+  border:2px solid #7986d79a;border-radius:13px;box-shadow:0 6px 22px #060924aa,0 0 16px #6384cf44}
+.cell{min-width:0;min-height:0;background:#2a3663;border:1px solid #53619444;border-radius:4px;position:relative;
+  box-shadow:inset 1px 1px 3px #0b1b41aa;transition:background .11s}
+.cell.filled,.mini-cell,.ghost-cell{border-radius:5px;border:1px solid #ffffff35;
+  background:linear-gradient(140deg,#ffffff60 0%,transparent 35%),linear-gradient(160deg,var(--tone-light),var(--tone));
+  box-shadow:inset 2px 2px 2px #ffffff55,inset -2px -3px 2px #0004,0 0 6px var(--tone-shine)}
+.coral{--tone:#ff653d;--tone-light:#ffae64;--tone-shine:#ff8159}
+.sun{--tone:#f7b930;--tone-light:#fff581;--tone-shine:#ffd74d}
+.mint{--tone:#45bc72;--tone-light:#a5f98d;--tone-shine:#5de4ac}
+.sky{--tone:#338cdf;--tone-light:#83d6ff;--tone-shine:#72b9ff}
+.purple{--tone:#854ce4;--tone-light:#df9bff;--tone-shine:#d89dff}
+.rose{--tone:#e84f88;--tone-light:#ffb2c4;--tone-shine:#ff77c1}
+.cell.preview-good{background:#8ffff27d;outline:2px solid #b9ffe2;outline-offset:-2px;box-shadow:inset 0 0 10px #78ffd988}
+.cell.preview-bad{background:#ff586a85;outline:1px solid #ffb2bd}
+.cell.just-cleared{animation:flashCell .36s ease-out both}
+@keyframes flashCell{0%{background:#ffffff;box-shadow:0 0 20px #a8f7ff}100%{background:#2a3663}}
+.combo-flash{position:absolute;inset:36% 0 auto;text-align:center;pointer-events:none;font-weight:1000;
+  font-size:clamp(24px,8vw,45px);color:#ffdb62;text-shadow:0 3px 0 #b54f45,0 0 18px #ffdb88;
+  opacity:0;transform:scale(.7);z-index:3}
+.combo-flash.active{animation:comboFlash 1.12s ease-out forwards}
+@keyframes comboFlash{0%{opacity:0;transform:scale(.5) rotate(-5deg)}20%{opacity:1;transform:scale(1.16) rotate(3deg)}70%{opacity:1;transform:scale(1)}100%{opacity:0;transform:translateY(-30px) scale(.95)}}
+.mascot-row{width:min(91vw,430px);display:flex;align-items:center;min-height:88px;gap:10px;margin:7px auto 0;
+  border-radius:18px;padding:6px 13px;background:#111a449c;border:1px solid #9cb2ff50;
+  box-shadow:0 5px 15px #0609264c}
+.mascot-face{font-size:clamp(43px,11vw,62px);line-height:1;filter:drop-shadow(0 3px 6px #0008);transform-origin:center bottom;
+  animation:breathe 3.3s ease-in-out infinite}
+.mascot-face.happy{animation:mascotHappy .65s ease-in-out 2}
+.mascot-face.big,.mascot-face.combo,.mascot-face.record{animation:mascotJump .55s ease-in-out 2}
+@keyframes breathe{50%{transform:translateY(-2px) scale(1.03)}}
+@keyframes mascotHappy{50%{transform:rotate(-9deg) scale(1.08)}}
+@keyframes mascotJump{50%{transform:translateY(-11px) rotate(8deg) scale(1.19)}}
+.mascot-text{min-width:0}.mascot-text strong{font-size:16px;color:#ffe599}.mascot-caption{font-size:clamp(13px,3.4vw,16px);line-height:1.35;color:#f3f7ff;min-height:20px}
+.tray-wrap{width:min(91vw,430px);margin-top:8px}
+.tray-heading{display:flex;justify-content:space-between;align-items:center;font-size:12px;letter-spacing:1.3px;color:#d5e0ff;font-weight:800;padding:0 5px 4px}
+.tiny-button{background:#475dad;color:white;border:1px solid #aecafa99;border-radius:10px;padding:6px 10px;font-weight:750;letter-spacing:0}
+.tray{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;height:clamp(88px,13dvh,118px)}
+.piece-slot{min-width:0;display:flex;align-items:center;justify-content:center;background:#172455bb;
+  border:1px solid #92a5eb75;border-radius:15px;padding:8px;position:relative}
+.piece-slot.selected{border-color:#ffe38c;box-shadow:0 0 0 2px #ffd25799,0 0 15px #e9e18266}
+.piece-slot.used{opacity:.25}
+.piece{display:grid;gap:2px;cursor:grab;touch-action:none;align-items:stretch;justify-content:center}
+.piece:active{cursor:grabbing}.mini-cell{width:var(--mini);height:var(--mini);border-radius:3px}
+.mini-empty{width:var(--mini);height:var(--mini)}
+.instruction{font-size:clamp(11px,2.7vw,13px);text-align:center;color:#d5e0ff;margin:11px 2px 6px}
+.storage-status{color:#ffe47b;font-size:12px;text-align:center;margin:3px}
+.footer{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:5px 3px 8px;
+  color:#c7d2f7;font-size:11px;letter-spacing:.2px}
+.footer-button{color:#eff7ff;background:#424e8b9e;border:1px solid #c0c4ee66;border-radius:12px;
+  padding:9px 13px;font-size:13px;font-weight:800}
+.drag-ghost{position:fixed;z-index:30;pointer-events:none;display:grid;gap:3px;filter:drop-shadow(0 8px 12px #000a);opacity:.94}
+.ghost-cell{width:var(--ghost-cell);height:var(--ghost-cell)}.ghost-empty{width:var(--ghost-cell);height:var(--ghost-cell)}
+.sparkles{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:40}
+.spark{position:absolute;left:var(--px);top:var(--py);width:var(--sz);height:var(--sz);border-radius:3px;
+  background:var(--color);box-shadow:0 0 7px var(--color);animation:spark .9s ease-out forwards}
+@keyframes spark{to{opacity:0;transform:translate(var(--dx),var(--dy)) rotate(230deg) scale(.2)}}
+.modal{border:1px solid #acc7ff8c;border-radius:24px;padding:0;color:white;background:linear-gradient(145deg,#343b87,#242857);
+  width:min(calc(100vw - 24px),420px);max-height:85dvh;box-shadow:0 16px 50px #000a}
+.modal::backdrop{background:#090c2bcb;backdrop-filter:blur(4px)}
+.modal-content{padding:22px;display:flex;flex-direction:column;gap:13px}
+.modal h2{font-size:25px;margin:0 0 5px}.modal label{font-weight:650}
+.modal select{background:#1a2258;color:#fff;border:1px solid #9da8ff;border-radius:12px;padding:12px;min-height:44px}
+.modal .check{display:flex;gap:10px;align-items:center}.check input{width:21px;height:21px;accent-color:#f9c45e}
+.help{font-size:12px;line-height:1.45;color:#d7e3ff;margin:0}
+.primary-button{border:0;border-radius:16px;min-height:51px;padding:12px 16px;
+  background:linear-gradient(180deg,#fff28e,#f9ac40);color:#513363;font-size:17px;font-weight:950;
+  box-shadow:0 4px 0 #9f5c2f;cursor:pointer}
+.result{text-align:center;background:radial-gradient(circle at 50% 0,#a16cf0,#443079 65%,#292358);
+  align-items:center}.result h2{font-size:28px}.result p{margin:0}.result .crown{font-size:70px}
+.final-score{font-size:64px;color:#ffed99;text-shadow:0 4px 0 #995b3d}
+.result .primary-button{width:100%;margin-top:12px}
+@media(max-height:720px){.top{padding-top:0;padding-bottom:4px}.board-wrap{width:min(87vw,430px,49dvh)}
+ .mascot-row{min-height:66px;margin-top:5px;padding:4px 8px}.mascot-face{font-size:39px}
+ .tray{height:76px}.instruction{margin-top:6px}.piece-slot{padding:4px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+body.reduce-motion *,body.reduce-motion *::before,body.reduce-motion *::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+
+/* Visible speed meter and readable layered celebration, sized for Android portrait. */
+.bonus-hud{width:min(91vw,430px);display:flex;flex-direction:column;gap:3px;align-items:center;
+  margin:4px auto 0;min-height:48px;justify-content:center}
+.bonus-live{border-radius:12px;padding:5px 10px;border:1px solid #f9d98277;
+  color:#ffe47d;background:#27285aa0;font-weight:950;font-size:clamp(12px,3.3vw,15px);
+  letter-spacing:.2px;text-align:center;min-height:29px;width:100%}
+.bonus-live.running{border-color:#7cead5;background:#28447e;color:#ddfff9}
+.bonus-earned{font-size:clamp(11px,3vw,13px);font-weight:800;color:#ffee96;
+  min-height:17px;max-width:100%;text-align:center;line-height:1.25}
+.combo-flash{top:31%;font-size:clamp(21px,6vw,33px);line-height:1.17;white-space:pre-line;
+  padding:10px 2px;background:#121a50c5;border-radius:15px;max-width:100%;
+  -webkit-text-stroke:.3px #452870}
+.combo-flash.active{animation:comboFlash 1.65s ease-out forwards}
+@media(max-height:720px){.bonus-hud{min-height:36px;margin-top:1px}.bonus-live{padding:2px 6px}
+  .bonus-earned{min-height:13px;font-size:11px}.tray-wrap{margin-top:4px}}
+
+/* Guidance does not steal touch events, and remains compact on short screens. */
+.haptic-sonar{font-size:clamp(10px,2.9vw,13px);font-weight:850;min-height:0;line-height:1.15;
+ text-align:center;color:#c9fffd;letter-spacing:.1px;text-shadow:0 0 8px #59defa7a;pointer-events:none}
+.haptic-sonar:empty{display:none}
+
+
+/* 0.6 : rainbow anticipation and graduated clear effect. No flashing strobe.
+   Only truly completed rows/columns receive these colors.
+   The static gradients remain usable under reduced-motion preferences. */
+.board-wrap{isolation:isolate}
+.solve-signal{
+  position:absolute;z-index:13;left:50%;top:3%;transform:translateX(-50%);
+  width:max-content;max-width:94%;padding:5px 12px;border-radius:14px;
+  background:#171a49e0;color:#fff;font-size:clamp(12px,3.3vw,17px);
+  font-weight:950;text-align:center;pointer-events:none;white-space:normal;
+  text-shadow:0 1px 6px #09062f;box-shadow:0 0 12px #73eff088;
+}
+.solve-signal:empty{display:none}
+.board.rainbow-board{box-shadow:0 0 12px #41e9fa80,0 0 18px #ff7af160}
+.board .cell.will-solve,.board .cell.just-solved{
+  position:relative;isolation:isolate;z-index:1;overflow:visible;
+  border:2px solid #ffffffd7;
+  box-shadow:inset 0 0 6px #ffffffa0,0 0 var(--energy-blur,9px) #fff9;
+}
+.board .cell.will-solve::after,.board .cell.just-solved::after{
+  content:"";position:absolute;inset:-3px;border-radius:6px;
+  pointer-events:none;opacity:var(--energy-alpha,.5);
+  background:conic-gradient(
+   from var(--rainbow-index,0deg),
+   #ff558c,#ffcc60,#dfff75,#42e8df,#8b9dff,#ee80ff,#ff558c
+  );
+  box-shadow:0 0 var(--energy-blur,9px) #b2f9ffcc;
+  mix-blend-mode:screen;
+}
+.board .cell.will-solve::after{
+  animation:rainbowWave 2.5s linear infinite;
+}
+.board .cell.just-solved{
+  animation:clearRainbow 1.25s ease-out both;
+}
+.board .cell.just-solved::after{opacity:.9;animation:rainbowWave 1.8s linear infinite}
+@keyframes rainbowWave{
+  0%{filter:hue-rotate(0deg);transform:scale(1)}
+  50%{filter:hue-rotate(160deg);transform:scale(1.045)}
+  100%{filter:hue-rotate(360deg);transform:scale(1)}
+}
+@keyframes clearRainbow{
+  0%{opacity:.97;filter:saturate(1);transform:scale(1)}
+  35%{opacity:1;filter:saturate(1.55) brightness(1.22);transform:scale(1.06)}
+  100%{opacity:0;filter:saturate(1.1);transform:scale(.93)}
+}
+body.reduce-motion .board .cell.will-solve::after,
+body.reduce-motion .board .cell.just-solved,
+body.reduce-motion .board .cell.just-solved::after{
+  animation:none!important;transform:none!important
+}
+@media(prefers-reduced-motion:reduce){
+  .board .cell.will-solve::after,.board .cell.just-solved,
+  .board .cell.just-solved::after{animation:none!important;transform:none!important}
+}
+
+
+/* ── FESTIVAL 0.7: SIX DISTINCT FAMILIES. Safe overlays: no touch interception. ── */
+.board-wrap[data-preview-theme="forest"] .board.rainbow-board{box-shadow:0 0 15px #50eeb182,0 0 27px #2c8c8a55}
+.board-wrap[data-preview-theme="crystal"] .board.rainbow-board{box-shadow:0 0 16px #dcb3ff99,0 0 31px #9ccefa77}
+.board-wrap[data-preview-theme="electric"] .board.rainbow-board{box-shadow:0 0 18px #36fcffbb,0 0 33px #fff29d66}
+.board-wrap[data-preview-theme="fireworks"] .board.rainbow-board{box-shadow:0 0 22px #ffc9749e,0 0 32px #e48cf080}
+.board-wrap[data-preview-theme="galaxy"] .board.rainbow-board{box-shadow:0 0 24px #bb84ffbb,0 0 39px #72c6ffa8}
+.board-wrap[data-preview-theme="disco"] .board.rainbow-board{box-shadow:0 0 23px #ffbffcdd,0 0 38px #fff095a3}
+.festival-stage{
+  position:absolute;inset:0;z-index:14;pointer-events:none;overflow:hidden;
+  border-radius:14px;isolation:isolate;
+  --festival-a:#72e3ac;--festival-b:#c3ff9d;--festival-c:#50c5dc;
+}
+.festival-stage:empty{display:none}
+.festival-stage.festival-forest{--festival-a:#6df2ae;--festival-b:#d6fda0;--festival-c:#2ed8df}
+.festival-stage.festival-crystal{--festival-a:#e2a0ff;--festival-b:#8bf5fb;--festival-c:#a6b8ff}
+.festival-stage.festival-electric{--festival-a:#3ef6fd;--festival-b:#faff98;--festival-c:#6289ff}
+.festival-stage.festival-fireworks{--festival-a:#ffdb89;--festival-b:#ff74a5;--festival-c:#bd82ff}
+.festival-stage.festival-galaxy{--festival-a:#b6a1ff;--festival-b:#62e9ff;--festival-c:#f3a3fa}
+.festival-stage.festival-disco{--festival-a:#ffe98b;--festival-b:#7ffff3;--festival-c:#ff8fd6}
+.festival-stage::before{
+  content:"";position:absolute;inset:0;opacity:.36;z-index:-1;
+  background:radial-gradient(ellipse at 50% 45%,var(--festival-a),transparent 67%);
+  animation:festival-breath 2.3s ease-in-out 1 both;
+}
+.festival-stage.festival-forest::before{
+  background:radial-gradient(ellipse at 50% 68%,#134e5ca0,#10294a40 55%,transparent 80%);
+  opacity:.75;
+}
+.festival-stage.festival-crystal::before{
+  background:conic-gradient(from 30deg at 50% 55%,transparent 0deg,#c891f977 95deg,
+    transparent 135deg,#72deef8c 225deg,transparent 290deg,#bc9cff70 360deg);
+  opacity:.45;
+}
+.festival-stage.festival-electric::before{
+  background:repeating-linear-gradient(118deg,transparent 0 17px,#72eff950 18px 20px,
+    transparent 21px 47px);
+  opacity:.42;
+}
+.festival-stage.festival-fireworks::before{
+  background:radial-gradient(circle at 30% 30%,#ffb8a36b,transparent 40%),
+    radial-gradient(circle at 70% 67%,#8db7ff8a,transparent 50%);
+  opacity:.62;
+}
+.festival-stage.festival-galaxy::before{
+  background:conic-gradient(from 38deg at 50% 50%,#7856b57a,#447fa88c,#c056b37f,#6649bc7f,#7856b57a);
+  opacity:.6;animation:festival-galaxy-turn 7s linear infinite;
+}
+.festival-stage.festival-disco::before{
+  background:conic-gradient(from 15deg at 50% 50%,#ffa1e255,#58e9ff6e,#fce88b73,
+    #a28dff7a,#ffa1e255);
+  opacity:.54;animation:festival-galaxy-turn 3.2s linear infinite;
+}
+.festival-mote{
+  position:absolute;z-index:1;left:50%;top:49%;width:6px;height:6px;
+  margin:-3px;border-radius:50%;background:var(--festival-a);
+  box-shadow:0 0 10px 3px var(--festival-c);
+  opacity:0;animation:festival-fly 1.85s ease-out var(--particle-delay,0s) 1 both;
+}
+.festival-mote:nth-of-type(3n){background:var(--festival-b);box-shadow:0 0 10px 3px var(--festival-b)}
+.festival-mote:nth-of-type(5n){background:var(--festival-c);border-radius:2px}
+.festival-forest .festival-mote{width:4px;height:4px;box-shadow:0 0 7px 3px var(--festival-b);
+  animation-name:festival-firefly;animation-duration:2.4s}
+.festival-crystal .festival-mote{border-radius:1px;transform:rotate(45deg)}
+.festival-electric .festival-mote{width:3px;height:13px;border-radius:2px}
+.festival-galaxy .festival-mote{width:4px;height:4px;border-radius:50%}
+.festival-disco .festival-mote{border-radius:2px}
+.festival-label{
+  position:absolute;z-index:18;bottom:6%;left:50%;transform:translateX(-50%);
+  padding:7px 12px;max-width:91%;color:#fffbe0;background:#161b4dc9;
+  border:1px solid var(--festival-a);border-radius:16px;white-space:nowrap;
+  text-align:center;font-size:clamp(11px,3.1vw,16px);font-weight:950;
+  letter-spacing:.3px;text-shadow:0 1px 5px #050a32;
+  box-shadow:0 0 10px var(--festival-a),0 0 18px #09082330;
+  animation:festival-label-in 1.95s ease-in-out both;
+}
+.festival-disco .festival-label{bottom:1%;color:#fff8d6;font-size:clamp(15px,4.1vw,21px);
+  border-color:#ffe98b;box-shadow:0 0 19px #fa80cb}
+.festival-ray{
+  position:absolute;z-index:0;left:50%;top:27%;
+  width:10px;height:55%;transform-origin:50% 0;
+  background:linear-gradient(to bottom,#ffffffb5,#fff6a6a3,transparent 90%);
+  filter:blur(4px);opacity:.55;
+  transform:rotate(var(--ray-angle,0deg));
+  animation:festival-ray-turn 2.6s linear var(--ray-delay,0s) infinite;
+}
+@keyframes festival-ball-drop{
+  0%{opacity:0;transform:translateY(-100px) scale(.25) rotate(-28deg)}
+  18%{opacity:1;transform:translateY(0) scale(1) rotate(0)}
+  75%{opacity:1;transform:translateY(8px) scale(1.08)}
+  100%{opacity:0;transform:translateY(-30px) scale(.95)}
+}
+@keyframes festival-ray-turn{to{transform:rotate(calc(var(--ray-angle,0deg) + 115deg))}}
+@keyframes festival-fly{
+  0%{opacity:0;transform:rotate(var(--particle-angle,0deg)) translateX(0) scale(.3)}
+  22%{opacity:1}72%{opacity:.9}
+  100%{opacity:0;transform:rotate(var(--particle-angle,0deg))
+    translateX(var(--particle-distance,80px)) scale(var(--particle-scale,1))}
+}
+@keyframes festival-firefly{
+  0%{opacity:0;transform:rotate(var(--particle-angle,0deg)) translateX(0) scale(.3)}
+  40%{opacity:.86}
+  100%{opacity:0;transform:rotate(var(--particle-angle,0deg))
+    translateX(var(--particle-distance,80px)) scale(1.15)}
+}
+@keyframes festival-galaxy-turn{to{transform:rotate(360deg)}}
+@keyframes festival-breath{0%{opacity:0}40%{opacity:.55}100%{opacity:0}}
+@keyframes festival-label-in{
+  0%{opacity:0;transform:translate(-50%,13px) scale(.9)}
+  20%{opacity:1;transform:translate(-50%,0) scale(1)}
+  75%{opacity:1}
+  100%{opacity:0;transform:translate(-50%,-13px) scale(.95)}
+}
+@media(prefers-reduced-motion:reduce){
+  .festival-stage *,.festival-stage::before{animation:none!important}
+  .festival-mote,.festival-ray{display:none}
+  .festival-label{opacity:1}
+  .festival-disco-ball{transform:none;opacity:1}
+}
+body.reduce-motion .festival-stage *,body.reduce-motion .festival-stage::before{
+  animation:none!important
+}
+body.reduce-motion .festival-mote,body.reduce-motion .festival-ray{display:none}
+body.reduce-motion .festival-label{opacity:1}
+body.reduce-motion .festival-disco-ball{transform:none;opacity:1}
+
+
+/* A theme changes the actual preview colors, not just the outer halo. */
+.board-wrap[data-preview-theme="forest"] .cell.will-solve::after{
+ background:radial-gradient(circle at 27% 33%,#dfffb5,#6bf5aab8 24%,#2ed6c88a 58%,#194f75a6);
+}
+.board-wrap[data-preview-theme="crystal"] .cell.will-solve::after{
+ background:conic-gradient(from var(--rainbow-index,0deg),#c5faff,#9c9fff,#e2a9ff,#a1edf8,#c5faff);
+}
+.board-wrap[data-preview-theme="electric"] .cell.will-solve::after{
+ background:linear-gradient(135deg,#d8fffe,#1cdaff 42%,#6b83ff 57%,#d5ff7d);
+}
+.board-wrap[data-preview-theme="fireworks"] .cell.will-solve::after{
+ background:conic-gradient(from var(--rainbow-index,0deg),#ffda88,#ff8e8c,#caa1ff,#ffde99);
+}
+.board-wrap[data-preview-theme="galaxy"] .cell.will-solve::after{
+ background:conic-gradient(from var(--rainbow-index,0deg),#b9a3ff,#81d6ff,#6738b5,#f2aafa,#b9a3ff);
+}
+.board-wrap[data-preview-theme="disco"] .cell.will-solve::after{
+ background:repeating-conic-gradient(from var(--rainbow-index,0deg),#fff2a0 0 16deg,
+   #89effa 19deg 30deg,#f7a3d9 33deg 42deg,#d7a2ff 45deg 54deg);
+}
+
+
+/* v0.8 — FULL-VIEWPORT atmospheric FX, no square board clipping.
+ * Stage is reparented under <body> so ancestor size/overflow cannot cut beams.
+ * Gradient ambient extents are ~2x viewport, fading to full transparency.
+ */
+.festival-stage {
+  position:fixed;inset:0;overflow:visible;clip-path:none;border-radius:0;
+  z-index:40;pointer-events:none;isolation:isolate;
+}
+.festival-stage:empty{display:none}
+.festival-stage::before{
+  content:"";position:absolute;inset:-80vmax;z-index:-1;
+  border-radius:50%;
+  background:radial-gradient(ellipse at center,var(--festival-a) 0%,transparent 62%);
+  opacity:.22;
+  animation:festival-breath 2.35s ease-out both;
+}
+.festival-stage.festival-forest::before {
+  background:radial-gradient(ellipse at center,#25899b88 0%,#20557953 28%,transparent 64%);
+}
+.festival-stage.festival-crystal::before {
+  background:radial-gradient(ellipse at center,#ae88ed8c 0%,#4ac9e34a 28%,transparent 64%);
+}
+.festival-stage.festival-electric::before {
+  background:radial-gradient(ellipse at center,#32d5f591 0%,#7476f64b 28%,transparent 64%);
+}
+.festival-stage.festival-fireworks::before {
+  background:radial-gradient(ellipse at center,#ffab86a3 0%,#8c68ec3e 28%,transparent 64%);
+}
+.festival-stage.festival-galaxy::before {
+  background:radial-gradient(ellipse at center,#8d77eb91 0%,#a65cc34a 28%,transparent 64%);
+}
+.festival-stage.festival-disco::before {
+  background:radial-gradient(ellipse at center,#f8d681c7 0%,#70e2f24d 25%,transparent 63%);
+  opacity:.32;animation:festival-breath 2.35s ease-out both;
+}
+/* Sprite-backed discoball: frames encode only yaw motion, not a CSS 3D spin.
+ * The sphere never flattens, and its compositing box has a transparent background.
+ */
+.festival-disco-ball {
+  position:absolute;z-index:10;left:50%;top:var(--festival-ball-top,19dvh);
+  width:var(--festival-size,160px);height:var(--festival-size,160px);
+  margin-left:calc(var(--festival-size,160px) / -2);
+  overflow:visible;border:0;outline:0;background:transparent;
+  object-fit:contain;
+  border-radius:50%;
+  filter:drop-shadow(0 0 12px #e6f5ffcc) drop-shadow(0 0 28px #e695ec8a);
+  animation:festival-ball-enter 3.0s cubic-bezier(.2,.8,.3,1) both;
+  will-change:transform,opacity;
+}
+.festival-ray {
+  position:absolute;z-index:2;
+  left:50%;top:calc(var(--festival-ball-top,19dvh) + var(--festival-size,160px) / 2);
+  width:clamp(22px,6vw,42px);height:160vmax;
+  transform-origin:50% 0;
+  background:linear-gradient(to bottom,#fffdfdb8 0%,#fff0a16b 12%,#86f6f940 35%,transparent 70%);
+  filter:blur(8px);opacity:.45;
+  border:0;border-radius:40% 40% 100% 100%;
+  transform:rotate(var(--ray-angle,0deg));
+  animation:festival-ray-turn 2.8s linear var(--ray-delay,0s) infinite;
+}
+.festival-label {
+  position:fixed;top:auto;bottom:clamp(75px,13dvh,175px);
+  max-width:min(94vw,410px);white-space:normal;
+}
+.festival-disco .festival-label {bottom:clamp(86px,15dvh,195px)}
+@keyframes festival-ball-enter {
+  0%{opacity:0;transform:translateY(-130px) scale(.3)}
+  15%{opacity:1;transform:translateY(0) scale(1)}
+  72%{opacity:1;transform:translateY(9px) scale(1.08)}
+  100%{opacity:0;transform:translateY(-32px) scale(.93)}
+}
+@keyframes festival-ray-turn {
+  to{transform:rotate(calc(var(--ray-angle,0deg) + 92deg))}
+}
+@media (prefers-reduced-motion:reduce) {
+  .festival-stage .festival-disco-ball,
+  .festival-stage .festival-label{animation:none!important;opacity:1!important;transform:none!important}
+  .festival-stage .festival-ray,.festival-stage .festival-mote{display:none}
+}
+body.reduce-motion .festival-stage .festival-disco-ball,
+body.reduce-motion .festival-stage .festival-label{
+  animation:none!important;opacity:1!important;transform:none!important
+}
+body.reduce-motion .festival-stage .festival-ray,
+body.reduce-motion .festival-stage .festival-mote{display:none}
+
+
+/* 0.9 — ANDROID 16 bottom navigation is not game content.
+ * The Samsung gesture/navigation strip can overlay the WebView on target 35.
+ * An explicit bottom safety floor allows the whole footer to scroll above it.
+ */
+body{overflow-y:auto;-webkit-overflow-scrolling:touch}
+body.android-host .app-shell{
+  min-height:100dvh;
+  padding-bottom:max(78px,calc(env(safe-area-inset-bottom,0px) + 22px));
+}
+body.android-host .footer{
+  padding-bottom:12px;min-height:55px;flex-shrink:0;
+}
+body.android-host .footer-button{min-height:44px}
+body.android-host .game-surface{flex:1 0 auto;touch-action:pan-y}
+body.android-host .mascot-row,
+body.android-host .bonus-hud,
+body.android-host .instruction,
+body.android-host .tray-heading{touch-action:pan-y}
+body.android-host .board,
+body.android-host .piece-slot{touch-action:none}
+
+/* Front label above the disco ball, above all rays and spotlights.
+   Large readable type, two lines of real points + earned multipliers. */
+.festival-bonus-front{
+  position:fixed;left:50%;top:clamp(230px,43dvh,540px);
+  transform:translateX(-50%);width:min(94vw,530px);
+  z-index:95;pointer-events:none;display:flex;flex-direction:column;
+  align-items:center;gap:5px;text-align:center;
+  filter:drop-shadow(0 2px 8px #090c3e);
+  animation:concert-bonus-float 2.8s ease-out both;
+}
+.festival-bonus-title{
+  color:#fff9bf;font-weight:1000;
+  font-size:clamp(24px,7.2vw,44px);line-height:1.06;
+  letter-spacing:.6px;text-shadow:0 0 9px #f4a0f6,0 3px 3px #0b174a,
+    0 0 19px #fcce79;
+}
+.festival-bonus-points{
+  color:white;font-weight:1000;line-height:1.08;
+  font-size:clamp(26px,8.3vw,52px);
+  text-shadow:0 0 8px #23edff,0 0 21px #62a4ff,0 3px 5px #070831;
+}
+.festival-bonus-details{
+  color:#fff5bf;background:#1b2256cd;border:1px solid #ffe4a9ad;
+  padding:5px 10px;border-radius:18px;max-width:100%;
+  white-space:normal;font-weight:850;
+  font-size:clamp(11px,3.1vw,16px);
+}
+.festival-disco .festival-disco-ball{z-index:15}
+.festival-disco .festival-label{z-index:25;opacity:.85}
+.festival-disco .festival-ray{z-index:3}
+
+/* Theatre moving-head lamps: origin at alternating upper corners,
+   shafts extend beyond the visible screen, but carry no solid rectangle. */
+.concert-spot{
+  position:absolute;top:-8dvh;left:var(--spot-x,5%);
+  width:clamp(65px,24vw,160px);height:120vmax;z-index:4;
+  transform-origin:50% 0;opacity:.39;pointer-events:none;
+  border-radius:40% 40% 60% 60%;
+  background:linear-gradient(to bottom,var(--spot-color,#aeeffc99) 0%,
+     #c4d8ff36 20%,#fffffa16 46%,transparent 72%);
+  filter:blur(13px);
+  mix-blend-mode:screen;
+  animation:concert-sweep 2.8s ease-in-out var(--spot-delay,0s) infinite alternate;
+}
+.concert-spot:nth-of-type(2n){opacity:.31}
+@keyframes concert-sweep{
+  0%{transform:rotate(calc(var(--spot-angle,20deg) - 16deg))}
+  50%{transform:rotate(var(--spot-angle,20deg))}
+  100%{transform:rotate(calc(var(--spot-angle,20deg) + 19deg))}
+}
+@keyframes concert-bonus-float{
+  0%{opacity:0;transform:translate(-50%,12px) scale(.85)}
+  14%{opacity:1;transform:translate(-50%,0) scale(1.09)}
+  36%{opacity:1;transform:translate(-50%,-2px) scale(1)}
+  82%{opacity:1}
+  100%{opacity:0;transform:translate(-50%,-23px) scale(.96)}
+}
+@media (prefers-reduced-motion:reduce){
+  .concert-spot{display:none!important}
+  .festival-bonus-front{animation:none!important;opacity:1;transform:translateX(-50%)}
+}
+body.reduce-motion .concert-spot{display:none!important}
+body.reduce-motion .festival-bonus-front{
+  animation:none!important;opacity:1;transform:translateX(-50%)
+}
+
+
+/* v0.10 — FLOATING SOAP BUBBLES AND FLOOR SPOTLIGHTS (2+ lines / cross x10). */
+.festival-stage.festival-bubbles {
+  --festival-a:#90dcf9;--festival-b:#d9abff;--festival-c:#c2ffec;
+}
+.festival-stage.festival-bubbles::before {
+  background:radial-gradient(ellipse at 50% 86%,#81bfff79 0%,#846aca3a 23%,
+    transparent 58%);
+  animation:festival-breath 2.85s ease-out both;
+}
+.bubble-floor-spot {
+  position:fixed;bottom:0;left:var(--floor-x);width:clamp(46px,13vw,85px);
+  height:100vmax;z-index:2;pointer-events:none;opacity:.54;
+  transform-origin:50% 100%;transform:rotate(var(--floor-angle));
+  background:linear-gradient(to top,#fffffff0 0%,#98f3ffe0 3%,#9fb9ff7b 25%,
+    #e4a9ff38 55%,transparent 93%);
+  clip-path:polygon(46% 100%,54% 100%,95% 0%,5% 0%);
+  filter:blur(8px);
+  animation:bubble-floor-sweep 2.9s ease-in-out var(--floor-delay,0s) infinite alternate;
+}
+.bubble-floor-spot::after{
+  content:"";position:absolute;bottom:-10px;left:20%;width:60%;height:24px;
+  background:radial-gradient(ellipse,#fff8c6bd,transparent 69%);
+  border-radius:50%;
+}
+.festival-bubble{
+  position:fixed;left:var(--bubble-x);bottom:-8vh;
+  width:var(--bubble-size);height:var(--bubble-size);
+  border-radius:50%;pointer-events:none;z-index:9;opacity:0;
+  border:1.5px solid #ffffffba;
+  background:radial-gradient(circle at 28% 21%,#ffffffe0 0%,#d5faff7a 13%,
+    transparent 39%),
+    conic-gradient(from 38deg,#b1fff448,#8bcaff42,#f4aeff5e,#fbefd935,#b1fff448);
+  box-shadow:inset 3px 3px 8px #fffffff2,inset -4px -3px 8px #7071ec6b,
+    0 0 10px #bbd9ff70;
+  animation:bubble-float-pop var(--bubble-duration) ease-in var(--bubble-delay) 1 both;
+}
+.festival-bubble::before{
+  content:"";position:absolute;top:12%;left:16%;width:21%;height:21%;
+  border:1px solid #fffd;border-radius:50%;
+}
+.festival-bubble::after{
+  content:"";position:absolute;inset:-12px;opacity:0;pointer-events:none;
+  background:
+    radial-gradient(circle at 10% 50%,#fff 0 2px,transparent 3px),
+    radial-gradient(circle at 92% 30%,#a5eeff 0 2px,transparent 3px),
+    radial-gradient(circle at 72% 95%,#e7adff 0 2px,transparent 3px),
+    radial-gradient(circle at 35% 5%,#fff6be 0 2px,transparent 3px);
+  animation:bubble-glitter var(--bubble-duration) ease-in var(--bubble-delay) 1 both;
+}
+.festival-bubbles .festival-bonus-front{
+  top:clamp(190px,37dvh,465px);
+  z-index:95;
+}
+.festival-bubbles .festival-bonus-title{
+  color:#e6fffb;text-shadow:0 0 12px #62efff,0 3px 5px #070831;
+}
+@keyframes bubble-floor-sweep{
+  0%{transform:rotate(calc(var(--floor-angle) - 12deg));opacity:.3}
+  100%{transform:rotate(calc(var(--floor-angle) + 14deg));opacity:.54}
+}
+@keyframes bubble-float-pop {
+  0%{opacity:0;transform:translate(0,0) scale(.35)}
+  17%{opacity:.8}
+  82%{opacity:.8;transform:translate(var(--bubble-drift),-63dvh) scale(1.12)}
+  91%{opacity:1;transform:translate(var(--bubble-drift),-69dvh) scale(1.30)}
+  100%{opacity:0;transform:translate(var(--bubble-drift),-71dvh) scale(1.72)}
+}
+@keyframes bubble-glitter{
+  0%,86%{opacity:0}
+  93%{opacity:.94;transform:scale(.95)}
+  100%{opacity:0;transform:scale(2.4)}
+}
+@media(prefers-reduced-motion:reduce){
+  .bubble-floor-spot{display:none!important}
+  .festival-bubble{animation:none!important;opacity:.45;bottom:25vh}
+  .festival-bubble::after{display:none!important}
+}
+body.reduce-motion .bubble-floor-spot{display:none!important}
+body.reduce-motion .festival-bubble{animation:none!important;opacity:.45;bottom:25vh}
+body.reduce-motion .festival-bubble::after{display:none!important}
+.board-wrap[data-preview-theme="bubbles"] .cell.will-solve::after{
+  background:radial-gradient(circle at 24% 20%,#ffffffcb,transparent 35%),
+    conic-gradient(from var(--rainbow-index,0deg),#9fefff,#d6a8fc,
+       #fff2b5,#a2f5df,#9fefff);
+}
+
+
+/* 0.11 — CROSS ×10 is the GRAND FINALE: mirror ball + floor lamps + bubbles.
+   All elements share the same full-screen fixed FX layer; bonus text wins. */
+.festival-stage.festival-cross::before{
+  background:radial-gradient(ellipse at 50% 69%,#edb4ff92 0%,#89eaf857 28%,
+    #b1a8ff23 48%,transparent 73%);
+  opacity:.31;
+}
+.festival-cross .festival-bonus-front{
+  top:clamp(235px,43dvh,530px);
+  z-index:95;
+}
+.festival-cross .festival-bonus-title{
+  color:#fff2b5;
+  text-shadow:0 0 14px #82faff,0 0 20px #e9a5ff,0 3px 5px #070831;
+}
+.festival-cross .festival-disco-ball{z-index:15}
+.festival-cross .festival-bubble{z-index:11;opacity:0}
+.festival-cross .bubble-floor-spot{opacity:.31}
+.festival-cross .festival-ray{opacity:.30}
+.festival-cross .concert-spot{opacity:.25}

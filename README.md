@@ -1,1 +1,155 @@
-# Block-Boost
+# 🐾 Block Boost — première version jouable
+
+Un **puzzle tactile de blocs colorés** avec six compagnons adorables, des voix d'encouragement, des FX lumineux et un record personnel sauvegardé localement.
+
+**Statut : prototype Web/PWA, branche de développement, sans APK/AAB.** Le dépôt `main` n'a pas été fusionné et il ne s'agit pas d'une release Android.
+
+## 🎮 Jouer
+
+- Grille **8 × 8** et **trois pièces** disponibles.
+- **Premier doigt** : maintenir puis glisser une pièce sur la grille.
+- **Deuxième doigt** : tourner la pièce maintenue de **90° vers la droite**, sans la déposer ; plusieurs appuis successifs produisent plusieurs rotations.
+- Sur ordinateur : sélectionner la pièce et appuyer sur **R**, ou cliquer sur « ↻ Tourner ». Il est aussi possible de sélectionner une pièce et de toucher une cellule pour la poser.
+- Lignes ou colonnes remplies : suppression + bonus + combo + effets lumineux.
+- La partie s'achève lorsqu'aucune des pièces disponibles ne peut être posée.
+- Score courant, meilleur score, choix d'animal et partie en cours conservés dans le stockage du navigateur.
+
+## 🐰 Compagnons
+
+Pompom 🦊, Plume 🐰, Lilo 🦦, Nox 🦉, Moka 🐱 et Biscotte 🦊.
+
+Ils encouragent par des messages français, des animations simples et la synthèse vocale du téléphone/navigateur lorsque disponible. **Les emoji sont des graphismes provisoires** ; les sprites et voix françaises embarquées définitifs restent à réaliser. Les FX sont de petites notes générées par Web Audio. Voix, effets et animations sont réglables.
+
+## ▶️ Lancer le prototype
+
+Depuis cette branche (ou après téléchargement du code), lancer un petit serveur Web statique à la racine :
+
+```bash
+python3 -m http.server 8080
+```
+
+Ouvrir `http://localhost:8080` dans un navigateur moderne. Depuis un téléphone sur le même réseau, utiliser l'adresse réseau du PC ; pour bénéficier d'une installation PWA et du service worker hors `localhost`, un site HTTPS est nécessaire.
+
+Le jeu ne nécessite pas de serveur pour les données ni de compte. Après chargement initial et installation du cache PWA, le gameplay peut fonctionner hors connexion. Une voix française système n'est pas garantie en mode hors ligne sur tous les navigateurs.
+
+## 🧪 Tests
+
+```bash
+node --test tests/*.test.mjs
+npm install
+npm run test:touch
+```
+
+Le second test demande Google Chrome installé ; il simule deux contacts tactiles via le protocole Chrome DevTools, puis vérifie la rotation, la dépose et la reprise du score après rechargement.
+
+[Workflow de validation GitHub Actions](.github/workflows/tests.yml).
+
+## 🧠 Mémoires du projet
+
+- [Description ultra-détaillée](docs/description-gameplay-mascottes-voix-fx-et-score-local.md)
+- [brain.md](brain.md) et [brainmap.md](brainmap.md)
+- [todo.md](todo.md) — travail achevé vs restant
+- [debughistorical.md](debughistorical.md)
+- [ordres-de-mission.md](ordres-de-mission.md)
+
+Les ressources de la vidéo de référence ne sont **pas copiées** : les règles connues inspirent le prototype, qui utilise ses propres visuels et effets.
+
+## 🎙️ Block Boost Émotion 0.2.0 — labo audio Android (16/10/2026)
+
+Nouvelle APK de test signée debug : [téléchargement direct, sans ZIP](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-emotion-0.2.0/temp/android/BlockBoost-0.2.0-emotion-debug.apk). SHA-256 : `49c5bce6a6edc4892b60f1505c5b06b321bd54819068e62dede7407cd4f9f6e0`.
+
+Cette version utilise le moteur de voix locale Android sur un **thread audio dédié**, des profils d'intonation plus enthousiastes (encouragement, surprise, combo, record), et un historique anti-répétition de 48 répliques. Fonctionnement hors ligne si une voix française locale est disponible sur le système. Le modèle Qwen et les voix de VisionMaxRead ne sont pas intégrés.
+
+**Important : ce n'est pas encore une voix émotionnelle neuronale !** Les profils changent la hauteur, le rythme et les phrases ; la lecture de vrais clips expressifs est préparée mais aucun clip n'est encore inclus. Application de test séparée `fr.greenpower.blockboost.emotionlab`, avec sauvegardes indépendantes de la 0.1.0. Pas de publication stable, pas de validation physique Samsung.
+
+Plus d'informations : [spécification 0.2.0](docs/block-boost-emotion-multithread-020.md). [Compilation GitHub Actions réussie](https://github.com/greenpower2669/Block-Boost/actions/runs/38956309047).
+
+## 2026-10-16 — Bonus vitesse visibles et EXTRA sans rotation (0.3.0)
+
+Nouvelle version de test avec **multiplicateur vitesse VISIBLE ×4→×0** et **EXTRA SANS ROTATION**, annoncés en grand sur la grille, avec nouveaux commentaires vocaux. On démarre le chrono à la sélection d'une pièce. Vitesse : ×4 sous 2 s, ×3 jusqu'à 4 s, ×2 jusqu'à 7 s, ×1 jusqu'à 11 s, ×0 ensuite. Le score classique ne tombe jamais à zéro : le coefficient s'applique seulement au **bonus** `5 × casesPièce × coefficient`. L'extra, indépendant, donne `5 × casesPièce` sans aucune rotation.
+
+**📲 [Télécharger l'APK Android 0.3.0 directement, sans ZIP](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-bonus-0.3.0/temp/android/BlockBoost-0.3.0-bonus-debug.apk)** — 42 688 octets, SHA256 `e14696954dbf30b17fb006fb34ab72daf9a131da1e4e4f27cf319110faf72b65`. App `fr.greenpower.blockboost.bonuslab` installée à côté des versions 0.1/0.2, avec records distincts. Tests [Chrome/Node](https://github.com/greenpower2669/Block-Boost/actions/runs/38958540023) et [Android](https://github.com/greenpower2669/Block-Boost/actions/runs/38958540134) verts ; **test tactile réel Samsung restant**. Détails [dans la spécification](docs/bonus-vitesse-extra-sans-rotation-030.md). Pas de merge main ni release.
+
+## 🐾 Block Boost Audio/Haptiques 0.4.0 (16 octobre 2026)
+
+**388 nouvelles phrases** avec personnalité des six compagnons, anti-répétition persistante (48 dernières) et paroles plus espacées ; petit son de **décrochage** de pièce ; double note **« dring-biling »** quand la pièce passe d'une position invalide à une position valide ; vibrations haptiques Android optionnelles (réglage indépendant des voix et des FX).
+
+**📲 [Télécharger l'APK brute sans ZIP](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-audio-0.4.0/temp/android/BlockBoost-0.4.0-audio-debug.apk)** — 52 067 octets, SHA-256 `304e962393c98a2e356bf5b976e4c74aed55d492ddb1b6b7514a11f22773ed0a`. Version de laboratoire `fr.greenpower.blockboost.audiolab` (scores indépendants des précédentes applications). [CI validations verte](https://github.com/greenpower2669/Block-Boost/actions/runs/38962905329) et [CI Android verte](https://github.com/greenpower2669/Block-Boost/actions/runs/38962905413). La vraie sensation sonore et haptique doit encore être essayée sur Samsung.
+
+Détails dans [docs/audio-haptics-phrases-040.md](docs/audio-haptics-phrases-040.md). Pas de merge main, aucune publication stable.
+
+## 📳 Block Boost Haptique 0.5.0 — un guidage qui monte en puissance
+
+Les bonus de vitesse, EXTRA sans rotation, lignes et combos déclenchent désormais des **vibrations de célébration distinctes**. Pendant le glissement d'une pièce, un sonar calcule les emplacements **légaux qui effacent au moins une ligne** ; la vibration cyclique augmente sur quatre niveaux en approchant de ces cibles. Dès que le doigt se relève, le jeu est interrompu ou l'option est désactivée, le guidage s'arrête. Une sécurité native l'interrompt automatiquement en absence de commandes.
+
+Option « Guidage vibratoire progressif vers les lignes et combos » indépendante de l'option vibrations générales. Les bonus et les 388 phrases de 0.4.0 sont conservés.
+
+**[APK 0.5.0 Android à télécharger directement sans ZIP](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-haptic-0.5.0/temp/android/BlockBoost-0.5.0-haptic-debug.apk)**, 57 692 octets, SHA-256 `94f44de8f569841a5ce91061dda22cb73b6cca0e6d035c7c5ed1213c598ee790`. Laboratoire `fr.greenpower.blockboost.hapticlab` avec sauvegardes séparées ; [tests Chrome/Node](https://github.com/greenpower2669/Block-Boost/actions/runs/38970378913) et [Android](https://github.com/greenpower2669/Block-Boost/actions/runs/38970267717) verts. **Test réel Samsung non encore effectué.** Voir [spécification haptique 0.5.0](docs/haptic-sonar-050.md). Aucune fusion sur main.
+
+## 🌈 Block Boost Lumières 0.6.0 (17 octobre 2026)
+
+Voix des mascottes **en pause** ; sons et haptiques conservés. Grille arc-en-ciel AVANT la pose lorsque la pièce terminerait réellement des lignes ou colonnes, intensité selon cases/lignes/combos/bonus, et animations après effacement. Six niveaux de vibration et motifs de cascades, respect animations réduites.
+
+[APK Android 0.6.0 directe sans ZIP](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-rainbow-0.6.0/temp/android/BlockBoost-0.6.0-rainbow-debug.apk) — 61 018 octets, SHA256 09b53fce4a63379e4a5cf0d6369c22f7c926b61897838508fb2efe390fa5f494. CI Node/Chrome 39026234986 et Android 39026190674 **vertes**. App labo fr.greenpower.blockboost.rainbowlab, scores indépendants, aucune validation humaine Android. 5 ZIP Sonniss référencés sur [Djipie Release Sons](https://github.com/greenpower2669/Djipie/releases/tag/Sons), sans extraction ni redistribution. Voir [contrat 0.6](docs/rainbow-solves-silent-060.md).
+
+## 🪩 Block Boost Festival 0.7.0 — animations + 12 sons de Djipie
+
+Six signatures distinctes : **lucioles de forêt nocturne**, cristal/aurore, électrique arcade, pluie de points, galaxie et **boule à facettes tournante qui surgit et grossit** lors d'un vrai jackpot. Les couleurs de la grille varient avant une ligne gagnante, puis les points et le combo orchestrent la célébration. Animations réduites respectées, temps et nombre de particules limités.
+
+**12 vrais sons OGG Kenney CC0** sélectionnés dans [Djipie AUDIO](https://github.com/greenpower2669/Djipie/tree/feature/export-kenney-blockboost-v1/RESSOURCES_PARTAGEES/AUDIO/EXPORTS) et intégrés dans le jeu pour fonctionner hors ligne : sons de prise, pose, combo, vitesse, cristal, disco, etc. Origines et SHA par fichier dans `assets/kenney-manifest.json`. **Aucun fichier Sonniss ni archive Sonniss ajouté à Block Boost** ; ces ressources restent en Release Djipie. Les voix d'animaux restent provisoirement **désactivées**.
+
+Branche `feature/festival-animation-djipie-audio-070` ; APK Android de laboratoire 0.7.0 signée debug, indépendante des versions précédentes et de leurs scores ; APK construite et SHA vérifié dans GitHub Actions. [Contrat détaillé](docs/festival-themes-djipie-audio-070.md). Aucun merge main ni release.
+
+**📲 Version de test Festival 0.7.0 compilée :** [télécharger l'APK directement, sans ZIP](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-festival-0.7.0/temp/android/BlockBoost-0.7.0-festival-debug.apk) — 132 604 octets, SHA-256 `a87766eff2accb67ce139545563bb681c4c335c6eb068952a487924a04b13be5`. [Tests Node et tactile Chrome verts](https://github.com/greenpower2669/Block-Boost/actions/runs/39036754891), [build Android vert](https://github.com/greenpower2669/Block-Boost/actions/runs/39036754874). Aucun test réel Samsung encore : vérifier volume des 12 sons Kenney, performance de la boule tournante et richesse des différentes familles. Aucune sortie sur Play Store.
+
+## 🪩 Block Boost Disco 0.8.0 — voix optionnelles, sphère mono-axe et FX sans cadre
+
+Trois corrections : **voix décochées par défaut mais activables dans Réglages** (arrêt immédiat à la décoche sans couper sons/haptique) ; rayons/halos désormais **au niveau de l'écran entier** sans rectangle autour de la grille ; boule à facettes **ronde, en 20 vues sphériques successives tournant autour d'un seul axe vertical**, au lieu d'une déformation CSS 3D. Le mode animations réduites garde une sphère immobile. Les six styles, sons Kenney Djipie, scores et bonus restent intacts.
+
+**[Télécharger directement l'APK Android Disco 0.8.0, sans ZIP](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-disco-0.8.0/temp/android/BlockBoost-0.8.0-disco-debug.apk)** (136 226 octets, SHA-256 `2fb995699d1400f9c3081301e92732714e2dbb53a7d33eed6e839f8b0cc8850b`). [Tests Node/Chrome verts](https://github.com/greenpower2669/Block-Boost/actions/runs/39040170369) et [build Android vert](https://github.com/greenpower2669/Block-Boost/actions/runs/39040170375). Application debug labo `fr.greenpower.blockboost.discolab` avec scores indépendants ; aucun merge main ni publication Play. [Spécification complète](docs/voice-toggle-disco-sprites-080.md). Le rendu sur Samsung reste à valider.
+
+## 🪩 Block Boost Disco 0.8.0 — 17 octobre 2026
+
+**Voix désactivées par défaut, mais activables à tout moment** dans ⚙️ Réglages ; on peut les couper à nouveau instantanément sans arrêter le son ni l'haptique.
+
+La boule à facettes utilise désormais **20 images sphériques précalculées** qui simulent la rotation autour d'un seul axe vertical. Halos et reflets disco dépassent de la grille et se fondent dans la transparence au-delà de l'écran ; aucun rectangle d'effets visible. Mode animations réduites pris en charge ; les six familles d'animations et les 12 sons Kenney CC0 Djipie sont conservés.
+
+**[Télécharger l'APK directe Android Disco 0.8.0, sans ZIP](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-disco-0.8.0/temp/android/BlockBoost-0.8.0-disco-debug.apk)** · 136 226 octets · SHA256 `2fb995699d1400f9c3081301e92732714e2dbb53a7d33eed6e839f8b0cc8850b`. [Tests tactiles Chrome et Node réussis](https://github.com/greenpower2669/Block-Boost/actions/runs/39040170369), [compilation Android réussie](https://github.com/greenpower2669/Block-Boost/actions/runs/39040170375). Application `fr.greenpower.blockboost.discolab` distincte des anciennes, scores de laboratoire indépendants. Essai visuel/sonore Samsung à faire ; aucune fusion sur main ni sortie Play. [Contrat](docs/voice-toggle-disco-sprites-080.md).
+
+## 🎵 Block Boost Concert 0.9.0 — 17 octobre 2026
+
+**Nouveautés :** six spots de concert balayent l'écran autour de la boule disco (trois spots pour certains autres thèmes), texte **JACKPOT · +N POINTS · COMBO · VITESSE · EXTRA** au premier plan, jingles courts originaux « dring-biling », et **24 sons Kenney CC0** de [Djipie AUDIO](https://github.com/greenpower2669/Djipie/tree/feature/export-kenney-blockboost-24-v2/RESSOURCES_PARTAGEES/AUDIO/EXPORTS), hors ligne. Aucun Sonniss brut intégré au dépôt public. « Waouh ! », « Hooo ! », « Whaa ! » restent facultatifs, si les voix sont activées ; OFF par défaut.
+
+Correction Android 16 : espace bas sécurisé et défilement vertical hors cellules/pièces pour atteindre « Nouvelle partie » malgré les boutons système.
+
+**[Télécharger l'APK Android 0.9.0 directement sans ZIP](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-concert-0.9.0/temp/android/BlockBoost-0.9.0-concert-debug.apk)** (216 071 octets, SHA-256 `bfc9fe705b2e75c9e74709da423d61c498750ed8c1720742516761eca26db4a9`). [Tests Chrome/Node verts](https://github.com/greenpower2669/Block-Boost/actions/runs/39057514184) et [compilation Android verte](https://github.com/greenpower2669/Block-Boost/actions/runs/39057514186). App laboratoire `fr.greenpower.blockboost.concertlab`, sauvegardes indépendantes. **Qualité sur Samsung à valider**, pas de merge main ni Play release. [Détail de la mission](docs/concert-bonus-audio-safearea-090.md).
+
+## 🫧 Block Boost Bulles 0.10.0 — croisement ×10, 11 sons privés synchronisés
+
+Nouveau mode visuel pour **2 lignes/colonnes ou plus** : cinq projecteurs au sol, bulles translucides qui s'élèvent et éclatent ; titre et points en surimpression. **Croisement simultané ligne + colonne = ×10 sur les seuls points d'effacement**, sans doubler l'intersection. Disco sphérique mono-axe conservée, le Bass Drop 3 est le son provisoire sélectionné.
+
+Les 11 sons Sonniss de la sonothèque Djipie privée (déclenchements de gameplay et annonceurs optionnels) ne sont **jamais stockés dans ce dépôt public** : intégration exclusivement dans **l'APK de jeu compilée en privé** via le pipeline Djipie `feature/blockboost-bubbles-private-apk-100`. Les builds publiques Web/Android gardent les 24 FX Kenney CC0 hors ligne. Licences respectées, aucune redistribution des sons seuls et aucun entraînement IA.
+
+Contrat complet : [docs/bubbles-cross10-licensed-audio-100.md](docs/bubbles-cross10-licensed-audio-100.md). Tests Node/Chrome [verts 39067278200](https://github.com/greenpower2669/Block-Boost/actions/runs/39067278200), APK Android publique fallback [verte 39067278164](https://github.com/greenpower2669/Block-Boost/actions/runs/39067278164). La version **privée avec sons Sonniss doit être contrôlée séparément** ; ne pas confondre ces deux APK. Aucune fusion main, aucune sortie Play.
+
+**🫧 Téléchargements 0.10.0 :** [APK COMPLÈTE avec 11 sons Sonniss intégrés au jeu sur GitHub Djipie privé](https://github.com/greenpower2669/Djipie/blob/temp/blockboost-bubbles-private-0.10.0/temp/android/BlockBoost-0.10.0-bubbles-private-debug.apk) (438355 octets, SHA-256 `fc8ff2bb0ab94784f9f506a7a240912b00d29afdd041d3a8a4f03b1a3de9a9a0`, [CI privée verte](https://github.com/greenpower2669/Djipie/actions/runs/39067423786), connexion GitHub requise) ; [APK PUBLIQUE sans sons Sonniss mais avec 24 Kenney CC0](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-bubbles-0.10.0/temp/android/BlockBoost-0.10.0-bubbles-debug.apk) (219209 octets, SHA-256 `dddacdfd9099d4ff82be2175c720a00e55f4a245666065ab62da5f0ee7c44c5a`, [CI verte](https://github.com/greenpower2669/Block-Boost/actions/runs/39067278164)). Les deux compilations portent l'applicationId expérimental `fr.greenpower.blockboost.bubbleslab` mais pourraient avoir des clés debug différentes : **ne pas les installer l'une sur l'autre sans sauvegarder les données**. [Validation tactile Chrome](https://github.com/greenpower2669/Block-Boost/actions/runs/39067278200). Aucun merge main ni publication Play ; test physique encore à faire.
+
+
+**BILAN FINAL ACTUALISÉ (17/10/2026) :** après correction des pops audio dans src/main.mjs, tests Node/Chrome [39067717083](https://github.com/greenpower2669/Block-Boost/actions/runs/39067717083) **verts** et APK publique [39067712581](https://github.com/greenpower2669/Block-Boost/actions/runs/39067712581) **verte**. Quota de stockage d'artifacts GitHub atteint sur Djipie ; upload-artifact rendu facultatif, la publication de l'APK .apk seule en branche privée n'en dépend plus. CI Djipie privée finale [39068208556](https://github.com/greenpower2669/Djipie/actions/runs/39068208556) **SUCCESS**. [APK PRIVÉE FINALE 0.10 avec 11 sons](https://github.com/greenpower2669/Djipie/blob/temp/blockboost-bubbles-private-0.10.0/temp/android/BlockBoost-0.10.0-bubbles-private-debug.apk), **438375 octets**, SHA256 `99bbe28c08be72f8cf57d08a32457c0d9b7d2f7ced1f6ceeff22b44f601baa57`. Ce SHA remplace tous les SHA antérieurs des compilations d'essai. Lien privé (connexion GitHub requise). Aucun merge main ni Play release.
+
+## 🪩 Block Boost 0.11 — retour de la boule à facettes
+
+Boule disco visible sur les **gros jackpots**, bulles/projecteurs du bas pour les **doubles lignes ordinaires**, spectacle **Boule + Bulles** pour le croisement simultané ligne-colonne ×10. Le score reste lisible devant les effets, Bass Drop 3 et les pops sont étagés pour ne pas s'écraser. Aucun changement du calcul du score ×10.
+
+[Documentation détaillée](docs/restore-disco-bubbles-cross-011.md) · [PR #12 brouillon](https://github.com/greenpower2669/Block-Boost/pull/12) · [tests Chrome+Node verts](https://github.com/greenpower2669/Block-Boost/actions/runs/39071874406) · [APK publique CC0 compilée](https://github.com/greenpower2669/Block-Boost/actions/runs/39071874411).
+
+L'APK complète Sonniss 0.11 doit être validée et livrée **dans Block Boost** sur branche TEMP ; Djipie reste la bibliothèque de sons. Aucune fusion main.
+
+
+**LIVRAISON VALIDÉE 0.11 (17 octobre 2026) :** APK Android COMPLÈTE avec onze sons Sonniss incorporés au jeu, **439 203 octets**, SHA256 `de6c6330d8a3d0c33488c8fdd392a009eeb6a35fb530df36bc51e30ce59b9c09`, [APK directe sans ZIP sur Block Boost](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-disco-bubbles-full-0.11.0/temp/android/BlockBoost-0.11.0-disco-bubbles-full-debug.apk). CI privée Djipie [39072037738](https://github.com/greenpower2669/Djipie/actions/runs/39072037738) **success** : réutilisation strictement des 11 effets validés déjà encapsulés dans APK 0.10 (SHA vérifié) après indisponibilité des Releases source ; recompilation 0.11, présence des 11 fichiers dans l'APK. Le blob Git binaire `46075377c90e920ed0b55b733d590eb779cfddc1` a été contrôlé identique lors du transfert de Djipie vers la branche de livraison propre à Block Boost `temp/blockboost-disco-bubbles-full-0.11.0` (commit `82fc7fd126d608a9016d2581cc8676ddf55ea6b6`). **Jamais de ZIP ni de sons Sonniss autonomes à installer**, seulement le jeu fini. CI Android public [39071874411](https://github.com/greenpower2669/Block-Boost/actions/runs/39071874411) et tests Node/Chrome [39071874406](https://github.com/greenpower2669/Block-Boost/actions/runs/39071874406) **verts**. Les APK debug peuvent avoir des signatures distinctes : sauvegarder données avant désinstallation/remplacement. Aucun merge `main` ni publication Play, test Samsung encore nécessaire.
+
+## 🪩 Block Boost 0.12 — Chance de rattrapage et musique disco 4 secondes
+
+Quand le joueur est loin de son ancien high score, la chance de recevoir des **trios de pièces à fort potentiel sur deux coups** augmente, sans garantis ni bonus de score fictifs. Proche du record, probabilités habituelles. La boule à facettes retrouve une fanfare originale **de 4 secondes**, gaie, drôle, multi-instruments et synthétisée localement (les effets FX peuvent être désactivés). Le spectacle reste 4,2 secondes et le double effacement garde les bulles ; le croisement x10 combine disco et bulles. Voix optionnelles OFF par défaut.
+
+[**APK 0.12 complète avec 11 sons Sonniss synchronisés — téléchargement direct dans Block Boost, sans ZIP**](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-comeback-victory-full-0.12.0/temp/android/BlockBoost-0.12.0-comeback-victory-full-debug.apk), 442949 octets SHA256 `d4ff4b8509c1a840cf3258cc9b31c586acbdfc1aae51b220d8ae065a1e35dd67`. [Tests Node/Chrome verts](https://github.com/greenpower2669/Block-Boost/actions/runs/39084934741), [build Android vert](https://github.com/greenpower2669/Block-Boost/actions/runs/39084934816), [build privé audio vert](https://github.com/greenpower2669/Djipie/actions/runs/39085006124). L'APK est déjà au bon endroit, seule l'application entière est livrée, pas les sons isolés. [Mission détaillée](docs/comeback-score-victory-music-012.md). Aucune fusion main ou Play Store ; écoute sur téléphone à valider.

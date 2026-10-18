@@ -1,0 +1,62 @@
+name: 🐾 Block Boost — extraire l'APK directement sur GitHub
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/block-boost-playable-rotation-v1
+    paths:
+      - '.github/workflows/publish-apk-direct.yml'
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  unzip-and-publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Récupérer les sources sans toucher à main
+        uses: actions/checkout@v4
+
+      - name: Télécharger ET décompresser l'artefact GitHub Actions existant
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/apk-extracted"
+          gh run download 38932973713 \
+            --repo "${{ github.repository }}" \
+            --name "BlockBoost-0.1.0-debug-APK" \
+            --dir "$RUNNER_TEMP/apk-extracted"
+          test -s "$RUNNER_TEMP/apk-extracted/BlockBoost-0.1.0-debug.apk"
+
+      - name: Comparer le SHA-256 à la compilation validée
+        run: |
+          cd "$RUNNER_TEMP/apk-extracted"
+          echo '49e963e01c075a2014b1889c54a236fec86b56587b328bfede3e2bea0688b98c  BlockBoost-0.1.0-debug.apk' | sha256sum -c -
+
+      - name: Créer une branche temporaire contenant le vrai APK
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b temp/blockboost-apk-0.1.0
+          mkdir -p temp/android
+          cp "$RUNNER_TEMP/apk-extracted/BlockBoost-0.1.0-debug.apk" temp/android/
+          (cd temp/android && sha256sum BlockBoost-0.1.0-debug.apk > BlockBoost-0.1.0-debug.sha256)
+          printf '%s\n' '# Distribution temporaire : Block Boost 0.1.0' '' \
+            'Le fichier BlockBoost-0.1.0-debug.apk est une APK Android debug directement installable.' \
+            'Sa signature debug ne convient pas à une publication Google Play.' \
+            'Cette branche est temporaire, indépendante de main et ne correspond pas à une release.' \
+            > temp/android/README.md
+          git add temp/android/BlockBoost-0.1.0-debug.apk temp/android/BlockBoost-0.1.0-debug.sha256 temp/android/README.md
+          git commit -m "artifact(android): APK 0.1.0 debug dézippée et accessible directement"
+          git push origin HEAD:refs/heads/temp/blockboost-apk-0.1.0
+
+      - name: Afficher le lien direct sans ZIP
+        run: |
+          echo "### 🐾 APK Block Boost disponible directement" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "[📲 BlockBoost-0.1.0-debug.apk](https://github.com/${{ github.repository }}/raw/refs/heads/temp/blockboost-apk-0.1.0/temp/android/BlockBoost-0.1.0-debug.apk)" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "SHA-256 : \`49e963e01c075a2014b1889c54a236fec86b56587b328bfede3e2bea0688b98c\`" >> "$GITHUB_STEP_SUMMARY"

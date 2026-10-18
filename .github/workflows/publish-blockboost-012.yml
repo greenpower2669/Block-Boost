@@ -1,0 +1,83 @@
+name: 📦 Publier Block Boost v0.12.0 — APK complète
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/publish-blockboost-012.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: blockboost-release-v0.12.0
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: GitHub Release v0.12.0 (APK directe)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Vérifier version et APK du jeu fini
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF_NAME" = "main"
+          grep -F "versionName '0.12.0'" android/app/build.gradle
+          test -f src/victory-music.mjs
+          node --test tests/*.test.mjs
+          mkdir -p dist
+          curl -fL --retry 3 --retry-delay 3 \
+            "https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-comeback-victory-full-0.12.0/temp/android/BlockBoost-0.12.0-comeback-victory-full-debug.apk" \
+            -o dist/BlockBoost-0.12.0-comeback-victory-full-debug.apk
+          echo "d4ff4b8509c1a840cf3258cc9b31c586acbdfc1aae51b220d8ae065a1e35dd67  dist/BlockBoost-0.12.0-comeback-victory-full-debug.apk" \
+            > dist/BlockBoost-0.12.0-comeback-victory-full-debug.sha256
+          sha256sum --check dist/BlockBoost-0.12.0-comeback-victory-full-debug.sha256
+          test "$(wc -c < dist/BlockBoost-0.12.0-comeback-victory-full-debug.apk)" -eq 442949
+          unzip -Z1 dist/BlockBoost-0.12.0-comeback-victory-full-debug.apk \
+            | grep -F 'assets/www/src/victory-music.mjs'
+          unzip -Z1 dist/BlockBoost-0.12.0-comeback-victory-full-debug.apk \
+            | grep -F 'assets/www/assets/licensed/festival-disco.ogg'
+          COUNT=$(unzip -Z1 dist/BlockBoost-0.12.0-comeback-victory-full-debug.apk \
+            | grep -Ec '^assets/www/assets/licensed/.*\.ogg$')
+          test "$COUNT" -eq 11
+      - name: Notes de publication
+        shell: bash
+        run: |
+          cat > dist/RELEASE_NOTES.md <<'EOF'
+          ## 🪩 Block Boost 0.12.0 — Chance & Disco
+
+          **Jeu Android en version d'essai : APK directement installable, pas de ZIP.**
+
+          - Si le joueur est loin de son meilleur score précédent : nouvelles pièces offrant plus souvent des suites prometteuses de deux coups. Aucun score ni coup offert.
+          - Boule à facettes : musique originale festive, drôle et complexe de 4 secondes.
+          - Double ligne/colonne : projecteurs en bas, bulles qui montent et éclatent.
+          - Croisement ligne + colonne : ×10 sur les points d'effacement et spectacle combiné boule + bulles.
+          - 11 effets Sonniss synchronisés au jeu fini et 24 Kenney CC0. Voix désactivées par défaut, réactivables.
+
+          **Qualité :** tests Node/navigateur, compilation Android publique et privée réussis, empreinte SHA-256 contrôlée. Écoute sur Samsung encore à valider.
+
+          **Attention :** APK debug d'essai, pas une publication Google Play. Clé de signature potentiellement différente ; sauvegarder les scores avant désinstallation.
+          EOF
+      - name: Publier la release GitHub
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if gh release view v0.12.0 --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Release v0.12.0 existante, aucun écrasement."
+          else
+            gh release create v0.12.0 \
+              dist/BlockBoost-0.12.0-comeback-victory-full-debug.apk \
+              dist/BlockBoost-0.12.0-comeback-victory-full-debug.sha256 \
+              --repo "$GITHUB_REPOSITORY" \
+              --target "$GITHUB_SHA" \
+              --title "Block Boost v0.12.0 — Chance & Disco" \
+              --notes-file dist/RELEASE_NOTES.md \
+              --prerelease
+          fi
+          echo "https://github.com/$GITHUB_REPOSITORY/releases/tag/v0.12.0" >> "$GITHUB_STEP_SUMMARY"

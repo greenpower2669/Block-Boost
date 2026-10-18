@@ -1,0 +1,9 @@
+<resources>
+    <style name="Theme.BlockBoost" parent="android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:statusBarColor">@color/game_bg</item>
+        <item name="android:navigationBarColor">@color/game_bg</item>
+        <item name="android:windowActionModeOverlay">true</item>
+        <item name="android:windowBackground">@color/game_bg</item>
+    </style>
+</resources>

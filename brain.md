@@ -209,3 +209,21 @@ Fab souhaite « Si le joueur est loin de son dernier highscore il faut aider la 
 - [CI Node + Chrome 39084934741](https://github.com/greenpower2669/Block-Boost/actions/runs/39084934741), [APK publique 39084934816](https://github.com/greenpower2669/Block-Boost/actions/runs/39084934816), [APK SONNISS PRIVÉE 39085006124](https://github.com/greenpower2669/Djipie/actions/runs/39085006124) : **success**.
 - **Livraison unique du jeu sur Block Boost** [APK COMPLÈTE directement téléchargeable](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-comeback-victory-full-0.12.0/temp/android/BlockBoost-0.12.0-comeback-victory-full-debug.apk), **442949 octets** SHA256 `d4ff4b8509c1a840cf3258cc9b31c586acbdfc1aae51b220d8ae065a1e35dd67`, binaire identique blob Git `106ff3be43b25007ec9d7bd5618a551e961b30cc` à celui généré via CI privée, commit de livraison `e80a73efaf66580b4995945126e6525c2891761e` sur `temp/blockboost-comeback-victory-full-0.12.0`, sans ZIP.
 - Pas de merge main, pas de release Play, son rendu sur Samsung réel pas encore écouté/validé.
+
+## 18 octobre 2026 — 0.13, nouvelle scène FIREWORKS, résultat record en trois temps
+Demande explicite : « Avant la release » ; ne pas fusionner `main` ni publier sur Google Play sans validation finale.
+
+**Gameplay :** à chaque fois que le score de **la partie en cours** franchit 1000, 2000, 3000… points, déclencher UN spectacle de feux d'artifice de **6 secondes** ; le seuil est naturellement réinitialisé à 1000 quand `newGame()` remet le score à zéro. Si un mouvement dépasse plusieurs seuils, ne pas lancer plusieurs spectacles concurrents. Le ×10 du croisement et le High Score historique restent inchangés.
+
+**Visuel :** nouvelle couche `src/fireworks.mjs` (fusées colorées sur la surface, 9 éclatements maximum, animation non stroboscopique, 4 étoiles fixes en animations réduites) ; priorité sur la disco ordinaire pour le mouvement qui franchit le palier. Sur `end-dialog`, **uniquement si meilleur score battu**, jouer **successivement** : (1) boule disco 3,2 s, (2) bulles et cinq projecteurs 2,8 s, (3) fireworks 6 s. `src/result-celebration.mjs` conserve le score et le bouton Rejouer au premier plan, annule les timers si la partie redémarre ou le dialog est fermé.
+
+**Sons choisis par Fab depuis Djipie :**
+- Jingle de guitare électrique `Musique_electrique_guitare_jingle_001.wav` en musique de résultat record.
+- Sept explosions `bang_01.ogg`…`bang_07.ogg` à déclenchements étalés en feu d'artifice.
+- Fond ambiance `SON-0d763008d5a403c7c3c5349a__sbfa-fireworks-001.wav`.
+- Fond explosions proches `SON-0a0461aae77465f5b1f28eaf__13-fireworks-powerful-explosions-multiples-in-a-row-near.wav`.
+Les deux grands WAV sont coupés + fondus **à six secondes maximum** via FFmpeg lors du build privé Djipie ; le contrôleur audio coupe la totalité du son fireworks à 6000 ms même si un fichier est plus long. Les 11 effets validés antérieurement sont conservés : **21 OGG synchronisés au total**. AUCUN WAV brut dans le dépôt source public ; seulement l'APK de jeu complète pourra être livrée. Les options FX et animation réduite sont respectées, et des effets synthétiques de secours existent pour la build publique sans Sonniss.
+
+**Production future :** package Android confirmé précédemment avec Fab, désormais `fr.greenpower.blockboost`, version `0.13.0`/code 13, ce qui crée une application distincte du prototype `fr.greenpower.blockboost.bubbleslab`; scores anciens non migrés automatiquement. AAB Play signé après validation des secrets GitHub, distinct de l'APK debug de test. **Ne pas publier de release Google Play ni fusionner main tant que Fab n'a pas testé.**
+
+Source `feature/final-result-fireworks-013`. Workflow public Android `.github/workflows/android-apk.yml`; build privé Djipie `feature/blockboost-fireworks-assets-private-013`. Tests Node + tactile Chrome en CI. Prendre soin des sons seulement dans l'APK du jeu ; livraison `.apk` directe dans Block Boost sans ZIP selon ordre immuable FabCopilot.

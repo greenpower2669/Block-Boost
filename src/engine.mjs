@@ -51,13 +51,100 @@ export function pieceBatch(rng=Math.random) {
     color: PALETTE[Math.floor(rng()*PALETTE.length)], used:false
   }));
 }
+/**
+ * The player gets a discreet LUCK boost, never an artificial score reward,
+ * only when a previous high score is genuinely far away. This never changes
+ * existing cells, places a block or guarantees a clear/high score.
+ */
+export function comebackChance(score=0,record=0,moves=0){
+  if(!Number.isSafeInteger(score)||!Number.isSafeInteger(record)||
+    score<0||record<800||moves<3)return 0;
+  const gap=record-score;
+  if(gap<=Math.max(450,record*.40))return 0;
+  const gapRatio=Math.max(0,Math.min(1,gap/record));
+  return Math.min(.73,.38+gapRatio*.35); // 38–73% of new trios.
+}
+function nextPlacement(board,coords,x,y){
+  if(!canPlace(board,coords,x,y))return null;
+  const next=board.map(row=>row.slice());
+  for(const [dx,dy] of coords)next[y+dy][x+dx]="mint";
+  const rows=[],cols=[];
+  for(let r=0;r<SIZE;r++)if(next[r].every(Boolean))rows.push(r);
+  for(let c=0;c<SIZE;c++)if(next.every(row=>row[c]!==null))cols.push(c);
+  for(const row of rows)next[row].fill(null);
+  for(const col of cols)for(const row of next)row[col]=null;
+  const n=rows.length+cols.length;
+  const clear=n?80*n*n*(rows.length&&cols.length?10:1):0;
+  // Encourage a USEFUL follow-up line without optimizing every occupied cell.
+  let setup=0;
+  for(const row of next){
+    const filled=row.filter(Boolean).length;
+    if(filled>=4)setup+=(filled-3)*(filled-3);
+  }
+  for(let c=0;c<SIZE;c++){
+    const filled=next.reduce((k,row)=>k+(row[c]!==null?1:0),0);
+    if(filled>=4)setup+=(filled-3)*(filled-3);
+  }
+  return {next,rank:clear+setup*5+coords.length};
+}
+function bestPositions(board,coords,cap=4){
+  const result=[],seen=new Set();
+  let orientation=normalize(coords);
+  for(let turn=0;turn<4;turn++){
+    const signature=JSON.stringify(orientation);
+    if(!seen.has(signature)){
+      seen.add(signature);
+      const b=bounds(orientation);
+      for(let y=0;y<=SIZE-b.height;y++)for(let x=0;x<=SIZE-b.width;x++){
+        const move=nextPlacement(board,orientation,x,y);
+        if(move)result.push(move);
+      }
+    }
+    orientation=rotate(orientation);
+  }
+  result.sort((a,b)=>b.rank-a.rank);
+  return result.slice(0,cap);
+}
+/** Evaluate a pair of moves (not just a lucky one-off piece). */
+export function batchProspect(board,pieces){
+  if(!pieces?.length)return -1;
+  let best=-1;
+  for(let i=0;i<pieces.length;i++){
+    const first=bestPositions(board,pieces[i].coords,4);
+    for(const step of first){
+      let followUp=0;
+      for(let j=0;j<pieces.length;j++){
+        if(i===j)continue;
+        const second=bestPositions(step.next,pieces[j].coords,1)[0];
+        if(second)followUp=Math.max(followUp,second.rank);
+      }
+      best=Math.max(best,step.rank+followUp*.83);
+    }
+  }
+  return best;
+}
+/** Offer one of six independently generated 3-piece trios with higher
+ * two-move clearing potential.  The original random offer stays possible.
+ */
+export function comebackBatch(board,rng=Math.random,chance=0){
+  const ordinary=pieceBatch(rng);
+  if(chance<=0||rng()>=chance)return {pieces:ordinary,assisted:false};
+  const original= batchProspect(board,ordinary);
+  let winner=ordinary,highest=original;
+  for(let i=0;i<5;i++){
+    const candidate=pieceBatch(rng);
+    const score=batchProspect(board,candidate);
+    if(score>highest){highest=score;winner=candidate;}
+  }
+  return {pieces:winner,assisted:highest>original};
+}
 export function newGame(rng=Math.random) {
   return {board:emptyBoard(),pieces:pieceBatch(rng),score:0,combo:0,bestCombo:0,
     moves:0,gameOver:false,version:1};
 }
 // A successful clearing move increases the combo. Any non-clearing placement resets it.
 // Score: 5 per occupied cell plus 80 * lines^2 * comboStreak. A cross intersection is counted once.
-export function applyMove(game, pieceIndex, x, y, rng=Math.random, reward=null) {
+export function applyMove(game, pieceIndex, x, y, rng=Math.random, reward=null, context=null) {
   if (game.gameOver) return {game,event:{type:"invalid",reason:"finished"}};
   const piece=game.pieces[pieceIndex];
   if (!piece || piece.used || !canPlace(game.board,piece.coords,x,y))
@@ -87,12 +174,18 @@ export function applyMove(game, pieceIndex, x, y, rng=Math.random, reward=null) 
   const gained=basePoints+speedBonus+noRotationBonus;
   let pieces=game.pieces.map((p,i)=>i===pieceIndex ? {...p,used:true} : p);
   const newBatch=pieces.every(p=>p.used);
-  if(newBatch) pieces=pieceBatch(rng);
+  let assistedBatch=false;
+  if(newBatch){
+    const chance=comebackChance(game.score+gained,context?.targetScore,game.moves+1);
+    const nextBatch=comebackBatch(board,rng,chance);
+    pieces=nextBatch.pieces;
+    assistedBatch=nextBatch.assisted;
+  }
   const gameOver=!hasLegalMove(board,pieces);
   const next={...game,board,pieces,score:game.score+gained,combo,
     bestCombo:Math.max(game.bestCombo,combo),moves:game.moves+1,gameOver};
   return {game:next,event:{type:gameOver?"gameOver":lines>0?"clear":"placed",gained,
-    basePoints,speedBonus,noRotationBonus,crossMultiplier,crossBonus,clearPoints,newBatch,
+    basePoints,speedBonus,noRotationBonus,crossMultiplier,crossBonus,clearPoints,newBatch,assistedBatch,
     speedMultiplier:reward?.speedMultiplier??0,
     lines,combo,clearedRows,clearedColumns,clearedCells:[...cellsToClear].map(s=>s.split(",").map(Number)),
     score:next.score,gameOver}};

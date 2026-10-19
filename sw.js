@@ -1,6 +1,6 @@
-const CACHE="blockboost-finish-v14-20261019";
+const CACHE="blockboost-music-v15-20261019";
 const FILES=["./","./index.html","./styles.css","./src/engine.mjs","./src/storage.mjs",
-  "./src/feedback.mjs","./src/bonus.mjs","./src/placement-cues.mjs","./src/haptic-sonar.mjs","./src/solve-preview.mjs","./src/winning-snap.mjs","./src/festival.mjs","./src/fireworks.mjs","./src/result-celebration.mjs","./src/concert-cues.mjs","./src/victory-music.mjs","./src/private-audio.mjs","./src/disco-sprites.mjs","./src/kenney-audio.mjs","./src/phrase-bank.mjs","./src/voice-director.mjs","./src/main.mjs","./manifest.webmanifest","./assets/icon.svg"];
+  "./src/feedback.mjs","./src/background-music.mjs","./src/bonus.mjs","./src/placement-cues.mjs","./src/haptic-sonar.mjs","./src/solve-preview.mjs","./src/winning-snap.mjs","./src/festival.mjs","./src/fireworks.mjs","./src/result-celebration.mjs","./src/concert-cues.mjs","./src/victory-music.mjs","./src/private-audio.mjs","./src/disco-sprites.mjs","./src/kenney-audio.mjs","./src/phrase-bank.mjs","./src/voice-director.mjs","./src/main.mjs","./manifest.webmanifest","./assets/icon.svg","./assets/music/Blockboostmusic.mp3"];
 self.addEventListener("install",event=>{
   event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(FILES)).then(()=>self.skipWaiting()));
 });

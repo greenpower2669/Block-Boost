@@ -2,7 +2,7 @@ import {sanitizeGame} from "./engine.mjs";
 export const SAVE_KEY="block-boost.local.v1";
 const MASCOTS=["pompom","plume","lilo","nox","moka","biscotte"];
 const defaults = () => ({version:1,bestScore:0,lastScore:0,gamesPlayed:0,
-  bestCombo:0,history:[],mascot:"pompom",settings:{voice:false,fx:true,reducedMotion:false,haptics:true,hapticGuidance:true},
+  bestCombo:0,history:[],mascot:"pompom",settings:{voice:false,fx:true,music:true,reducedMotion:false,haptics:true,hapticGuidance:true},
   progress:null});
 const saneNumber = v => Number.isSafeInteger(v)&&v>=0&&v<=1000000000?v:0;
 export function sanitizeSave(data) {

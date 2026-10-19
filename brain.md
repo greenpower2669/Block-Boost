@@ -253,3 +253,6 @@ Snap vers ancre légale gagnante seule : acquisition 0,46 cellule, maintien spat
 Son BB-014 : restauration éphémère des 21 effets du jeu APK 0.13 SHA-vérifiée, empaquetage dans le jeu 0.14 complet uniquement. Aucune diffusion de sons autonomes.
 
 **Livré en CI 19/10 (BB-014) :** APK debug complète 0.14, 21 OGG synchronisés, 608074 octets SHA-256 2f815dd0faf5a0db8a1526fdb8034b8a52f9330cf8c10c55cce9f3954ea619ca, source c6452aab…, branche temp/blockboost-full-0.14.0. CI Node/Chrome et Android vertes. Réception Samsung non faite ; AAB Play signée non produite faute de vérification PEM public et secrets.
+
+## BB-015 — Contrat mixage musique de fond
+La piste fournie par Fab `assets/music/Blockboostmusic.mp3` doit tourner en boucle hors ligne à niveau faible, et s'abaisser automatiquement pendant tous les FX, fanfares et annonces. Les effets et voix conservent leurs volumes. Musique activable indépendamment de la case FX et de la voix OFF par défaut, traversant le redémarrage d'une manche mais suspendue quand l'application est masquée. Pas d'égalisation passe-bande. Implémentation de branche 0.15, validation réelle Android attendue.

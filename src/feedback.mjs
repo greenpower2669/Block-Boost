@@ -3,6 +3,7 @@ import {victoryScore,VICTORY_SECONDS} from "./victory-music.mjs";
 import {CONCERT_CUES,chooseJingle} from "./concert-cues.mjs";
 import {KENNEY_AUDIO} from "./kenney-audio.mjs";
 import {VoiceDirector} from "./voice-director.mjs";
+import {BackgroundMusic} from "./background-music.mjs";
 // Audio and mascot direction: independent of the rules engine. No remote services.
 export const MASCOTS={
   pompom:{name:"Pompom",species:"Panda roux",emoji:"🦊",voicePitch:0.90,lines:{
@@ -52,8 +53,10 @@ export class Feedback {
     this.fireworkPlaying=false;
     this.victoryMaster=null;
     this.lastVictoryAt=-Infinity;
+    this.music=new BackgroundMusic(()=>this.getSettings().music!==false);
   }
   ensureAudio() {
+    this.music.start();
     if(!this.getSettings().fx) return;
     try{
       const Context=globalThis.AudioContext||globalThis.webkitAudioContext;
@@ -64,6 +67,7 @@ export class Feedback {
   }
   chirp(freq=520,duration=.12,volume=.10,delay=0) {
     if(!this.getSettings().fx)return;
+    this.music.duck(520);
     this.ensureAudio();if(!this.ctx)return;
     try{
       const osc=this.ctx.createOscillator(),gain=this.ctx.createGain(),now=this.ctx.currentTime+delay;
@@ -80,6 +84,7 @@ export class Feedback {
   melodicCue(kind){
     if(!this.getSettings().fx)return false;
     const notes=CONCERT_CUES[kind];if(!notes)return false;
+    this.music.duck(900);
     const now=Date.now();
     // A short global cooldown stops sound stacking on the same placement.
     if(now-this.lastMelodyAt<165 && kind!=="disco")return false;
@@ -120,6 +125,7 @@ export class Feedback {
     if(!this.getSettings().fx)return false;
     this.ensureAudio();
     if(!this.ctx)return false;
+    this.music.duck(4300);
     const now=Date.now();
     if(now-this.lastVictoryAt<2300)return true; // one fanfare, no overlapping Bass Drop fallback
     this.stopVictoryMusic();
@@ -184,6 +190,7 @@ export class Feedback {
       player.volume=(voices?.27:event==="festival-disco"?.33:.25)/(1+other*.30);
       player.pause();player.currentTime=0;
       player.play()?.catch?.(()=>this.playKenney(event));
+      this.music.duck(["streak2","streak3"].includes(event)?2800:1000);
       return true;
     }catch {return false;}
   }
@@ -204,6 +211,7 @@ export class Feedback {
       audio.volume=volume;
       audio.pause();audio.currentTime=0;
       audio.play()?.catch?.(()=>{});
+      this.music.duck(event.startsWith("fireworks-bed")?6300:event==="result-guitar"?5500:900);
       return true;
     }catch{return false;}
   }
@@ -286,6 +294,7 @@ export class Feedback {
       player.volume=(key.startsWith("disco")?.23:.165)/(1+otherPlaying*.45);
       player.pause();player.currentTime=0;
       player.play()?.catch?.(()=>{});
+      this.music.duck(850);
       return true;
     }catch{return false;}
   }
@@ -368,6 +377,7 @@ export class Feedback {
     const speech=this.director.choose(mascot,kind,force);
     if(!speech)return;
     const {phrase,mood}=speech;
+    this.music.duck(Math.min(9000,Math.max(2200,phrase.length*115+800)));
     const effectivePriority=Math.max(priority,speech.priority);
     this.lastPhrase=phrase;this.lastVoice=now;this.priority=effectivePriority;
     this.lastByKind.set(kind,now);
@@ -415,7 +425,11 @@ export class Feedback {
     this.lastVoice=0;
     this.lastByKind.clear();
   }
+  startMusic(){this.music.start();}
+  setMusicEnabled(enabled){this.music.setEnabled(enabled);}
+  pauseMusic(){this.music.pause();}
   stop(){
+    // Keep the backing track when starting a new round.
     this.stopVictoryMusic();
     this.stopAllSpecial();
     this.stopGuidance();

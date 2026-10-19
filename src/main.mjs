@@ -145,6 +145,7 @@ function showMascot(){
   $("mascot-face").textContent=m.emoji;$("mascot-name").textContent=m.name;
   $("mascot-choice").value=save.mascot;
   $("voice-setting").checked=save.settings.voice;$("fx-setting").checked=save.settings.fx;
+  $("music-setting").checked=save.settings.music!==false;
   $("motion-setting").checked=save.settings.reducedMotion;
   $("haptics-setting").checked=save.settings.haptics!==false;
   $("guidance-setting").checked=save.settings.hapticGuidance!==false;
@@ -426,6 +427,7 @@ function restart(confirmActive=false){
 // Pointer Events: first finger DRAGS; each new secondary touch pointerdown ROTATES once.
 // Subsequent movement of the secondary finger never drops the piece.
 document.addEventListener("pointerdown",e=>{
+  feedback.startMusic(); // Unlock MP3 on user interaction (WebView/PWA autoplay policy).
   if(drag){
     if(e.pointerId!==drag.pointer && e.pointerType==="touch"){
       e.preventDefault();rotateSelected();
@@ -488,11 +490,12 @@ $("mascot-choice").addEventListener("change",e=>{
   save={...save,mascot:e.target.value};persistSettings();showMascot();
   feedback.speak("welcome",1,true);
 });
-for(const [id,key] of [["voice-setting","voice"],["fx-setting","fx"],["motion-setting","reducedMotion"],["haptics-setting","haptics"],["guidance-setting","hapticGuidance"]]){
+for(const [id,key] of [["voice-setting","voice"],["fx-setting","fx"],["music-setting","music"],["motion-setting","reducedMotion"],["haptics-setting","haptics"],["guidance-setting","hapticGuidance"]]){
   $(id).addEventListener("change",e=>{
     save={...save,settings:{...save.settings,[key]:e.target.checked}};
     persistSettings();showMascot();
     if(key==="voice"&&!e.target.checked)feedback.stopVoice?.();
+    if(key==="music")feedback.setMusicEnabled(e.target.checked);
     if(key==="fx"&&!e.target.checked){
       feedback.stopVictoryMusic?.();
       feedback.stopAllSpecial?.();
@@ -512,13 +515,14 @@ window.addEventListener("pagehide",()=>{
   if(!game.gameOver)persist();
   clearTimeout(endGameTimer);
   resultCelebration.stop();fireworks.stop();
-  feedback.stop();festival.stop();
+  feedback.stop();feedback.pauseMusic();festival.stop();
 });
 document.addEventListener("visibilitychange",()=>{
   if(document.hidden){
     feedback.stopGuidance();feedback.stopVictoryMusic?.();
     feedback.stopAllSpecial?.();
-  }
+    feedback.pauseMusic();
+  }else feedback.startMusic();
 });
 if(!save.progress)persist();
 paint();updateBonusLive();

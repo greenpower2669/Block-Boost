@@ -1,0 +1,5 @@
+# BB-015 — Mixage musique de fond Block Boost
+
+MP3 public fourni par Fab le 19 octobre 2026 : objet Git `ab73a2914ab6afe3c6b9f30093766053977dcc0e` de `main`, 17 549 936 octets. Même objet référencé sous `assets/music/Blockboostmusic.mp3` sur la branche de travail.
+
+Musique en boucle, volume linéaire 0,10, duck à 0,025 (gain réduit d'environ 12 dB) durant chaque FX/voix/fanfare, attaque 130 ms, relâchement 850 ms et temporisation prolongée par les effets concomitants. Aucun filtre passe-bande. Tous les FX Kenney, les 21 FX Sonniss empaquetés, les 6 secondes d'artifices, les jingles et les voix activables conservent leur volume. Musique ON par défaut mais case autonome et persistante. Autoplay seulement après geste, pause hors écran, sauvegarde et gameplay inchangés. Android: piste incluse dans APK via assets/** ; PWA service worker cache piste pour hors ligne. Tests Node de gain, boucle, arrêt ; CI Android APK complète + vérification du contenu à effectuer. Android Samsung écoute réelle requise. Aucun merge main ni release Play.

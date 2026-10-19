@@ -267,3 +267,10 @@ APK brute : https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/bl
 - [ ] Vérifier sur Samsung Android 16 : snap juste gagné/micro-descente, rotation 2 doigts, diagonales et L, halos 360°, fréquence des gros blocs, fireworks/son/score/sauvegarde.
 - [ ] **AAB signée Play non produite** : fournir/importer certificat **public** PEM original de l'Upload Key dans `android/certificates/BlockBoost-upload-certificate.pem` sur la branche privée de travail appropriée ; exécuter workflow manuel seulement après avoir configuré les 4 secrets existants (noms immuables) ; comparer vrais certificats et vérifier package fr.greenpower.blockboost, code14, SHA et 21 sons. Ne jamais régénérer JKS.
 - [ ] Valider explicitement auprès de Fab avant merge main, GitHub Release, ou upload Google Play.
+
+## BB-015 — MP3 d'ambiance et ducking (19 octobre 2026)
+- [x] Intégrer le MP3 de Fab comme blob identique depuis `main`, module musique de fond, baisse douce sur FX/voix, préférence indépendante.
+- [x] Préparer pipeline 0.15 APK complète 21 FX + MP3, nom propre, publication `.apk` directe dans dépôt Block-Boost.
+- [ ] Constater suite tests Node/Chrome et build Android, vérifier APK binaire et SHA avant livraison.
+- [ ] Sur Samsung Android 16 : écouter musique/FX/voix/jingle/fireworks (6 s), retour écran et musique OFF, contrôler niveau et absence de distorsion, test installation/signature et scores.
+- [ ] Aucun merge main ni AAB Play avant validation de Fab ; missions précédentes, en particulier BB-014, inchangées.

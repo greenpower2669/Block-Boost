@@ -10,8 +10,8 @@ android {
         applicationId 'fr.greenpower.blockboost'
         minSdk 26
         targetSdk 35
-        versionCode 14
-        versionName '0.14.0'
+        versionCode 15
+        versionName '0.15.0'
     }
 
     // The Upload Key exists only on a controlled CI runner, never in Git.

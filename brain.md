@@ -249,3 +249,5 @@ Conserver la 0.13 en brouillon sur PR #16, tests verts et APK avec 21 sons synch
 
 ## BB-014 — candidat de finition 19/10/2026
 Snap vers ancre légale gagnante seule : acquisition 0,46 cellule, maintien spatial 0,70, biais supérieur 0,09, coordonnée unique fantôme/preview/haptique/pose ; changement de rotation et annulation réinitialisent le snap. Tirage `DRAW_CONFIG` : diagonales 1,5 %/pièce max 1/trio, L3 distinct du carré plein, grands blocs en début si plaçables, diminution avec densité. `comebackBatch` toujours indépendant du score. Animation conique 360° des reflets via `--rainbow-phase` avec mouvement réduit. Version Android 0.14/code14/id fr.greenpower.blockboost. Les 21 sons complets et l'AAB signée restent à prouver par builds, avant toute publication.
+
+Son BB-014 : restauration éphémère des 21 effets du jeu APK 0.13 SHA-vérifiée, empaquetage dans le jeu 0.14 complet uniquement. Aucune diffusion de sons autonomes.

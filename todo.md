@@ -254,3 +254,6 @@ APK brute : https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/bl
 - [ ] Attendre validation explicite pour merge main, GitHub Release et Google Play.
 
 - [x] Reproduire l'échec CI initial : 66/68 verts ; corriger RNG déterministe zéro et assertion rayon. Relancer les workflows automatiquement sur le commit de correction.
+
+- [x] Préparer le pipeline 0.14 21 FX depuis APK 0.13 SHA validé sans fuite de fichiers audio autonomes.
+- [ ] Vérifier réussite Actions, SHA du .apk direct complet, essai Samsung ; certifier AAB seulement lorsque PEM public et quatre secrets valides sont fournis à la CI.

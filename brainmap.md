@@ -74,3 +74,5 @@ Publication : Android `fr.greenpower.blockboost` identifié dans 0.13, code 13, 
 - `src/engine.mjs` : ajout L3 et quatre diagonales, `shapeFits`, `weightedIndex`, `DRAW_CONFIG`, `pieceBatch(rng,board,config)`, `comebackBatch` reçoit la grille.
 - `styles.css` : `@property --rainbow-phase` + `rainbowWave` 360°, halos de toutes familles dont forêt/électrique ; respect animations réduites.
 - `tests/finish-014.test.mjs` + `tests/touch.e2e.mjs` : tests de réception ; `.github/workflows/android-apk.yml` reste une APK CC0 de secours ; `.github/workflows/android-play-candidate.yml` vérifie PEM/JKS/secrets et signe un AAB candidat ; `android/app/build.gradle` code14 et signature env temporaire.
+
+BB-014 : scripts/reuse_blockboost_013_audio.py vérifie le SHA complet 0.13, les 21 OGG et le mapping, restaure temporairement assets/licensed et src/private-audio.mjs. Workflow android-apk.yml fabrique APK 0.14 complète en temp/blockboost-full-0.14.0 ; android-play-candidate.yml utilise les mêmes sons, mais exige clé/signature.

@@ -225,3 +225,6 @@ La précédente passation documentaire (« code pas ») reste historiquement val
 - Rotation réelle de phase lumineuse à 360° par `--rainbow-phase`, blocs fixes, mouvements réduits conservés.
 - Android candidat 0.14.0/code14 même identifiant ; workflow manuel pour vraie AAB signée avec JKS existante seulement si quatre secrets fonctionnels et PEM public de référence présent.
 - Les 21 sons complets de la 0.13 ne se trouvent PAS dans la build publique de secours 0.14. AAB et APK complète 0.14 non validées à la date de ce commit.
+
+### BB-014 19/10 — Production du jeu complet
+Le workflow 0.14 utilise uniquement en CI les 21 sons du jeu complet 0.13 après vérification SHA-256, sans publication de sons séparés. APK directe prévue sous temp/blockboost-full-0.14.0 après tests. AAB manuel signé toujours conditionné à JKS existante, quatre secrets fonctionnels et PEM public historique. Aucun merge, Release ni Play.

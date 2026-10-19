@@ -231,3 +231,15 @@ APK brute : https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/bl
 - [ ] Ajouter sur les blocs prêts à gagner un **halo dégradé tournant 360°** sans faire tourner les cellules, mode mouvement réduit.
 - [ ] Après développement futur : tests Android + APK directe jeu complet dans dépôt Block Boost, AAB Play `fr.greenpower.blockboost` signée avec **Upload Key existante** et 4 secrets GitHub, vrais contrôles de signature, sous réserve d'autorisation de Fab pour merge/release/Play.
 - [x] Passation et protocole de signature préservés en **tête de `ordres-de-mission.md` — BLOCKBOOST-IMMUTABLE-001**, sans code ni release.
+
+
+## Mission ouverte, non codée — 19/10 : ultime gameplay puis AAB sécurisé
+
+- [ ] **Seulement après accord de Fab pour coder** : ajouter aimantation réactive des **vrais** placements gagnants, correction micro-descente à la levée du doigt (petit biais supérieur, hystérésis, cible verrouillée) sans aide pour placements perdants. Coordonner prévisualisation, haptique et case réelle ; tester rotation 2 doigts.
+- [ ] Ajouter coin L **3 cases dans 2×2** (le carré plein existe), diagonales 2/3 cases dans 2 orientations **très rares**, rééquilibrer grands blocs au début **seulement plaçables** puis diminuer avec occupation ; tester distributions et garde-fou comeback.
+- [ ] Faire tourner à 360° les **reflets lumineux**, pas les cases ni les formes ; préserver dégradés/halos existants, animations réduites et fluidité Samsung.
+- [ ] Préserver 0.13 déjà livrée (PR #16, APK complète 21 sons, feux 1000/2000… par partie / 6s, guitare et triple séquence record). Vérifier sur Samsung avant toute release ; ne pas refaire le travail existant.
+- [ ] Vérifier sans jamais révéler les **4 secrets GitHub** normalisés ; confirmer sauvegarde privée/reconstruction JKS existante RSA 4096 alias `blockboost-upload`. Créer pipeline de **vraie AAB release** `fr.greenpower.blockboost`, versionCode >13, signature correspondant au PEM, tests Android, SHA256 et inclusion des sons ; ne jamais régénérer la clé.
+- [ ] Livrer APK direct sans ZIP sur Block Boost, AAB distinct signé ; PR et release **seulement sur validation de Fab** ; Google Play Console non encore confirmée créée.
+
+**Conservation obligatoire :** [section IMMUTABLE ordres-de-mission.md](ordres-de-mission.md) + [passation intégrale](docs/passation-ultime-snap-pieces-lumiere-aab-014.md). Ici **aucun code, aucun build, aucune nouvelle release réalisés** pour la demande 19/10 : documents de passation seulement.

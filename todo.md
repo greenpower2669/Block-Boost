@@ -252,3 +252,5 @@ APK brute : https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/bl
 - [ ] Vérifier les 4 secrets requis et le certificat PEM public de l'Upload Key 4096 déjà existante sans jamais divulguer ni régénérer la JKS ; exécuter le workflow manuel AAB signé, contrôler certificat, code14, ID, sons, SHA et livrer un .aab distinct.
 - [ ] Test physique Samsung Android16 : wobble pointerup, positions neutres jamais aimantées, rotation 2 doigts, blocs L/diagonales, fréquence, halos et performance, 21 sons, fireworks et triple record.
 - [ ] Attendre validation explicite pour merge main, GitHub Release et Google Play.
+
+- [x] Reproduire l'échec CI initial : 66/68 verts ; corriger RNG déterministe zéro et assertion rayon. Relancer les workflows automatiquement sur le commit de correction.

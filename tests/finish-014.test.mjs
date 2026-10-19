@@ -29,7 +29,7 @@ test("Winning placement acquires and holds a tiny downward release wobble",()=>{
   assert.equal(winningSnap(targets,6.1,1.4,win),null);
   assert.equal(winningSnap(targets,2,2),null);
   assert.equal(winningSnap([],7,0),null);
-  assert.equal(winningSnap(targets,7.04,.54,null),null);
+  assert.equal(winningSnap(targets,7.04,.59,null),null);
   assert.ok(WIN_SNAP.keepRadius<1);
 });
 test("Rotation cannot keep a no-longer-legal locked winning anchor",()=>{

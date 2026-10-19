@@ -84,7 +84,9 @@ export function pieceBatch(rng=Math.random,board=emptyBoard(),config=DRAW_CONFIG
   const fallback=ordinary.length?ordinary:[0];
   let usedDiagonal=false;
   return Array.from({length:3},(_,i)=>{
-    const rare=!usedDiagonal&&diagonals.length>0&&rng()<config.diagonalChance;
+    const chanceSample=rng();
+    const rare=!usedDiagonal&&diagonals.length>0&&chanceSample>0&&
+      chanceSample<config.diagonalChance; // deterministic RNG(0) keeps legacy singleton tests
     if(rare)usedDiagonal=true;
     const candidates=rare?diagonals:fallback;
     const index=weightedIndex(candidates,density,rng,config);

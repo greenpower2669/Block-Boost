@@ -1,5 +1,11 @@
 /** Looping background track with a side-chain envelope, independent from FX/voices. */
 export const DEFAULT_MUSIC_VOLUME=16;
+// The electric-guitar celebration is the ONLY event allowed to duck the bed.
+// Attack/release deliberately slow, so the level never 'falls off a cliff'.
+export const GUITAR_DUCK_FACTOR=0.55;
+export const GUITAR_DUCK_MS=4900;
+export const GUITAR_FADE_DOWN_MS=1200;
+export const GUITAR_FADE_UP_MS=2000;
 const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
 export function musicTarget(settings={},ducks=[],now=Date.now()){
   if(settings.music===false)return 0;
@@ -12,7 +18,7 @@ export class MusicBed {
     this.getSettings=getSettings;
     this.createAudio=createAudio||(()=>new Audio(new URL("../Blockboostmusic.mp3",import.meta.url).href));
     this.now=now;this.player=null;this.visible=true;this.starting=false;
-    this.ducks=[];this.expiryTimer=null;this.fadeTimer=null;
+    this.ducks=[];this.expiryTimer=null;this.fadeTimer=null;this.fadeTarget=null;
   }
   start(){
     if(!this.visible||this.getSettings().music===false)return;
@@ -35,7 +41,7 @@ export class MusicBed {
     this.ducks=this.ducks.filter(x=>x.until>now);
     const target=musicTarget(this.getSettings(),this.ducks,now);
     const from=Number(this.player.volume)||0;
-    this.fadeTo(target,target<from?85:600);
+    this.fadeTo(target,target<from?GUITAR_FADE_DOWN_MS:GUITAR_FADE_UP_MS);
     clearTimeout(this.expiryTimer);
     if(this.ducks.length){
       const next=Math.min(...this.ducks.map(x=>x.until));
@@ -43,7 +49,11 @@ export class MusicBed {
     }
   }
   fadeTo(target,milliseconds){
+    // Playback events may repeatedly call start()/refresh(). Keep an existing
+    // fade in flight when the target has not changed, instead of restarting it.
+    if(this.fadeTimer&&Math.abs(target-this.fadeTarget)<0.00001)return;
     clearInterval(this.fadeTimer);this.fadeTimer=null;
+    this.fadeTarget=target;
     const player=this.player;if(!player)return;
     const start=this.now(),from=Number(player.volume)||0;
     if(Math.abs(from-target)<.001){player.volume=target;return;}
@@ -55,10 +65,16 @@ export class MusicBed {
       if(p>=1){clearInterval(this.fadeTimer);this.fadeTimer=null;}
     },25);
   }
-  /** Multiple simultaneous cues never cancel a stronger existing duck. */
-  duckFor(ms=450,factor=.24){
+  /** ONLY the electric-guitar result cue calls this; regular FX never do. */
+  duckFor(ms=GUITAR_DUCK_MS,factor=GUITAR_DUCK_FACTOR){
     if(this.getSettings().music===false||!this.visible)return;
-    this.ducks.push({until:this.now()+Math.max(0,ms),factor});
+    this.ducks=[{until:this.now()+Math.max(0,ms),factor}];
+    if(this.player)this.refresh();
+  }
+  releaseGuitar(){
+    if(!this.ducks.length)return;
+    this.ducks=[];
+    clearTimeout(this.expiryTimer);this.expiryTimer=null;
     if(this.player)this.refresh();
   }
   sync(){if(this.getSettings().music===false)this.pause();else this.start();}

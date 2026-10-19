@@ -266,3 +266,6 @@ Son BB-014 : restauration éphémère des 21 effets du jeu APK 0.13 SHA-vérifi�
 - Livraison [APK complète 0.14.0 en direct](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-full-0.14.0/temp/android/BlockBoost-0.14.0-full-debug.apk), **18 160 356 octets**, SHA-256 `8fe7dec4de78c620e9ae12e14932dba43d792735120def761e22e5ce94a53a89`, branche `temp/blockboost-full-0.14.0`.
 - **À valider matériellement** sur Samsung Android 16 : volume réel selon haut-parleur, lecture longue et boucle, voix longues, FX groupés, scènes de 6s et retour au premier plan. AAB signée et Play non publiées.
 - **Interdits préservés :** aucun merge `main`, Release Play ou remplacement JKS ; Djipie non modifié.
+
+## BB-016 — Retrait du ducking général (19/10/2026)
+Retour d'écoute de Fab : la diminution de la musique à chaque son était trop brutale et désagréable. Décision : musique de fond continue et discrète ; **aucune baisse sur FX, voix, fireworks ou disco**, seulement la guitare électrique du record avec descente sur 1200 ms, facteur 0,55, et retour sur 2000 ms. Réglage musique conservé, 21 effets inchangés. Tests automatiques et essai Samsung à suivre. Ne pas fusionner main sans validation.

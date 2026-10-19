@@ -164,3 +164,8 @@ BB-014 : le premier build 0.14 était un fallback CC0 sans 21 sons. Correctif ca
 - Reproductibilité : MP3 identique à main (SHA blob `ab73a2914ab6afe3c6b9f30093766053977dcc0e`), Android inclut `assets/www/Blockboostmusic.mp3`, service worker ne met pas le MP3 lourd en précache.
 - CI et APK source 0.14 réussis (Android #39324826000 ; tests #39324826032 et #39324832287). Android matériel non encore écouté.
 - Vérifications terrain attendues : décodage offline WebView, absence de coupure/artefact lors du fade, équilibre FX/TTS/musique, écran verrouillé, reprise, boucle MP3. Ne pas déclarer la qualité audio validée avant essai.
+
+## BB-016 — Retour utilisateur sur la brutalité du volume
+- Régression perceptive BB-015 : ducking fréquent de 85 ms provoquant un pompage abrupt, même en présence d'effets courts.
+- Correctif demandé : éliminer toutes les baisses à l'exception de la guitare électrique de record ; facteur modéré 0,55 et rampes 1200/2000 ms ; conserver la musique en boucle à faible niveau et volume réglable.
+- Tests d'écoute obligatoires : vérifier transition après capture de score, effet guitare manquant (fallback sans ducking), interruption prématurée, reprise Android, et stabilité au cours des parties riches en effets.

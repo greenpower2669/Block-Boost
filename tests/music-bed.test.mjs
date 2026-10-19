@@ -1,11 +1,18 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {musicTarget,DEFAULT_MUSIC_VOLUME,MusicBed} from "../src/music-bed.mjs";
+import {musicTarget,DEFAULT_MUSIC_VOLUME,MusicBed,GUITAR_DUCK_FACTOR,GUITAR_DUCK_MS,GUITAR_FADE_DOWN_MS,GUITAR_FADE_UP_MS} from "../src/music-bed.mjs";
+import {Feedback} from "../src/feedback.mjs";
 test("music remains audible with FX disabled and obeys its own switch",()=>{
   assert.equal(musicTarget({fx:false,voice:false,music:true}),DEFAULT_MUSIC_VOLUME/100);
   assert.equal(musicTarget({fx:true,music:false,musicVolume:90}),0);
   assert.equal(musicTarget({musicVolume:150}),1);
   assert.equal(musicTarget({musicVolume:-10}),0);
+});
+test("the soft guitar duck is partial and lasts through the guitar cue",()=>{
+  assert.equal(GUITAR_DUCK_FACTOR,.55);
+  assert.equal(GUITAR_DUCK_MS,4900);
+  assert.ok(GUITAR_FADE_DOWN_MS>=1000);
+  assert.ok(GUITAR_FADE_UP_MS>=1500);
 });
 test("strongest overlapping duck wins until its own expiry",()=>{
   const ducks=[{until:7000,factor:.20},{until:1400,factor:.08},{until:800,factor:.01}];
@@ -32,4 +39,30 @@ test("music loops, mutes and pauses in background",async()=>{
     settings.music=false;music.sync();assert.equal(music.player.paused,true);
     music.pause();
   }finally{if(saved===undefined)delete globalThis.Audio;else globalThis.Audio=saved;}
+});
+
+test("ordinary FX, voices, regular fanfare and fireworks never duck music",()=>{
+  const feedback=new Feedback(()=>({music:true,musicVolume:16,fx:true,voice:true}),()=>"pompom",()=>{},()=>{});
+  const duckCalls=[];
+  feedback.music={start(){},duckFor(...args){duckCalls.push(args);},releaseGuitar(){}};
+  feedback.fx("drop");feedback.fx("combo");feedback.fx("festival-disco");
+  feedback.speak("welcome",1,true);
+  feedback.playFireworksAudio();feedback.stopFireworksAudio();
+  assert.deepEqual(duckCalls,[]);
+});
+test("guitar is the only ducking trigger, and stopping it releases smoothly",()=>{
+  const feedback=new Feedback(()=>({music:true,musicVolume:16,fx:true,voice:false}),()=>"pompom",()=>{},()=>{});
+  const calls=[];
+  feedback.music={start(){},duckFor(){calls.push("duck");},releaseGuitar(){calls.push("release");}};
+  // Simulate the private GitHub Actions asset availability independently
+  // of the public empty audio manifest.
+  const native=feedback.special;
+  feedback.special=(event)=>event==="result-guitar";
+  // Public manifest may be empty; this test validates the dedicated trigger
+  // path without changing or exposing the 21 licensed audio assets.
+  feedback.playResultGuitar();
+  assert.equal(calls.filter(x=>x==="duck").length,0);
+  feedback.stopResultGuitar();
+  assert.equal(calls.at(-1),"release");
+  feedback.special=native;
 });

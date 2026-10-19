@@ -274,3 +274,10 @@ APK brute : https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/bl
 - [x] Tests Node/Chrome réussis (Actions 39324826032 / 39324832287) et Android **complet** (39324826000), 21 effets + MP3 vérifiés, APK directe 18 160 356 octets / SHA `8fe7dec4de78c620e9ae12e14932dba43d792735120def761e22e5ce94a53a89`.
 - [ ] Test Samsung Android 16 : musique ne masque jamais voix, bang, combo ; pas de trous de boucle ; retour de volume correct ; son pendant 6s fireworks et jingle record ; lecture hors réseau ; passage arrière-plan/avant-plan.
 - [ ] Éventuelles corrections de niveau après écoute de Fab ; préserver 21 sons et signature Android existante. **Attendre approbation avant AAB signée / merge main / Release / Play.**
+
+## BB-016 — Correction après écoute de Fab (19/10/2026)
+- [x] À la demande de Fab, **désactiver l'atténuation automatique sur TOUS les FX, voix, fanfares disco et fireworks** : la musique doit rester faible et stable au volume choisi (défaut conservé 16 %, curseur indépendant).
+- [x] **Seule exception : guitare électrique du nouvel écran record** : réduction modérée au lieu de silence (~55 % du niveau musical), descente lente 1,2 s, retour très doux 2 s, fin de guitare libère l'atténuation ; ne jamais couper/repartir la musique de fond.
+- [x] Préserver l'APK offline, les 21 effets Djipie, les paramètres, le package `fr.greenpower.blockboost`, la JKS et la PR #16 sans merge.
+- [ ] Vérifier tests CI Node/Chrome et build APK complète pour la correction BB-016, puis relever SHA et fournir lien direct .apk.
+- [ ] Essai Samsung : niveau continu en jeu, seules guitare/record atténuées, pas d'à-coups à l'entrée ni à la sortie, redémarrage et arrière-plan.

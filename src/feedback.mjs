@@ -127,7 +127,7 @@ export class Feedback {
     if(!this.ctx)return false;
     const now=Date.now();
     if(now-this.lastVictoryAt<2300)return true; // one fanfare, no overlapping Bass Drop fallback
-    this.music.duckFor(4400,.12);
+    // The regular disco/festival jingle does not change the background level.
     this.stopVictoryMusic();
     try {
       const ctx=this.ctx,t0=ctx.currentTime+.018;
@@ -209,7 +209,13 @@ export class Feedback {
       }
       audio.volume=volume;
       audio.pause();audio.currentTime=0;
-      audio.play()?.catch?.(()=>{});
+      if(event==="result-guitar"&&!audio.__musicGuitarReleaseBound){
+        audio.__musicGuitarReleaseBound=true;
+        audio.addEventListener?.("ended",()=>this.music.releaseGuitar());
+      }
+      audio.play()?.catch?.(()=>{
+        if(event==="result-guitar")this.music.releaseGuitar();
+      });
       return true;
     }catch{return false;}
   }
@@ -217,10 +223,16 @@ export class Feedback {
     const p=this.specialPlayers.get(event);
     if(p)try{p.pause();p.currentTime=0;}catch{}
   }
-  stopResultGuitar(){this.stopSpecial("result-guitar");}
+  stopResultGuitar(){
+    this.stopSpecial("result-guitar");
+    this.music.releaseGuitar();
+  }
   playResultGuitar(){
     this.stopResultGuitar();
-    this.music.duckFor(6500,.10);
+    const hasGuitar=Boolean(this.getSettings().fx&&PRIVATE_AUDIO_FILES["result-guitar"]);
+    // A gentle, partial 1.2s descent only while the electric guitar plays.
+    // Normal sound effects, speech and fireworks leave background music stable.
+    if(hasGuitar)this.music.duckFor();
     return this.special("result-guitar",.42)||this.playVictoryMusic();
   }
   stopFireworksAudio(){
@@ -235,7 +247,7 @@ export class Feedback {
     this.stopFireworksAudio();
     if(this.getSettings().fx===false)return false;
     this.fireworkPlaying=true;
-    this.music.duckFor(6400,.09);
+    // No ducking for fireworks: background music remains quietly constant.
     // Both ambient beds are converted and hard-trimmed to MAXIMUM six seconds
     // in Djipie's private compiler, with a short fade-out. The local timer
     // stops them independently of any faulty file duration/decoder.
@@ -299,11 +311,7 @@ export class Feedback {
   }
   fx(event) {
     if(!this.getSettings().fx)return;
-    const big=event==="festival-disco"||event==="festival-bubbles-create"||
-      event==="festival-fireworks"||event==="streak2"||event==="streak3";
-    const length=event==="festival-disco"?4300:big?1650:
-      /line|combo|festival|bubbles|streak|record/i.test(event)?950:420;
-    this.music.duckFor(length,big ? 0.12 : 0.24);
+    // All ordinary FX and voices mix over a fixed, quiet music bed.
     // Original 4s fanfare takes the place of the old short Bass Drop / Kenney
     // sample when WebAudio is available; source WAV is kept as fallback only.
     if(event==="festival-disco"&&this.playVictoryMusic())return;
@@ -386,7 +394,7 @@ export class Feedback {
     this.lastByKind.set(kind,now);
     this.onCaption(phrase);
     this.onEmotion(kind==="clear"?"happy":kind);
-    this.music.duckFor(Math.max(2400,phrase.length*125+750),.08);
+    // Speech is clear over the low constant music bed: no sudden side-chain dip.
     clearTimeout(this.captionTimeout);clearTimeout(this.emotionTimeout);
     this.captionTimeout=setTimeout(()=>this.onCaption(""),3700);
     this.emotionTimeout=setTimeout(()=>this.onEmotion("idle"),1200);

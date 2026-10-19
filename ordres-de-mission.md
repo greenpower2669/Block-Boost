@@ -238,3 +238,8 @@ Le workflow 0.14 utilise uniquement en CI les 21 sons du jeu complet 0.13 après
 - Instruction de Fab : intégrer son fichier `Blockboostmusic.mp3` au jeu et laisser **tous les effets sonores et la voix au premier plan**. Solution implémentée : niveau de base discret et ducking temporel, plutôt que filtre passe-bande permanent.
 - Branche `feature/final-result-fireworks-013` et PR #16 conservées, sans fusion. Les assets 21 FX et le mécanisme AAB/JKS **IMMUTABLE** ne sont pas modifiés.
 - Résultat source testé CI et APK debug complète 0.14 : [téléchargement direct .apk](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-full-0.14.0/temp/android/BlockBoost-0.14.0-full-debug.apk), SHA256 `8fe7dec4de78c620e9ae12e14932dba43d792735120def761e22e5ce94a53a89`. Écoute Samsung encore requise.
+
+## Correction demandée BB-016 — stabilité du fond sonore
+- Fab rejette le ducking général (« mauvaise idée » ; baisse brutale) : conserver une musique discrète à niveau constant pendant FX/voix et festivals.
+- Exception autorisée : seule guitare électrique du record baisse modérément le fond, par fondu lent à l'entrée (1200 ms) et à la sortie (2000 ms), sans couper le morceau.
+- Faire les tests et une APK complète de test ; préserver signature JKS, 21 effets, mémoire projet, aucune fusion main ni publication Play.

@@ -82,3 +82,6 @@ BB-014 : scripts/reuse_blockboost_013_audio.py vérifie le SHA complet 0.13, les
 ## BB-015 — Musique de fond du jeu (19/10/2026)
 - Nouveau composant `src/music-bed.mjs` (ducking FX/voix, musique `Blockboostmusic.mp3` 16 % et réglages persistants). Documentation et livraison vérifiée : lire `brain.md`, rubrique **BB-015**.
 - APK offline 0.14 avec musique + 21 FX, SHA/CI consignés dans `todo.md`. Test sonore Samsung requis. Les restrictions IMMUTABLE sur signature, merge et Play demeurent.
+
+## BB-016 — Correction volume après test d'écoute
+- Se référer au tiroir `brain.md` section BB-016 : le ducking global BB-015 a été supprimé sur demande de Fab, seul le jingle guitare électrique du record peut réduire très doucement le fond musical. `todo.md` contient validation CI/APK à terminer.

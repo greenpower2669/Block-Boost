@@ -25,7 +25,7 @@ try{
   const page=await context.newPage(),errors=[];
   page.on("pageerror",err=>errors.push(err.message));
   await page.addInitScript(()=>{
-    Math.random=()=>0.13;
+    Math.random=()=>0.07; // deterministic 3-cell horizontal with the new weighted draw
     window.__hapticCalls=[];
     window.__voiceCalls=[];
     window.__voiceStops=0;
@@ -139,6 +139,13 @@ try{
   assert.equal(await page.locator(".cell.will-solve").count(),8,
     "All eight truly completed cells should glow in rainbow before placement");
   assert.match(await page.locator("#solve-signal").textContent(),/1 LIGNE.*8 BLOCS/);
+  const wobble={...target,y:target.y+cellSize*.54};
+  await dragCDP.send("Input.dispatchTouchEvent",{type:"touchMove",touchPoints:[wobble]});
+  assert.equal(await page.locator(".cell.will-solve").count(),8,
+    "A tiny downward movement must not break the winning preview");
+  const ghostPosition=await page.locator("#drag-ghost").boundingBox();
+  assert.ok(Math.abs(ghostPosition.y-(b2.y+7))<5,
+    "Winner ghost must be aligned with the real board");
   await dragCDP.send("Input.dispatchTouchEvent",{type:"touchEnd",touchPoints:[]});
   assert.equal(await page.locator(".cell.will-solve").count(),0,
     "Anticipation is cleared immediately on release");

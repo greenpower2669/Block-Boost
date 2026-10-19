@@ -10,12 +10,27 @@ android {
         applicationId 'fr.greenpower.blockboost'
         minSdk 26
         targetSdk 35
-        versionCode 13
-        versionName '0.13.0'
+        versionCode 14
+        versionName '0.14.0'
     }
 
+    // The Upload Key exists only on a controlled CI runner, never in Git.
+    signingConfigs {
+        uploadRelease {
+            def keyPath = System.getenv('ANDROID_UPLOAD_KEYSTORE_PATH')
+            if (keyPath) {
+                storeFile file(keyPath)
+                storePassword System.getenv('ANDROID_UPLOAD_KEYSTORE_PASSWORD')
+                keyAlias System.getenv('ANDROID_UPLOAD_KEY_ALIAS')
+                keyPassword System.getenv('ANDROID_UPLOAD_KEY_PASSWORD')
+            }
+        }
+    }
     buildTypes {
-        release { minifyEnabled false }
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.uploadRelease
+        }
         debug { debuggable true }
     }
 

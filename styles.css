@@ -121,6 +121,12 @@ body.reduce-motion *,body.reduce-motion *::before,body.reduce-motion *::after{an
 .haptic-sonar:empty{display:none}
 
 
+/* Chromium/WebView: registered angle interpolates the LIGHT, never the blocks. */
+@property --rainbow-phase {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
 /* 0.6 : rainbow anticipation and graduated clear effect. No flashing strobe.
    Only truly completed rows/columns receive these colors.
    The static gradients remain usable under reduced-motion preferences. */
@@ -143,7 +149,7 @@ body.reduce-motion *,body.reduce-motion *::before,body.reduce-motion *::after{an
   content:"";position:absolute;inset:-3px;border-radius:6px;
   pointer-events:none;opacity:var(--energy-alpha,.5);
   background:conic-gradient(
-   from var(--rainbow-index,0deg),
+   from calc(var(--rainbow-index,0deg) + var(--rainbow-phase,0deg)),
    #ff558c,#ffcc60,#dfff75,#42e8df,#8b9dff,#ee80ff,#ff558c
   );
   box-shadow:0 0 var(--energy-blur,9px) #b2f9ffcc;
@@ -157,9 +163,9 @@ body.reduce-motion *,body.reduce-motion *::before,body.reduce-motion *::after{an
 }
 .board .cell.just-solved::after{opacity:.9;animation:rainbowWave 1.8s linear infinite}
 @keyframes rainbowWave{
-  0%{filter:hue-rotate(0deg);transform:scale(1)}
-  50%{filter:hue-rotate(160deg);transform:scale(1.045)}
-  100%{filter:hue-rotate(360deg);transform:scale(1)}
+  0%{--rainbow-phase:0deg;filter:hue-rotate(0deg);transform:scale(1)}
+  50%{--rainbow-phase:180deg;filter:hue-rotate(160deg);transform:scale(1.045)}
+  100%{--rainbow-phase:360deg;filter:hue-rotate(360deg);transform:scale(1)}
 }
 @keyframes clearRainbow{
   0%{opacity:.97;filter:saturate(1);transform:scale(1)}
@@ -305,22 +311,24 @@ body.reduce-motion .festival-disco-ball{transform:none;opacity:1}
 
 /* A theme changes the actual preview colors, not just the outer halo. */
 .board-wrap[data-preview-theme="forest"] .cell.will-solve::after{
- background:radial-gradient(circle at 27% 33%,#dfffb5,#6bf5aab8 24%,#2ed6c88a 58%,#194f75a6);
+ background:conic-gradient(from calc(var(--rainbow-index,0deg) + var(--rainbow-phase,0deg)),#ffffff9a,transparent 38%,#ffffff55 62%,transparent 83%,#ffffff9a),
+  radial-gradient(circle at 27% 33%,#dfffb5,#6bf5aab8 24%,#2ed6c88a 58%,#194f75a6);
 }
 .board-wrap[data-preview-theme="crystal"] .cell.will-solve::after{
- background:conic-gradient(from var(--rainbow-index,0deg),#c5faff,#9c9fff,#e2a9ff,#a1edf8,#c5faff);
+ background:conic-gradient(from calc(var(--rainbow-index,0deg) + var(--rainbow-phase,0deg)),#c5faff,#9c9fff,#e2a9ff,#a1edf8,#c5faff);
 }
 .board-wrap[data-preview-theme="electric"] .cell.will-solve::after{
- background:linear-gradient(135deg,#d8fffe,#1cdaff 42%,#6b83ff 57%,#d5ff7d);
+ background:conic-gradient(from calc(var(--rainbow-index,0deg) + var(--rainbow-phase,0deg)),#ffffff8c,transparent 40%,#b6ffff66 66%,transparent 90%,#ffffff8c),
+  linear-gradient(135deg,#d8fffe,#1cdaff 42%,#6b83ff 57%,#d5ff7d);
 }
 .board-wrap[data-preview-theme="fireworks"] .cell.will-solve::after{
- background:conic-gradient(from var(--rainbow-index,0deg),#ffda88,#ff8e8c,#caa1ff,#ffde99);
+ background:conic-gradient(from calc(var(--rainbow-index,0deg) + var(--rainbow-phase,0deg)),#ffda88,#ff8e8c,#caa1ff,#ffde99);
 }
 .board-wrap[data-preview-theme="galaxy"] .cell.will-solve::after{
- background:conic-gradient(from var(--rainbow-index,0deg),#b9a3ff,#81d6ff,#6738b5,#f2aafa,#b9a3ff);
+ background:conic-gradient(from calc(var(--rainbow-index,0deg) + var(--rainbow-phase,0deg)),#b9a3ff,#81d6ff,#6738b5,#f2aafa,#b9a3ff);
 }
 .board-wrap[data-preview-theme="disco"] .cell.will-solve::after{
- background:repeating-conic-gradient(from var(--rainbow-index,0deg),#fff2a0 0 16deg,
+ background:repeating-conic-gradient(from calc(var(--rainbow-index,0deg) + var(--rainbow-phase,0deg)),#fff2a0 0 16deg,
    #89effa 19deg 30deg,#f7a3d9 33deg 42deg,#d7a2ff 45deg 54deg);
 }
 
@@ -582,7 +590,7 @@ body.reduce-motion .festival-bubble{animation:none!important;opacity:.45;bottom:
 body.reduce-motion .festival-bubble::after{display:none!important}
 .board-wrap[data-preview-theme="bubbles"] .cell.will-solve::after{
   background:radial-gradient(circle at 24% 20%,#ffffffcb,transparent 35%),
-    conic-gradient(from var(--rainbow-index,0deg),#9fefff,#d6a8fc,
+    conic-gradient(from calc(var(--rainbow-index,0deg) + var(--rainbow-phase,0deg)),#9fefff,#d6a8fc,
        #fff2b5,#a2f5df,#9fefff);
 }
 

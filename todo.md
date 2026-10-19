@@ -243,3 +243,12 @@ APK brute : https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/bl
 - [ ] Livrer APK direct sans ZIP sur Block Boost, AAB distinct signé ; PR et release **seulement sur validation de Fab** ; Google Play Console non encore confirmée créée.
 
 **Conservation obligatoire :** [section IMMUTABLE ordres-de-mission.md](ordres-de-mission.md) + [passation intégrale](docs/passation-ultime-snap-pieces-lumiere-aab-014.md). Ici **aucun code, aucun build, aucune nouvelle release réalisés** pour la demande 19/10 : documents de passation seulement.
+
+## BB-014 — état de développement candidat, 19 octobre 2026
+- [x] Lire les cinq mémoires, la méthode et la PR #16 ; ne rien merger.
+- [x] Préparer implémentation candidate 0.14 : snap ciblé, nouvelles pièces pondérées, halo conique 360°, tests unitaires/tactiles, version Android et cache.
+- [ ] Confirmer CI Node/Chrome et build Android 0.14 ; corriger les échecs et documenter runs/SHA.
+- [ ] Produire via Djipie build privé complet 0.14 aux 21 sons et déposer une **vraie APK .apk directe** dans la branche temp/ du dépôt Block Boost, pas un fallback CC0.
+- [ ] Vérifier les 4 secrets requis et le certificat PEM public de l'Upload Key 4096 déjà existante sans jamais divulguer ni régénérer la JKS ; exécuter le workflow manuel AAB signé, contrôler certificat, code14, ID, sons, SHA et livrer un .aab distinct.
+- [ ] Test physique Samsung Android16 : wobble pointerup, positions neutres jamais aimantées, rotation 2 doigts, blocs L/diagonales, fréquence, halos et performance, 21 sons, fireworks et triple record.
+- [ ] Attendre validation explicite pour merge main, GitHub Release et Google Play.

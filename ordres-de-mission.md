@@ -217,3 +217,11 @@ Source `feature/final-result-fireworks-013`. Workflow public Android `.github/wo
 - **Tests obligatoires à la future exécution.** Simuler le doigt qui glisse de quelques pixels vers le bas lors de `pointerup` : conserver pose gagnante ; déplacer volontairement hors capture : ne pas forcer ; cibles perdantes et illégales non aimantées ; second doigt rotation intacte ; échantillonnage déterministe des pondérations de formes au début/fin, 2×2 réellement proposé, deux diagonales rares ; visualisation lumière 360°, pause et reducedMotion ; scoring x10, high score, spectacles 0.13, sauvegardes et sons inchangés ; tests Node, Chrome tactile et Samsung réel. Tenir les cinq fichiers vivants et respecter les invariants Play/APK ci-dessus.
 - **Release future.** Bumper le `versionCode` et `versionName` au-dessus de 0.13.0 avant build, fournir la nouvelle APK complète dans `Block-Boost/temp/`, puis préparer AAB `fr.greenpower.blockboost` signée avec les 4 secrets de l'Upload Key EXISTANTE ; vérifier signature et certificat, sans exposer la JKS. **Aucun merge main, aucune nouvelle release ni soumission Play avant nouvel accord explicite de Fab.**
 
+
+## 19/10/2026 — BB-014, développement candidat sur la PR #16
+La précédente passation documentaire (« code pas ») reste historiquement valide pour son tour ; la nouvelle mission de développement du 19/10 demande l'exécution des finitions. Les sections IMMUTABLE en tête ne changent pas. En attente de validation Samsung et binaires : aucun merge main, Release ni Play.
+- Snap uniquement placements gagnants légaux, hystérésis anti-descente, halo/fantôme/pose identiques, annulation à la rotation.
+- Coin L 3 cases, 4 diagonales 2/3 cases à 1,5 % paramétrable, gros blocs selon occupation et formes légales ; coup de pouce highscore conservé.
+- Rotation réelle de phase lumineuse à 360° par `--rainbow-phase`, blocs fixes, mouvements réduits conservés.
+- Android candidat 0.14.0/code14 même identifiant ; workflow manuel pour vraie AAB signée avec JKS existante seulement si quatre secrets fonctionnels et PEM public de référence présent.
+- Les 21 sons complets de la 0.13 ne se trouvent PAS dans la build publique de secours 0.14. AAB et APK complète 0.14 non validées à la date de ce commit.

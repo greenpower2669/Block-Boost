@@ -5,6 +5,7 @@ import {evaluateBonus,speedTier} from "./bonus.mjs";
 import {PlacementCueGate} from "./placement-cues.mjs";
 import {clearingTargets,rewardHaptic} from "./haptic-sonar.mjs";
 import {evaluateSolvePreview,enrichedGuidance} from "./solve-preview.mjs";
+import {winningSnap} from "./winning-snap.mjs";
 import {FestivalDirector,previewTheme} from "./festival.mjs";
 import {FireworksDirector,crossedFireworkMilestones,FIREWORKS_DURATION_MS} from "./fireworks.mjs";
 import {ResultCelebration} from "./result-celebration.mjs";
@@ -74,6 +75,7 @@ function clearSonar(){
 function computeSonar(index){
   const piece=game.pieces[index];
   targetPositions=piece&&!piece.used?clearingTargets(game.board,piece.coords):[];
+  if(drag)drag.snap=null; // discard the old orientation's winner
   currentGuidance=0;
 }
 function updateSonar(x,y){
@@ -206,9 +208,22 @@ function metrics(coords,clientX,clientY){
   const b=bounds(coords),r=boardEl.getBoundingClientRect();
   const cell=(r.width-14-7*3)/SIZE;
   const left=clientX-b.width*cell/2,top=clientY-(b.height+.65)*cell;
-  const x=Math.round((left-r.left-7)/(cell+3));
-  const y=Math.round((top-r.top-7)/(cell+3));
-  return {x,y,left,top,cell,b,valid:canPlace(game.board,coords,x,y)};
+  const rawX=(left-r.left-7)/(cell+3);
+  const rawY=(top-r.top-7)/(cell+3);
+  const x=Math.round(rawX),y=Math.round(rawY);
+  return {x,y,rawX,rawY,left,top,cell,b,gridLeft:r.left+7,
+    gridTop:r.top+7,step:cell+3,valid:canPlace(game.board,coords,x,y)};
+}
+// One legal, stable winner for ghost + preview + light + haptics + pointerup.
+function dragPlacement(m){
+  if(!drag||!drag.moved)return m;
+  const snap=winningSnap(targetPositions,m.rawX,m.rawY,drag.snap);
+  drag.snap=snap;
+  if(!snap)return m;
+  const coords=game.pieces[drag.index].coords;
+  if(!canPlace(game.board,coords,snap.x,snap.y)){drag.snap=null;return m;}
+  return {...m,x:snap.x,y:snap.y,valid:true,snapped:true,
+    left:m.gridLeft+snap.x*m.step,top:m.gridTop+snap.y*m.step};
 }
 function preview(x,y,valid){
   const cells=boardEl.children;
@@ -223,7 +238,7 @@ function preview(x,y,valid){
 }
 function drawGhost(){
   if(!drag)return;
-  const p=game.pieces[drag.index], m=metrics(p.coords,drag.x,drag.y);
+  const p=game.pieces[drag.index], m=dragPlacement(metrics(p.coords,drag.x,drag.y));
   drag.proposed=m;
   const base=buildShape(p.coords,p.color,m.cell,"ghost-cell");
   base.style.setProperty("--mini",m.cell+"px");
@@ -263,7 +278,7 @@ function beginDrag(index,e){
   if(game.gameOver||game.pieces[index]?.used)return;
   selectPiece(index);
   drag={index,pointer:e.pointerId,startX:e.clientX,startY:e.clientY,
-    x:e.clientX,y:e.clientY,proposed:null,moved:false,rotatedCue:false};
+    x:e.clientX,y:e.clientY,proposed:null,snap:null,moved:false,rotatedCue:false};
   cueGate.reset();computeSonar(index);
   feedback.ensureAudio();feedback.fx("grab");feedback.haptic("grab");
   drawTray();drawGhost();
@@ -437,7 +452,7 @@ document.addEventListener("pointermove",e=>{
 document.addEventListener("pointerup",e=>{
   if(!drag||e.pointerId!==drag.pointer)return;
   e.preventDefault();
-  const was=drag;const candidate=metrics(game.pieces[drag.index].coords,e.clientX,e.clientY);
+  const was=drag;const candidate=dragPlacement(metrics(game.pieces[drag.index].coords,e.clientX,e.clientY));
   const index=drag.index;resetDrag();
   if(was.moved&&candidate.valid){
     insertAt(index,candidate.x,candidate.y);

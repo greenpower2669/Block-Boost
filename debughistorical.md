@@ -158,3 +158,9 @@ BB-014 : le premier build 0.14 était un fallback CC0 sans 21 sons. Correctif ca
 - 19/10 BB-014, incident pipeline : substitution JS naïve a interprété `$'` de la commande grep comme suffixe de chaîne, dupliquant les dernières étapes YAML. GitHub Actions a rejeté les deux workflows **sans jobs** sur c274430. Remise à plat depuis les versions saines du commit 02719c, réinjection via remplacement fonctionnel (ne traite pas les `$` comme spéciaux) et vérification de structure YAML. Aucun binaire erroné diffusé.
 
 - BB-014, **preuve après reconstruction YAML** : GitHub Actions 39230344488 SUCCESS, tests Node/Chrome 39230344461 et 39230351456 SUCCESS ; restauration SHA-256 de l'APK 0.13 OK, comptage 21 FX dans APK 0.14 OK, dépôt .apk direct dans Block Boost OK (taille 608074, SHA 2f815dd0faf5a0db8a1526fdb8034b8a52f9330cf8c10c55cce9f3954ea619ca). Validation tactile Android 16 non réalisée. AAB signée non construite ; PEM public référent absent des sources courantes, validité des secrets non encore testée, NE PAS régénérer JKS.
+
+## BB-015 — Mix musical, tests et limites (19/10/2026)
+- Choix technique : atténuation temporelle de l'accompagnement, plutôt que filtrage spectral irréversible. Le ducking couvre SFX courts / longs, fanfare 4s, guitare, fireworks 6s et voix ; retour progressif.
+- Reproductibilité : MP3 identique à main (SHA blob `ab73a2914ab6afe3c6b9f30093766053977dcc0e`), Android inclut `assets/www/Blockboostmusic.mp3`, service worker ne met pas le MP3 lourd en précache.
+- CI et APK source 0.14 réussis (Android #39324826000 ; tests #39324826032 et #39324832287). Android matériel non encore écouté.
+- Vérifications terrain attendues : décodage offline WebView, absence de coupure/artefact lors du fade, équilibre FX/TTS/musique, écran verrouillé, reprise, boucle MP3. Ne pas déclarer la qualité audio validée avant essai.

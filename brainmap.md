@@ -78,3 +78,7 @@ Publication : Android `fr.greenpower.blockboost` identifié dans 0.13, code 13, 
 BB-014 : scripts/reuse_blockboost_013_audio.py vérifie le SHA complet 0.13, les 21 OGG et le mapping, restaure temporairement assets/licensed et src/private-audio.mjs. Workflow android-apk.yml fabrique APK 0.14 complète en temp/blockboost-full-0.14.0 ; android-play-candidate.yml utilise les mêmes sons, mais exige clé/signature.
 
 - BB-014 bilan de build : Actions 39230344488 (APK 0.14 complète) et 39230344461/39230351456 (tests) vertes ; branche artifact-only `temp/blockboost-full-0.14.0` commit 456c53de…, `temp/android/BlockBoost-0.14.0-full-debug.apk`, SHA 2f815dd0faf5a0db8a1526fdb8034b8a52f9330cf8c10c55cce9f3954ea619ca. AAB Play passe exclusivement par `.github/workflows/android-play-candidate.yml` dispatch manuel protégé si PEM public historique et quatre secrets fonctionnels.
+
+## BB-015 — Musique de fond du jeu (19/10/2026)
+- Nouveau composant `src/music-bed.mjs` (ducking FX/voix, musique `Blockboostmusic.mp3` 16 % et réglages persistants). Documentation et livraison vérifiée : lire `brain.md`, rubrique **BB-015**.
+- APK offline 0.14 avec musique + 21 FX, SHA/CI consignés dans `todo.md`. Test sonore Samsung requis. Les restrictions IMMUTABLE sur signature, merge et Play demeurent.

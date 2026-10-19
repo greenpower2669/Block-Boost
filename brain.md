@@ -253,3 +253,16 @@ Snap vers ancre légale gagnante seule : acquisition 0,46 cellule, maintien spat
 Son BB-014 : restauration éphémère des 21 effets du jeu APK 0.13 SHA-vérifiée, empaquetage dans le jeu 0.14 complet uniquement. Aucune diffusion de sons autonomes.
 
 **Livré en CI 19/10 (BB-014) :** APK debug complète 0.14, 21 OGG synchronisés, 608074 octets SHA-256 2f815dd0faf5a0db8a1526fdb8034b8a52f9330cf8c10c55cce9f3954ea619ca, source c6452aab…, branche temp/blockboost-full-0.14.0. CI Node/Chrome et Android vertes. Réception Samsung non faite ; AAB Play signée non produite faute de vérification PEM public et secrets.
+
+## BB-015 — Intégration Blockboostmusic.mp3 (19 octobre 2026)
+
+**Mission autorisée par Fab :** intégrer le MP3 existant dans la dernière branche de Block Boost et laisser toutes les voix / FX passer devant la musique. Approche principale : **ducking dynamique**, sans filtre passe-bande destructeur permanent.
+
+- `Blockboostmusic.mp3` de `main` réutilisé sur `feature/final-result-fireworks-013` via son SHA blob Git préexistant `ab73a2914ab6afe3c6b9f30093766053977dcc0e` (17 549 936 octets), sans réencodage ni ajout au dépôt Djipie.
+- `src/music-bed.mjs` : musique de fond boucle locale, volume initial 16 %, ducking des FX et voix par priorité, attaque 85 ms / restitution douce 600 ms. Fortes scènes (guitare, fireworks six secondes, fanfare) et voix natives abaissent davantage. Plusieurs duckings simultanés utilisent le facteur le plus bas.
+- Réglage musique indépendant (ON/OFF, curseur 0-100 %) et sauvegarde dans `src/storage.mjs` ; appuis gestuels déclenchent la lecture, pause lorsque la page est masquée. FX / voix / musique ont des activations séparées.
+- Bundle complet avec `Blockboostmusic.mp3` et les **21 sons Djipie réutilisés sans changement** dans l'APK, `audio/mpeg` configuré côté Java.
+- Tests unitaires + CI Chrome [39324826032](https://github.com/greenpower2669/Block-Boost/actions/runs/39324826032) et PR [39324832287](https://github.com/greenpower2669/Block-Boost/actions/runs/39324832287) : SUCCESS. Build Android complet [39324826000](https://github.com/greenpower2669/Block-Boost/actions/runs/39324826000) : SUCCESS, MP3 + FX contrôlés.
+- Livraison [APK complète 0.14.0 en direct](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-full-0.14.0/temp/android/BlockBoost-0.14.0-full-debug.apk), **18 160 356 octets**, SHA-256 `8fe7dec4de78c620e9ae12e14932dba43d792735120def761e22e5ce94a53a89`, branche `temp/blockboost-full-0.14.0`.
+- **À valider matériellement** sur Samsung Android 16 : volume réel selon haut-parleur, lecture longue et boucle, voix longues, FX groupés, scènes de 6s et retour au premier plan. AAB signée et Play non publiées.
+- **Interdits préservés :** aucun merge `main`, Release Play ou remplacement JKS ; Djipie non modifié.

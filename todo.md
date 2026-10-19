@@ -267,3 +267,10 @@ APK brute : https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/bl
 - [ ] Vérifier sur Samsung Android 16 : snap juste gagné/micro-descente, rotation 2 doigts, diagonales et L, halos 360°, fréquence des gros blocs, fireworks/son/score/sauvegarde.
 - [ ] **AAB signée Play non produite** : fournir/importer certificat **public** PEM original de l'Upload Key dans `android/certificates/BlockBoost-upload-certificate.pem` sur la branche privée de travail appropriée ; exécuter workflow manuel seulement après avoir configuré les 4 secrets existants (noms immuables) ; comparer vrais certificats et vérifier package fr.greenpower.blockboost, code14, SHA et 21 sons. Ne jamais régénérer JKS.
 - [ ] Valider explicitement auprès de Fab avant merge main, GitHub Release, ou upload Google Play.
+
+## BB-015 — Musique de fond priorisée (19/10/2026)
+- [x] Intégrer `Blockboostmusic.mp3` à la branche de travail et à l'APK offline, avec MIME `audio/mpeg` et sans réencodage.
+- [x] Ajouter bus musical indépendant : boucle 16 % initiale, baisse rapide pendant FX/voix/événements, restauration douce après, réglage volume ON/OFF indépendant et sauvegarde.
+- [x] Tests Node/Chrome réussis (Actions 39324826032 / 39324832287) et Android **complet** (39324826000), 21 effets + MP3 vérifiés, APK directe 18 160 356 octets / SHA `8fe7dec4de78c620e9ae12e14932dba43d792735120def761e22e5ce94a53a89`.
+- [ ] Test Samsung Android 16 : musique ne masque jamais voix, bang, combo ; pas de trous de boucle ; retour de volume correct ; son pendant 6s fireworks et jingle record ; lecture hors réseau ; passage arrière-plan/avant-plan.
+- [ ] Éventuelles corrections de niveau après écoute de Fab ; préserver 21 sons et signature Android existante. **Attendre approbation avant AAB signée / merge main / Release / Play.**

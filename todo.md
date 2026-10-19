@@ -257,3 +257,5 @@ APK brute : https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/bl
 
 - [x] Préparer le pipeline 0.14 21 FX depuis APK 0.13 SHA validé sans fuite de fichiers audio autonomes.
 - [ ] Vérifier réussite Actions, SHA du .apk direct complet, essai Samsung ; certifier AAB seulement lorsque PEM public et quatre secrets valides sont fournis à la CI.
+
+- [x] Diagnostiquer rejet YAML des workflows sur c274430 (expansion accidentelle du `$'` dans replace) ; reconstruire depuis la version saine 02719c et relancer CI.

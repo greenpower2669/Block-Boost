@@ -259,3 +259,11 @@ APK brute : https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/bl
 - [ ] Vérifier réussite Actions, SHA du .apk direct complet, essai Samsung ; certifier AAB seulement lorsque PEM public et quatre secrets valides sont fournis à la CI.
 
 - [x] Diagnostiquer rejet YAML des workflows sur c274430 (expansion accidentelle du `$'` dans replace) ; reconstruire depuis la version saine 02719c et relancer CI.
+
+### BB-014 — bilan vérifié CI 19/10
+- [x] Tests Node et Chrome : Actions 39230344461 et 39230351456, SUCCESS.
+- [x] Compiler **APK entière** 0.14.0 (21 FX vérifiés, source 0.13 SHA contrôlé) : Actions 39230344488 SUCCESS.
+- [x] Livrer directement sans ZIP sur Block Boost : [APK complète 0.14](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-full-0.14.0/temp/android/BlockBoost-0.14.0-full-debug.apk), 608074 octets, SHA256 `2f815dd0faf5a0db8a1526fdb8034b8a52f9330cf8c10c55cce9f3954ea619ca`, branche `temp/blockboost-full-0.14.0`, commit `456c53de878ba97fcbcf787b6ee7ecca8c654553`.
+- [ ] Vérifier sur Samsung Android 16 : snap juste gagné/micro-descente, rotation 2 doigts, diagonales et L, halos 360°, fréquence des gros blocs, fireworks/son/score/sauvegarde.
+- [ ] **AAB signée Play non produite** : fournir/importer certificat **public** PEM original de l'Upload Key dans `android/certificates/BlockBoost-upload-certificate.pem` sur la branche privée de travail appropriée ; exécuter workflow manuel seulement après avoir configuré les 4 secrets existants (noms immuables) ; comparer vrais certificats et vérifier package fr.greenpower.blockboost, code14, SHA et 21 sons. Ne jamais régénérer JKS.
+- [ ] Valider explicitement auprès de Fab avant merge main, GitHub Release, ou upload Google Play.

@@ -76,3 +76,5 @@ Publication : Android `fr.greenpower.blockboost` identifié dans 0.13, code 13, 
 - `tests/finish-014.test.mjs` + `tests/touch.e2e.mjs` : tests de réception ; `.github/workflows/android-apk.yml` reste une APK CC0 de secours ; `.github/workflows/android-play-candidate.yml` vérifie PEM/JKS/secrets et signe un AAB candidat ; `android/app/build.gradle` code14 et signature env temporaire.
 
 BB-014 : scripts/reuse_blockboost_013_audio.py vérifie le SHA complet 0.13, les 21 OGG et le mapping, restaure temporairement assets/licensed et src/private-audio.mjs. Workflow android-apk.yml fabrique APK 0.14 complète en temp/blockboost-full-0.14.0 ; android-play-candidate.yml utilise les mêmes sons, mais exige clé/signature.
+
+- BB-014 bilan de build : Actions 39230344488 (APK 0.14 complète) et 39230344461/39230351456 (tests) vertes ; branche artifact-only `temp/blockboost-full-0.14.0` commit 456c53de…, `temp/android/BlockBoost-0.14.0-full-debug.apk`, SHA 2f815dd0faf5a0db8a1526fdb8034b8a52f9330cf8c10c55cce9f3954ea619ca. AAB Play passe exclusivement par `.github/workflows/android-play-candidate.yml` dispatch manuel protégé si PEM public historique et quatre secrets fonctionnels.

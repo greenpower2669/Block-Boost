@@ -45,7 +45,7 @@ android {
 tasks.register('syncWebAssets', Copy) {
     from(rootProject.projectDir.parentFile) {
         include 'index.html', 'styles.css', 'manifest.webmanifest', 'sw.js'
-        include 'src/**/*.mjs', 'assets/**'
+        include 'src/**/*.mjs', 'assets/**', 'Blockboostmusic.mp3'
     }
     into(layout.projectDirectory.dir('src/main/assets/www'))
 }

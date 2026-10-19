@@ -303,7 +303,7 @@ export class Feedback {
       event==="festival-fireworks"||event==="streak2"||event==="streak3";
     const length=event==="festival-disco"?4300:big?1650:
       /line|combo|festival|bubbles|streak|record/i.test(event)?950:420;
-    this.music.duckFor(length,big?.12:.24);
+    this.music.duckFor(length,big ? 0.12 : 0.24);
     // Original 4s fanfare takes the place of the old short Bass Drop / Kenney
     // sample when WebAudio is available; source WAV is kept as fallback only.
     if(event==="festival-disco"&&this.playVictoryMusic())return;

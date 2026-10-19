@@ -74,6 +74,10 @@
       </select>
       <label class="check"><input type="checkbox" id="voice-setting"> Voix des animaux (désactivées par défaut)</label>
       <label class="check"><input type="checkbox" id="fx-setting" checked> Effets sonores</label>
+      <label class="check"><input type="checkbox" id="music-setting" checked> 🎵 Musique de fond</label>
+      <label for="music-volume">Volume de la musique : <output id="music-volume-value" for="music-volume">16 %</output></label>
+      <input id="music-volume" type="range" min="0" max="100" step="1" value="16" aria-label="Volume de la musique de fond en pourcentage">
+      <p class="help">La musique s'efface automatiquement pendant les effets et les voix, puis revient progressivement.</p>
       <label class="check"><input type="checkbox" id="motion-setting"> Animations réduites</label>
       <label class="check"><input type="checkbox" id="haptics-setting" checked> Petites vibrations haptiques</label>
       <label class="check"><input type="checkbox" id="guidance-setting" checked> Guidage vibratoire progressif vers les lignes et combos</label>

@@ -13,7 +13,7 @@ test("strongest overlapping duck wins until its own expiry",()=>{
   assert.ok(Math.abs(musicTarget({musicVolume:20},ducks,2000)-.04)<1e-10);
   assert.ok(Math.abs(musicTarget({musicVolume:20},ducks,8000)-.20)<1e-10);
 });
-test("music loops, mutes and pauses in background",()=>{
+test("music loops, mutes and pauses in background",async()=>{
   const saved=globalThis.Audio;const stats={plays:0};
   globalThis.Audio=class FakeAudio {
     constructor(){this.volume=0;this.paused=true;}
@@ -24,6 +24,7 @@ test("music loops, mutes and pauses in background",()=>{
     const settings={music:true,musicVolume:16,fx:false};
     const music=new MusicBed(()=>settings);
     music.start();assert.equal(music.player.loop,true);assert.equal(stats.plays,1);
+    await Promise.resolve();await Promise.resolve();
     music.duckFor(800,.12);assert.equal(music.ducks.length,1);
     music.setVisible(false);assert.equal(music.player.paused,true);
     assert.equal(music.ducks.length,0);

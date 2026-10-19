@@ -145,6 +145,9 @@ function showMascot(){
   $("mascot-face").textContent=m.emoji;$("mascot-name").textContent=m.name;
   $("mascot-choice").value=save.mascot;
   $("voice-setting").checked=save.settings.voice;$("fx-setting").checked=save.settings.fx;
+  $("music-setting").checked=save.settings.music!==false;
+  $("music-volume").value=String(save.settings.musicVolume);
+  $("music-volume-value").textContent=save.settings.musicVolume+" %";
   $("motion-setting").checked=save.settings.reducedMotion;
   $("haptics-setting").checked=save.settings.haptics!==false;
   $("guidance-setting").checked=save.settings.hapticGuidance!==false;
@@ -500,6 +503,17 @@ for(const [id,key] of [["voice-setting","voice"],["fx-setting","fx"],["motion-se
     if((key==="haptics"||key==="hapticGuidance")&&!e.target.checked)feedback.stopGuidance();
   });
 }
+$("music-setting").addEventListener("change",e=>{
+  save={...save,settings:{...save.settings,music:e.target.checked}};
+  persistSettings();feedback.updateMusic();
+});
+$("music-volume").addEventListener("input",e=>{
+  const musicVolume=Number(e.target.value);
+  save={...save,settings:{...save.settings,musicVolume}};
+  $("music-volume-value").textContent=musicVolume+" %";
+  feedback.updateMusic();
+});
+$("music-volume").addEventListener("change",()=>persistSettings());
 $("new-game").addEventListener("click",()=>restart(true));
 $("retry-button").addEventListener("click",()=>restart(false));
 $("end-dialog").addEventListener("close",()=>{
@@ -512,9 +526,10 @@ window.addEventListener("pagehide",()=>{
   if(!game.gameOver)persist();
   clearTimeout(endGameTimer);
   resultCelebration.stop();fireworks.stop();
-  feedback.stop();festival.stop();
+  feedback.stop(true);festival.stop();
 });
 document.addEventListener("visibilitychange",()=>{
+  feedback.setMusicVisible(!document.hidden);
   if(document.hidden){
     feedback.stopGuidance();feedback.stopVictoryMusic?.();
     feedback.stopAllSpecial?.();

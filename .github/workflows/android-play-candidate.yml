@@ -85,6 +85,8 @@ jobs:
           jarsigner -verify "$AAB" | grep -F 'jar verified.'
           unzip -l "$AAB" | grep -F 'base/assets/www/src/winning-snap.mjs'
           unzip -l "$AAB" | grep -F 'base/assets/www/src/fireworks.mjs'
+          unzip -l "$AAB" | grep -F 'base/assets/www/src/music-bed.mjs'
+          unzip -l "$AAB" | grep -F 'base/assets/www/Blockboostmusic.mp3'
           unzip -l "$AAB" | grep -F 'base/assets/www/styles.css'
           unzip -l "$AAB" | grep -F 'base/dex/classes.dex'
           AUDIO_COUNT="$(unzip -Z1 "$AAB" | grep -c '^base/assets/www/assets/licensed/.*\.ogg$')"

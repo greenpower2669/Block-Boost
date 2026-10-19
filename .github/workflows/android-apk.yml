@@ -22,6 +22,7 @@ on:
       - 'index.html'
       - 'styles.css'
       - 'src/**'
+      - 'Blockboostmusic.mp3'
       - 'assets/**'
       - 'tests/**'
       - 'scripts/**'
@@ -90,6 +91,8 @@ jobs:
           cp android/app/build/outputs/apk/debug/app-debug.apk android/dist/BlockBoost-0.14.0-full-debug.apk
           unzip -l android/dist/BlockBoost-0.14.0-full-debug.apk | grep -F 'assets/www/index.html'
           unzip -l android/dist/BlockBoost-0.14.0-full-debug.apk | grep -F 'assets/www/src/main.mjs'
+          unzip -l android/dist/BlockBoost-0.14.0-full-debug.apk | grep -F 'assets/www/src/music-bed.mjs'
+          unzip -l android/dist/BlockBoost-0.14.0-full-debug.apk | grep -F 'assets/www/Blockboostmusic.mp3'
           unzip -l android/dist/BlockBoost-0.14.0-full-debug.apk | grep -F 'assets/www/src/winning-snap.mjs'
           unzip -l android/dist/BlockBoost-0.14.0-full-debug.apk | grep -F 'assets/www/src/festival.mjs'
           unzip -l android/dist/BlockBoost-0.14.0-full-debug.apk | grep -F 'assets/www/src/disco-sprites.mjs'

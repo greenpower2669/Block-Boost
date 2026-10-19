@@ -3,6 +3,7 @@ import {victoryScore,VICTORY_SECONDS} from "./victory-music.mjs";
 import {CONCERT_CUES,chooseJingle} from "./concert-cues.mjs";
 import {KENNEY_AUDIO} from "./kenney-audio.mjs";
 import {VoiceDirector} from "./voice-director.mjs";
+import {MusicBed} from "./music-bed.mjs";
 // Audio and mascot direction: independent of the rules engine. No remote services.
 export const MASCOTS={
   pompom:{name:"Pompom",species:"Panda roux",emoji:"🦊",voicePitch:0.90,lines:{
@@ -52,8 +53,12 @@ export class Feedback {
     this.fireworkPlaying=false;
     this.victoryMaster=null;
     this.lastVictoryAt=-Infinity;
+    this.music=new MusicBed(this.getSettings);
   }
+  updateMusic(){this.music.sync();}
+  setMusicVisible(visible){this.music.setVisible(visible);}
   ensureAudio() {
+    this.music.start(); // independent of FX and voice switches
     if(!this.getSettings().fx) return;
     try{
       const Context=globalThis.AudioContext||globalThis.webkitAudioContext;
@@ -122,6 +127,7 @@ export class Feedback {
     if(!this.ctx)return false;
     const now=Date.now();
     if(now-this.lastVictoryAt<2300)return true; // one fanfare, no overlapping Bass Drop fallback
+    this.music.duckFor(4400,.12);
     this.stopVictoryMusic();
     try {
       const ctx=this.ctx,t0=ctx.currentTime+.018;
@@ -214,6 +220,7 @@ export class Feedback {
   stopResultGuitar(){this.stopSpecial("result-guitar");}
   playResultGuitar(){
     this.stopResultGuitar();
+    this.music.duckFor(6500,.10);
     return this.special("result-guitar",.42)||this.playVictoryMusic();
   }
   stopFireworksAudio(){
@@ -228,6 +235,7 @@ export class Feedback {
     this.stopFireworksAudio();
     if(this.getSettings().fx===false)return false;
     this.fireworkPlaying=true;
+    this.music.duckFor(6400,.09);
     // Both ambient beds are converted and hard-trimmed to MAXIMUM six seconds
     // in Djipie's private compiler, with a short fade-out. The local timer
     // stops them independently of any faulty file duration/decoder.
@@ -291,6 +299,11 @@ export class Feedback {
   }
   fx(event) {
     if(!this.getSettings().fx)return;
+    const big=event==="festival-disco"||event==="festival-bubbles-create"||
+      event==="festival-fireworks"||event==="streak2"||event==="streak3";
+    const length=event==="festival-disco"?4300:big?1650:
+      /line|combo|festival|bubbles|streak|record/i.test(event)?950:420;
+    this.music.duckFor(length,big?.12:.24);
     // Original 4s fanfare takes the place of the old short Bass Drop / Kenney
     // sample when WebAudio is available; source WAV is kept as fallback only.
     if(event==="festival-disco"&&this.playVictoryMusic())return;
@@ -373,6 +386,7 @@ export class Feedback {
     this.lastByKind.set(kind,now);
     this.onCaption(phrase);
     this.onEmotion(kind==="clear"?"happy":kind);
+    this.music.duckFor(Math.max(2400,phrase.length*125+750),.08);
     clearTimeout(this.captionTimeout);clearTimeout(this.emotionTimeout);
     this.captionTimeout=setTimeout(()=>this.onCaption(""),3700);
     this.emotionTimeout=setTimeout(()=>this.onEmotion("idle"),1200);
@@ -415,7 +429,8 @@ export class Feedback {
     this.lastVoice=0;
     this.lastByKind.clear();
   }
-  stop(){
+  stop(pauseMusic=false){
+    if(pauseMusic)this.music.pause();
     this.stopVictoryMusic();
     this.stopAllSpecial();
     this.stopGuidance();

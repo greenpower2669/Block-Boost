@@ -1,0 +1,118 @@
+name: '📦 Block Boost 0.15 — Release après AAB signée'
+
+on:
+  workflow_run:
+    workflows:
+      - '🔐 Block Boost 0.15 — Candidat AAB signé Play'
+    types: [completed]
+    branches: [main]
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: blockboost-v015-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    if: github.repository == 'greenpower2669/Block-Boost' && github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main' && github.event.workflow_run.head_repository.full_name == 'greenpower2669/Block-Boost'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Installer aapt Android SDK35
+        run: |
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" 'build-tools;35.0.0'
+      - name: Vérifier que les binaires viennent de la fusion main actuelle
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SIGNED_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          set -euo pipefail
+          test -n "$SIGNED_SHA"
+          MAIN_SHA="$(gh api "repos/$GITHUB_REPOSITORY/commits/main" --jq .sha)"
+          test "$GITHUB_SHA" = "$MAIN_SHA"
+          test "$SIGNED_SHA" = "$MAIN_SHA"
+          grep -F 'versionCode 15' android/app/build.gradle
+          grep -F "versionName '0.15.0'" android/app/build.gradle
+          node --test tests/*.test.mjs
+      - name: Télécharger AAB et APK SIGNÉES, pas une APK debug
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          UPSTREAM_RUN: ${{ github.event.workflow_run.id }}
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          gh run download "$UPSTREAM_RUN" --repo "$GITHUB_REPOSITORY" --name 'BlockBoost-0.15.0-signed-candidate' --dir dist
+          test -s dist/BlockBoost-0.15.0-release-candidate.apk
+          test -s dist/BlockBoost-0.15.0-release-candidate.aab
+          test -s dist/SHA256SUMS
+          (cd dist && sha256sum -c SHA256SUMS)
+      - name: Contrôle certificat historique, code, 21 OGG, musique et correction
+        shell: bash
+        run: |
+          set -euo pipefail
+          AAB=dist/BlockBoost-0.15.0-release-candidate.aab
+          APK=dist/BlockBoost-0.15.0-release-candidate.apk
+          PEM=android/certificates/BlockBoost-upload-certificate.pem
+          jarsigner -verify "$AAB" | grep -F 'jar verified.'
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose "$APK"
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | grep -F "package: name='fr.greenpower.blockboost' versionCode='15' versionName='0.15.0'"
+          EXPECTED="$(openssl x509 -in "$PEM" -noout -fingerprint -sha256 | cut -d= -f2 | tr -d '\r')"
+          SIGNED="$(keytool -printcert -jarfile "$AAB" | sed -n 's/^[[:space:]]*SHA256: //p' | head -n 1 | tr -d '\r')"
+          test -n "$EXPECTED" && test -n "$SIGNED"
+          test "$SIGNED" = "$EXPECTED"
+          unzip -Z1 "$AAB" | grep -Fx 'base/assets/www/Blockboostmusic.mp3'
+          unzip -Z1 "$AAB" | grep -Fx 'base/assets/www/src/music-bed.mjs'
+          unzip -Z1 "$AAB" | grep -Fx 'base/assets/www/src/engine.mjs'
+          unzip -p "$AAB" base/assets/www/src/engine.mjs | cmp - src/engine.mjs
+          unzip -p "$AAB" base/assets/www/src/engine.mjs | grep -F 'shapeFits(board,piece.coords)'
+          AUDIO_COUNT="$(unzip -Z1 "$AAB" | grep -Ec '^base/assets/www/assets/licensed/.*\.ogg$')"
+          test "$AUDIO_COUNT" -eq 21
+          unzip -Z1 "$AAB" | grep -Fx 'base/assets/www/assets/licensed/result-guitar.ogg'
+      - name: Rédiger notes de sortie sans prétendre publier Google Play
+        shell: bash
+        run: |
+          cat > dist/NOTES.md <<'EOF'
+          # 🐾 Block Boost 0.15.0 — Corrections rotations et fausses défaites
+
+          **Mise à jour Android 0.15 / code 15, `fr.greenpower.blockboost`.**
+
+          Correction critique : les trois pièces non utilisées sont désormais évaluées dans toutes leurs rotations possibles avant de déclarer une fin de partie. Les rotations en L et diagonales sont prises en compte ; les orientations symétriques ne sont pas répétées. Une rotation pour déterminer si la partie continue ne change pas la pièce du joueur.
+
+          Les 21 effets, musique `Blockboostmusic.mp3`, guitare de résultat, feux d'artifice, sauvegarde et bonus restent intégrés.
+
+          **Deux binaires de publication signés avec la même Upload Key historique** : fichier `.apk` de distribution directe et fichier `.aab` destiné à Google Play ; contrôle cryptographique strict contre le PEM public canonique, vérification SHA-256 et contenu Android. La somme SHA est dans `SHA256SUMS`.
+
+          **La disponibilité sur GitHub ne constitue pas une publication sur Google Play** : l'AAB doit encore être téléversée et acceptée dans la Play Console.
+
+          La validation physique sur Samsung est recommandée. Si une APK debug était installée, la différence de clé peut empêcher l'installation par-dessus ; sauvegarder les données avant toute désinstallation.
+          EOF
+      - name: Publier GitHub Release v0.15.0 avec fichiers DIRECTS et signés
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SIGNED_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          set -euo pipefail
+          if gh release view v0.15.0 --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo 'La Release existe déjà : aucun écrasement silencieux.'
+            exit 1
+          fi
+          gh release create v0.15.0 \
+            dist/BlockBoost-0.15.0-release-candidate.apk \
+            dist/BlockBoost-0.15.0-release-candidate.aab \
+            dist/SHA256SUMS \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$SIGNED_SHA" \
+            --title 'Block Boost v0.15.0 — correction des fausses défaites' \
+            --notes-file dist/NOTES.md
+          echo "https://github.com/$GITHUB_REPOSITORY/releases/tag/v0.15.0" >> "$GITHUB_STEP_SUMMARY"

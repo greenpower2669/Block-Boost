@@ -174,3 +174,10 @@ BB-014 : le premier build 0.14 était un fallback CC0 sans 21 sons. Correctif ca
 - Derniers tests branche PR #16 : Node/Chrome verts sur commits 2b4a998..., APK source 0.14 musique stable (21 sons) vérifiée par Actions 39326900698, SHA256 `3e27f2abc081328feca400f80ff086cb4869257977cb17a102ad9bf1eea923e1`.
 - Avant release : fusion autorisée le 20/10, nouveau workflow de GitHub Release 0.14 à déclenchement contrôlé lors de l'intégration `main`. Ne pas publier l'ancienne APK avec ducking violent (SHA `8fe7dec...`) ; utiliser exclusivement la dernière APK `3e27f2...`.
 - AAB release signée : branche actuelle ne contient pas `android/certificates/BlockBoost-upload-certificate.pem`; secrets impossibles à vérifier depuis le simple contenu du dépôt. Les gardes PEM et 4 secrets ne doivent pas être désactivées. Toute tentative doit échouer proprement en absence des prérequis. AAB non encore fabriquée et Play non confirmé.
+
+## BB-017 — PREUVES DE LIVRAISON (20/10/2026)
+- Merge PR #16 → `main` = `1e4386e761acdc0152c39253914fe250403a9835` confirmé sur GitHub.
+- Workflow Release v0.14.0 [39389652039](https://github.com/greenpower2669/Block-Boost/actions/runs/39389652039) SUCCESS (tests/MP3/21 FX/versionCode14/SHA). Tests `main` [39389652065](https://github.com/greenpower2669/Block-Boost/actions/runs/39389652065) SUCCESS.
+- GitHub [Release v0.14.0](https://github.com/greenpower2669/Block-Boost/releases/tag/v0.14.0) est une **pré-release** comportant l'APK de test et son SHA. APK 18 160 892 octets, SHA-256 `3e27f2abc081328feca400f80ff086cb4869257977cb17a102ad9bf1eea923e1`.
+- Aucun certificat PEM public `android/certificates/BlockBoost-upload-certificate.pem` dans `main` ni dans historique de commits de ce chemin. Un vrai AAB signé ne peut être attesté ; aucune exécution réussie du workflow AAB. Quatre secrets non audités en runner. Play non publiée.
+- La 0.14 debug n'assure pas une installation de mise à jour Play. Préserver l'identité `fr.greenpower.blockboost` et la clé JKS RSA4096 alias `blockboost-upload` existante, surtout éviter génération de nouvelles clés.

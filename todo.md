@@ -286,7 +286,14 @@ APK brute : https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/bl
 - [x] Autorisation explicite de Fab pour fusion `main`, GitHub Release, suivi mémoire et préparation AAB sur Block Boost 0.14.
 - [x] Préparer `.github/workflows/publish-blockboost-014.yml` : tests, versionCode 14, SHA de l'APK corrigée `3e27f2abc081328feca400f80ff086cb4869257977cb17a102ad9bf1eea923e1`, 21 sons et MP3, publication GitHub Release v0.14.0 en **prerelease APK debug**.
 - [x] Rendre `.github/workflows/android-play-candidate.yml` utilisable sur `main` **uniquement après vérification de la JKS existante / PEM public / 4 secrets**, sans nouvelle clé.
-- [ ] Effectuer merge PR #16 ; vérifier nouveau HEAD de `main`, CI main et Release GitHub 0.14 après exécution du workflow.
+- [x] **Merge PR #16 exécuté** (`main` commit `1e4386e761acdc0152c39253914fe250403a9835`), CI main [39389652065](https://github.com/greenpower2669/Block-Boost/actions/runs/39389652065) SUCCESS, GitHub [Release v0.14.0](https://github.com/greenpower2669/Block-Boost/releases/tag/v0.14.0) créée et vérifiée par Actions [39389652039](https://github.com/greenpower2669/Block-Boost/actions/runs/39389652039) SUCCESS. [APK debug directe](https://github.com/greenpower2669/Block-Boost/releases/download/v0.14.0/BlockBoost-0.14.0-full-debug.apk), 18 160 892 octets, SHA256 `3e27f2abc081328feca400f80ff086cb4869257977cb17a102ad9bf1eea923e1`.
 - [ ] Vérifier le certificat public PEM historique correspondant à l'Upload Key (actuellement non présent dans la branche), configurer/valider les 4 secrets via runner sécurisé, compiler AAB release signée et comparer certificat/empreintes et assets (21 OGG + MP3). Ne jamais inventer ni régénérer JKS.
 - [ ] Dépôt Google Play Console de l'AAB, contrôles Console et confirmation de publication effective ; ne pas déclarer cette étape avant résultat observé.
 - [ ] Test physique Samsung Android 16 de la dernière musique stable / fondu guitare et fonctionnement global avant validation de diffusion publique Play.
+
+## État BB-017 au 20/10/2026 — suite avant Play
+- [x] Merge et GitHub Release v0.14.0 accomplis, 21 effets et MP3 intégrés, livraison APK debug directe validée par SHA/CI.
+- [ ] **Précondition critique AAB :** retrouver le **certificat PEM PUBLIC HISTORIQUE** `android/certificates/BlockBoost-upload-certificate.pem` ; à défaut, ne jamais signer avec une nouvelle JKS par substitution. Les 4 secrets ont leurs noms documentés mais pas encore de validation pratique en CI.
+- [ ] Exécuter le workflow manuel `.github/workflows/android-play-candidate.yml` sur `main` une fois le PEM authentique et les 4 secrets présents ; conserver le contrôle par comparaison d'empreintes, SHA de l'AAB, inclusion de 21 OGG + MP3 et versionCode14.
+- [ ] Publication Google Play Console de l'AAB signée et vérification de son statut de traitement ; **aucune publication Play réalisée ou confirmée à cette date**.
+- [ ] Réception physique Samsung Android16 des dernières modifications avant généralisation.

@@ -89,3 +89,7 @@ BB-014 : scripts/reuse_blockboost_013_audio.py vérifie le SHA complet 0.13, les
 ## BB-017 — Publication autorisée le 20/10/2026
 - Fab autorise explicitement merge PR #16 et GitHub Release 0.14. Le workflow `.github/workflows/publish-blockboost-014.yml` vérifie le SHA de l'APK complète avant de créer une pré-release. Lire `ordres-de-mission.md` section BB-017.
 - AAB Play : workflow manuel sur main, bloqué si PEM public historique ou secrets de l'Upload Key existante manquants. Les limitations ne sont pas levées par l'autorisation de publication ; voir `todo.md` et `brain.md`.
+
+## BB-017 — Livraison GitHub 0.14 au 20/10/2026
+- **main fusionnée et GitHub Release v0.14.0 effective**, APK complète debug avec musique stable, 21 sons ; point d'entrée [Release](https://github.com/greenpower2669/Block-Boost/releases/tag/v0.14.0). Lire `brain.md` section BB-017 pour détails et SHA.
+- **AAB Google Play encore ouverte**, faute de PEM public de référence disponible et validation CI des quatre secrets. Référence d'état : `todo.md`, `ordres-de-mission.md` (BB-017). Ne jamais changer d'Upload Key.

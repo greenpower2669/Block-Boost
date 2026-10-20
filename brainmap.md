@@ -114,3 +114,7 @@ BB-014 : scripts/reuse_blockboost_013_audio.py vérifie le SHA complet 0.13, les
 ## BB-019 — APK 0.15 corrigée et tests verts
 - Correction du faux Game Over à rotation dans `src/engine.mjs`, PR [#17](https://github.com/greenpower2669/Block-Boost/pull/17) brouillon. [APK directe 0.15](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-rotation-fix-015/temp/android/BlockBoost-0.15.0-rotation-fix-debug.apk), SHA256 `483291a64335900cbeef9cc415e17d5e947f7ff46b93e4322a602f9d88ceb0e3`; CI Android #39404856807 et Node/Chrome #39404856825/#39404863168 réussies.
 - **Pas de merge main ni publication Play sans validation** ; surtout ne pas envoyer l'AAB v0.14 bugguée. Détails, incidents et suivi dans `brain.md`, `debughistorical.md`, `todo.md`.
+
+## BB-020 — Autorisation explicite de publier la 0.15
+- Fusion `main`, GitHub Release et AAB signée 0.15 autorisées par Fab le 20/10/2026. Voir `ordres-de-mission.md` BB-020. Ancienne AAB 0.14 **interdite de Play**.
+- Chaîne : sur passage `versionCode 15`, workflow AAB 0.15 (PEM/JKS historiques inchangés), puis après succès workflow GitHub Release 0.15 (APK/AAB signées directes). L'upload Play Console reste à confirmer séparément.

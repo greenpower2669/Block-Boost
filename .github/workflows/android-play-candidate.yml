@@ -9,13 +9,14 @@ on:
     branches: [main]
     paths:
       - 'android/certificates/BlockBoost-upload-certificate.pem'
+      - 'android/app/build.gradle' # Nouvelle versionCode : construire la VRAIE AAB sur main après fusion
 
 permissions:
   contents: read
 
 jobs:
   signed-candidate:
-    if: github.repository == 'greenpower2669/Block-Boost' && (github.ref_name == 'main' || github.ref_name == 'feature/final-result-fireworks-013')
+    if: github.repository == 'greenpower2669/Block-Boost' && github.ref_name == 'main'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:

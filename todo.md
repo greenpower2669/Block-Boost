@@ -332,3 +332,12 @@ APK brute : https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/bl
 - [x] Code du moteur, tests de rotation et CI Android/Chrome ; APK [0.15 corrigée disponible](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-rotation-fix-015/temp/android/BlockBoost-0.15.0-rotation-fix-debug.apk), SHA256 `483291a64335900cbeef9cc415e17d5e947f7ff46b93e4322a602f9d88ceb0e3`.
 - [ ] **Tester physiquement sur Samsung** : derniers coups possibles uniquement après rotation (2e doigt), L retourné, aucune fausse fin, score/records/sauvegarde, audio de la guitare.
 - [ ] Après validation explicite Fab, merger PR [#17](https://github.com/greenpower2669/Block-Boost/pull/17), fabriquer/signature AAB **0.15 code15** avec JKS et PEM immuables (workflow déjà adapté), archiver AAB et Release 0.15, publier via Play Console. **Ne pas utiliser la 0.14.**
+
+## BB-020 — Publication Block Boost 0.15 autorisée
+- [x] Fab approuve explicitement merge PR #17, GitHub Release et nouvelle AAB signée (20/10/2026).
+- [x] Tests de la PR verts et APK de test 0.15 déjà livrée en fichier direct.
+- [x] Préparer workflow `.github/workflows/android-play-candidate.yml` au merge `main` pour code15, 4 secrets et PEM existants sans renouvellement.
+- [x] Préparer workflow `.github/workflows/release-blockboost-015-signed.yml` avec vérification stricte AAB+APK signées, SHA256SUMS, certificat PEM, moteur corrigé, 21 sons et musique.
+- [ ] Merger PR #17 après nouvelle vérification CI.
+- [ ] Vérifier Actions AAB 0.15 & Release 0.15, liens directs APK/AAB et hash SHA256, noter l'état.
+- [ ] Vérifier transfert Google Play Console : non effectué dans le workflow GitHub ; ne pas l'annoncer publié sur Play avant confirmation.

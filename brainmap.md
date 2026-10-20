@@ -123,3 +123,8 @@ BB-014 : scripts/reuse_blockboost_013_audio.py vérifie le SHA complet 0.13, les
 - PR #17 fusionnée dans `main` le 20/10/2026 au commit `99522cfb412469b5c8485e770e55452ca055a968`. Version `0.15.0` code15, fausses défaites rotation corrigées.
 - GitHub [Release v0.15.0](https://github.com/greenpower2669/Block-Boost/releases/tag/v0.15.0) publiée : [APK release **signée directe**](https://github.com/greenpower2669/Block-Boost/releases/download/v0.15.0/BlockBoost-0.15.0-release-candidate.apk) et [AAB Play **signée directe**](https://github.com/greenpower2669/Block-Boost/releases/download/v0.15.0/BlockBoost-0.15.0-release-candidate.aab), vérifiées par Actions #39414217190 et #39414355907. SHA256 détaillées `brain.md` BB-020, [SHA256SUMS](https://github.com/greenpower2669/Block-Boost/releases/download/v0.15.0/SHA256SUMS).
 - Google Play Store non encore confirmé : envoi dans Console et validation Google restent à faire. Anciens assets v0.14 archivés seulement ; ne pas envoyer ancienne AAB à Play. PEM/JKS immuables inchangés.
+
+## BB-021 — API36 exigée par Google Play Console
+- Capture fournie : code15 API35 rejeté, 5 déclarations/paramétrages Play manquants. `0.15.0` déjà chargée dans brouillon production, PAS soumise. Fab autorise correction API36 et nouvelle AAB SIGNÉE.
+- Branched `feature/play-api36-compliance-016`, `compileSdk/targetSdk 36`, `versionCode16/versionName0.16.0`, WindowInsets UI Android16 ; JKS/PEM immuables.
+- Workflow `play-api36-candidate-016.yml` bâtit APK+AAB signées sur feature, livrées fichiers bruts direct via branche `temp/blockboost-play-api36-016` après tests/signatures/SHA. PAS de merge/release/main/Play sans validation. Voir `ordres-de-mission.md`, `todo.md` et `debughistorical.md`.

@@ -347,3 +347,14 @@ APK brute : https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/bl
 - [x] Signature APK/AAB release v0.15 avec JKS historique, PEM permanent, ressources 21 OGG + MP3, SHA contrôlées. [Release v0.15](https://github.com/greenpower2669/Block-Boost/releases/tag/v0.15.0) **publique**.
 - [ ] Publication **sur Google Play Console** : déposer [la NOUVELLE AAB 0.15](https://github.com/greenpower2669/Block-Boost/releases/download/v0.15.0/BlockBoost-0.15.0-release-candidate.aab), finaliser fiche du jeu si absente, contrôler acceptation/revue et l'état publié. Ne pas présenter la mise sur GitHub comme une publication Play.
 - [ ] Test physique Samsung SM-A576B Android16 pour confirmer rotation et fin de partie ; attention certificat release vs debug, préserver sauvegardes.
+
+## BB-021 — Google Play exige targetSdk 36 (21 octobre 2026)
+- [x] Confirmer les six erreurs d'après la capture Play : 5 déclarations + cible API35/36.
+- [x] Recevoir l'accord explicite de Fab pour corriger l'application et produire nouvelle AAB signée, sans fusion/publication.
+- [x] Développer API36 code16 sur branche feature dédiée, rendre les insets sûrs sous Android16 et ajouter tests.
+- [x] Préparer CI signée utilisant uniquement la JKS existante, PEM public canonique et 4 secrets, 21 sons/MP3, AAB+APK directes via branche temporaire.
+- [ ] **Contrôler les résultats GitHub Actions** (tests, compileSdk36 et targetSdk36, fingerprints, versions, SHA, liens directs).
+- [ ] Tester physiquement l'APK API36 sur Samsung Android16, barres Android et gestes.
+- [ ] Fab : dans le brouillon Play production, remplacer AAB code15 par la nouvelle code16, renseigner description longue, pays/régions, déclarations de santé et fonctionnalités financières, tableau de bord.
+- [ ] Vérifier les coordonnées visibles publiquement avant validation finale ; laisser AdMob OFF.
+- [ ] N'effectuer AUCUNE fusion main, GitHub Release ni publication Play sans nouvelle validation explicite.

@@ -3,6 +3,7 @@ package fr.greenpower.blockboost;
 import android.app.Activity;
 import android.os.Bundle;
 import android.graphics.Color;
+import android.graphics.Insets;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.view.View;
@@ -51,12 +52,19 @@ public final class MainActivity extends Activity {
         game.setVerticalScrollBarEnabled(false);
         game.setHorizontalScrollBarEnabled(false);
         game.setOnApplyWindowInsetsListener((view, insets) -> {
-            // Keep the game above system gestures and camera cutouts on Android 16.
-            int top = insets.getSystemWindowInsetTop();
-            int bottom = insets.getSystemWindowInsetBottom();
-            int left = insets.getSystemWindowInsetLeft();
-            int right = insets.getSystemWindowInsetRight();
-            view.setPadding(left, top, right, bottom);
+            // API 36 enforces edge-to-edge: place the WebView game *inside*
+            // actual system-bar and cutout insets, including gesture navigation.
+            // Insets are read on every change (rotation, bars, keyboard).
+            if (android.os.Build.VERSION.SDK_INT >= 30) {
+                Insets safe = insets.getInsets(
+                        WindowInsets.Type.systemBars() | WindowInsets.Type.displayCutout());
+                view.setPadding(safe.left, safe.top, safe.right, safe.bottom);
+            } else {
+                view.setPadding(insets.getSystemWindowInsetLeft(),
+                        insets.getSystemWindowInsetTop(),
+                        insets.getSystemWindowInsetRight(),
+                        insets.getSystemWindowInsetBottom());
+            }
             return insets;
         });
 

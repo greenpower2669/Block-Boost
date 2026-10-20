@@ -338,6 +338,12 @@ APK brute : https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/bl
 - [x] Tests de la PR verts et APK de test 0.15 déjà livrée en fichier direct.
 - [x] Préparer workflow `.github/workflows/android-play-candidate.yml` au merge `main` pour code15, 4 secrets et PEM existants sans renouvellement.
 - [x] Préparer workflow `.github/workflows/release-blockboost-015-signed.yml` avec vérification stricte AAB+APK signées, SHA256SUMS, certificat PEM, moteur corrigé, 21 sons et musique.
-- [ ] Merger PR #17 après nouvelle vérification CI.
-- [ ] Vérifier Actions AAB 0.15 & Release 0.15, liens directs APK/AAB et hash SHA256, noter l'état.
+- [x] PR #17 fusionnée dans main commit `99522cfb412469b5c8485e770e55452ca055a968`, CI Node/Chrome réussie avant et après fusion.
+- [x] [Actions AAB signée #39414217190](https://github.com/greenpower2669/Block-Boost/actions/runs/39414217190) et [Release #39414355907](https://github.com/greenpower2669/Block-Boost/actions/runs/39414355907) **SUCCESS**. [Release v0.15](https://github.com/greenpower2669/Block-Boost/releases/tag/v0.15.0) avec APK release directe [download](https://github.com/greenpower2669/Block-Boost/releases/download/v0.15.0/BlockBoost-0.15.0-release-candidate.apk) (SHA256 `85fdf812c3f1ece640aefc49d96f5ee88e7cc499f7fbf6940025f947bf5999c7`) et [AAB signée](https://github.com/greenpower2669/Block-Boost/releases/download/v0.15.0/BlockBoost-0.15.0-release-candidate.aab) (SHA256 `d4f2c089c127461af61f3c03821c3f2888cfd7243760c5c1be72e44090859015`), 21 sons, musique et code15.
 - [ ] Vérifier transfert Google Play Console : non effectué dans le workflow GitHub ; ne pas l'annoncer publié sur Play avant confirmation.
+
+## BB-020 — Statut final après Release GitHub 0.15
+- [x] PR #17 merge main validé ; Node/Chrome verts, versionCode15, corrections rotatives et mémoire FabCopilot synchronisées.
+- [x] Signature APK/AAB release v0.15 avec JKS historique, PEM permanent, ressources 21 OGG + MP3, SHA contrôlées. [Release v0.15](https://github.com/greenpower2669/Block-Boost/releases/tag/v0.15.0) **publique**.
+- [ ] Publication **sur Google Play Console** : déposer [la NOUVELLE AAB 0.15](https://github.com/greenpower2669/Block-Boost/releases/download/v0.15.0/BlockBoost-0.15.0-release-candidate.aab), finaliser fiche du jeu si absente, contrôler acceptation/revue et l'état publié. Ne pas présenter la mise sur GitHub comme une publication Play.
+- [ ] Test physique Samsung SM-A576B Android16 pour confirmer rotation et fin de partie ; attention certificat release vs debug, préserver sauvegardes.

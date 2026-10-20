@@ -118,3 +118,8 @@ BB-014 : scripts/reuse_blockboost_013_audio.py vérifie le SHA complet 0.13, les
 ## BB-020 — Autorisation explicite de publier la 0.15
 - Fusion `main`, GitHub Release et AAB signée 0.15 autorisées par Fab le 20/10/2026. Voir `ordres-de-mission.md` BB-020. Ancienne AAB 0.14 **interdite de Play**.
 - Chaîne : sur passage `versionCode 15`, workflow AAB 0.15 (PEM/JKS historiques inchangés), puis après succès workflow GitHub Release 0.15 (APK/AAB signées directes). L'upload Play Console reste à confirmer séparément.
+
+## BB-020 — Publication GitHub v0.15 TERMINÉE
+- PR #17 fusionnée dans `main` le 20/10/2026 au commit `99522cfb412469b5c8485e770e55452ca055a968`. Version `0.15.0` code15, fausses défaites rotation corrigées.
+- GitHub [Release v0.15.0](https://github.com/greenpower2669/Block-Boost/releases/tag/v0.15.0) publiée : [APK release **signée directe**](https://github.com/greenpower2669/Block-Boost/releases/download/v0.15.0/BlockBoost-0.15.0-release-candidate.apk) et [AAB Play **signée directe**](https://github.com/greenpower2669/Block-Boost/releases/download/v0.15.0/BlockBoost-0.15.0-release-candidate.aab), vérifiées par Actions #39414217190 et #39414355907. SHA256 détaillées `brain.md` BB-020, [SHA256SUMS](https://github.com/greenpower2669/Block-Boost/releases/download/v0.15.0/SHA256SUMS).
+- Google Play Store non encore confirmé : envoi dans Console et validation Google restent à faire. Anciens assets v0.14 archivés seulement ; ne pas envoyer ancienne AAB à Play. PEM/JKS immuables inchangés.

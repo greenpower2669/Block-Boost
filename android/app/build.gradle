@@ -4,14 +4,14 @@ plugins {
 
 android {
     namespace 'fr.greenpower.blockboost'
-    compileSdk 35
+    compileSdk 36
 
     defaultConfig {
         applicationId 'fr.greenpower.blockboost'
         minSdk 26
-        targetSdk 35
-        versionCode 15
-        versionName '0.15.0'
+        targetSdk 36
+        versionCode 16
+        versionName '0.16.0'
     }
 
     // The Upload Key exists only on a controlled CI runner, never in Git.

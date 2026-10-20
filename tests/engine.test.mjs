@@ -153,7 +153,12 @@ const canPlaceCurrentOrientationAnywhere=(board,coords)=>
 test("REGRESSION: no false game over when the only remaining bar fits after 90-degree rotation",()=>{
   // Singleton goes at (0,0). Other holes prevent any row/column clear.
   // Afterwards the horizontal 3-cell piece fits only in vertical holes.
-  const board=boardWithHoles([[0,0],[1,0],[0,4],[3,1],[3,2],[3,3]]);
+  // Every row and column must already contain a hole: no accidental
+  // clearing of initially-full rows/columns when placing the singleton.
+  // The three consecutive holes at x=3 are the only straight 3-slot lane.
+  const holes=Array.from({length:SIZE},(_,i)=>[i,i]);
+  holes.push([7,0],[0,7],[3,1],[3,2]);
+  const board=boardWithHoles(holes);
   const bar={id:1,coords:[[0,0],[1,0],[2,0]],color:"mint",used:false};
   const pieces=[structuredClone(single),bar,{...tri,used:true}];
   const original=structuredClone(pieces);

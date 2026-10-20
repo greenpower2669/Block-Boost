@@ -141,3 +141,75 @@ test("Two completed rows without column remain x1, but flag double-line effect",
  assert.equal(r.event.crossBonus,0);
  assert.equal(r.event.gained,10+320);
 });
+
+function boardWithHoles(holes){
+  const board=Array.from({length:SIZE},()=>Array(SIZE).fill("rose"));
+  for(const [x,y] of holes)board[y][x]=null;
+  return board;
+}
+const canPlaceCurrentOrientationAnywhere=(board,coords)=>
+  board.some((row,y)=>row.some((_,x)=>canPlace(board,coords,x,y)));
+
+test("REGRESSION: no false game over when the only remaining bar fits after 90-degree rotation",()=>{
+  // Singleton goes at (0,0). Other holes prevent any row/column clear.
+  // Afterwards the horizontal 3-cell piece fits only in vertical holes.
+  const board=boardWithHoles([[0,0],[1,0],[0,4],[3,1],[3,2],[3,3]]);
+  const bar={id:1,coords:[[0,0],[1,0],[2,0]],color:"mint",used:false};
+  const pieces=[structuredClone(single),bar,{...tri,used:true}];
+  const original=structuredClone(pieces);
+  assert.equal(canPlaceCurrentOrientationAnywhere(board,bar.coords),false);
+  const result=applyMove(game(board,pieces),0,0,0,()=>0);
+  assert.equal(result.event.type,"placed","No false game-over event");
+  assert.equal(result.event.gameOver,false);
+  assert.equal(result.game.gameOver,false);
+  assert.equal(result.event.lines,0,"The last move must not free accidental rows or columns");
+  assert.equal(result.event.gained,5,"Scoring stays identical");
+  assert.equal(result.game.pieces[0].used,true);
+  assert.deepEqual(result.game.pieces[1].coords,original[1].coords,"No automatic rotation of the tray");
+  assert.equal(hasLegalMove(result.game.board,result.game.pieces),true);
+  assert.equal(canPlaceCurrentOrientationAnywhere(result.game.board,bar.coords),false);
+  const afterUserRotation=rotatePiece(result.game,1);
+  assert.ok(canPlace(afterUserRotation.board,afterUserRotation.pieces[1].coords,3,1));
+  assert.equal(afterUserRotation.gameOver,false);
+  assert.equal(afterUserRotation.moves,result.game.moves,"Rotating alone does not consume a turn");
+  assert.equal(afterUserRotation.score,result.game.score);
+  const storage=mockStorage(),saved=loadSave(storage);
+  checkpoint(saved,result.game,0,storage);
+  assert.equal(loadSave(storage).progress.game.gameOver,false,"Real progress survives reload");
+  assert.equal(loadSave(storage).progress.game.pieces[1].used,false);
+});
+
+test("REGRESSION: all three other L orientations can rescue a playable position",()=>{
+  const l=[[0,0],[1,0],[0,1]];
+  for(const turns of [1,2,3]){
+    let rotated=l;
+    for(let i=0;i<turns;i++)rotated=rotate(rotated);
+    const holes=rotated.map(([x,y])=>[3+x,3+y]);
+    const board=boardWithHoles(holes);
+    const piece={id:0,coords:l,color:"coral",used:false};
+    assert.equal(canPlaceCurrentOrientationAnywhere(board,l),false,
+      "Original orientation must NOT fit for rotation "+turns);
+    assert.equal(hasLegalMove(board,[piece,null,{...single,used:true}]),true,
+      "Rotation "+(turns*90)+"° must prevent game over");
+    assert.deepEqual(l,[[0,0],[1,0],[0,1]],"Search never mutates the piece");
+  }
+});
+
+test("REGRESSION: rare diagonal pieces are checked in both slopes and all permitted rotations",()=>{
+  const positive=[[0,0],[1,1],[2,2]];
+  const negative=[[2,0],[1,1],[0,2]];
+  for(const shape of [positive,negative]){
+    const orientation=rotate(shape);
+    const board=boardWithHoles(orientation.map(([x,y])=>[2+x,2+y]));
+    assert.equal(hasLegalMove(board,[{id:0,coords:shape,used:false}]),true);
+    assert.equal(hasLegalMove(board,[{id:0,coords:shape,used:true}]),false);
+  }
+});
+
+test("REGRESSION: genuinely impossible board still ends, used pieces do not count",()=>{
+  const board=boardWithHoles([[0,0],[2,2],[4,4]]);
+  const unusedBar={id:0,coords:[[0,0],[1,0],[2,0]],color:"sky",used:false};
+  assert.equal(hasLegalMove(board,[unusedBar]),false);
+  assert.equal(hasLegalMove(board,[{...single,used:true},unusedBar]),false);
+  assert.equal(hasLegalMove(board,[null,{...single,used:true}]),false);
+});

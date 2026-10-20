@@ -44,18 +44,23 @@ export function canPlace(board, coords, x, y) {
     return row>=0 && row<SIZE && col>=0 && col<SIZE && board[row][col]===null;
   });
 }
+/** The same four-orientation legality rule powers both piece generation and
+ * game-over detection. Players may rotate any remaining unused piece.
+ * Do not mutate its displayed coords here or award an automatic rotation.
+ */
 export function hasLegalMove(board,pieces) {
   return pieces.some(piece => piece !== null && !piece.used &&
-    Array.from({length:SIZE},(_,y)=>y).some(y =>
-      Array.from({length:SIZE},(_,x)=>x).some(x => canPlace(board,piece.coords,x,y))
-    )
-  );
+    shapeFits(board,piece.coords));
 }
 // All new pieces are legal on the current board in at least one orientation.
 // Change draw probabilities here, not in the comeback/high-score assistance.
 function shapeFits(board,coords){
-  let shape=coords;
+  let shape=normalize(coords);
+  const seen=new Set();
   for(let orientation=0;orientation<4;orientation++){
+    const signature=JSON.stringify(shape);
+    if(seen.has(signature))break; // symmetry: only distinct orientations matter
+    seen.add(signature);
     const {width,height}=bounds(shape);
     for(let y=0;y<=SIZE-height;y++)for(let x=0;x<=SIZE-width;x++)
       if(canPlace(board,shape,x,y))return true;

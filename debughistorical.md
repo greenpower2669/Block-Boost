@@ -199,3 +199,10 @@ BB-014 : le premier build 0.14 était un fallback CC0 sans 21 sons. Correctif ca
 - Chaîne de publication [Actions #39395073250](https://github.com/greenpower2669/Block-Boost/actions/runs/39395073250) **SUCCESS** : récupère l'AAB signée du workflow #39394294446, compare ses empreintes au fichier SHA256SUMS, vérifie `jarsigner` et l'empreinte SHA256 du certificat signé face au PEM enregistré sur `main`, contrôle MP3 + 21 OGG, puis ajoute l'AAB et les empreintes à la Release.
 - **Aucune régénération de clé ; PEM public versionné durablement** sous `android/certificates/BlockBoost-upload-certificate.pem`. Ne pas redemander à Fab de fournir le PEM sur chaque nouvelle version. Les fichiers .jks, mots de passe et secrets ne sont jamais des assets publics.
 - **Google Play Console** : cette Release GitHub NE signifie pas que Google Play a reçu, validé ou publié l'AAB. Transfert à la Play Console encore à réaliser, avec suivi de son statut.
+
+## BB-019 — Cause racine, correction, contrôles (20/10/2026)
+- Code 0.14 : `hasLegalMove` trouvait des positions via `canPlace(board,piece.coords,...)` pour **l'orientation actuelle uniquement**. `pieceBatch/shapeFits` faisait pourtant quatre rotations. `applyMove` enchaînait `gameOver=!hasLegalMove`, puis `finish` effaçait la sauvegarde active. Faux Game Over et records perdus prématurément.
+- Correctif code : déléguer `hasLegalMove` au helper existant `shapeFits`, dédupliquer les orientations symétriques. Ne pas autorotater les pièces en affichage, respecter les bonus et le moteur.
+- Tests supplémentaires sur trou vertical + barre horizontale et rotation du joueur, L trois orientations, diagonales, snapshot progression, impossibilité réelle. VersionCode 15, 0.15.0 pour éviter collision avec AAB 0.14 bugguée.
+- 0.14.0 n'a PAS été envoyée sur Play. Certificat PEM public permanent et quatre secrets IMMUTABLE sont conservés ; aucun changement de clé ni déclenchement AAB signé sans validation.
+- Attendre vrais résultats GitHub CI/tests Android + SHA avant de déclarer prêt.

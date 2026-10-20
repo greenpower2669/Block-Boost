@@ -318,3 +318,12 @@ APK brute : https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/bl
 - [x] [Archiver l'AAB signée directement dans la Release v0.14.0](https://github.com/greenpower2669/Block-Boost/releases/download/v0.14.0/BlockBoost-0.14.0-release-candidate.aab), ainsi que les [empreintes SHA256](https://github.com/greenpower2669/Block-Boost/releases/download/v0.14.0/SHA256SUMS) ; GitHub Actions #39395073250 en succès.
 - [ ] **Reste :** téléverser l'AAB sur Google Play Console et confirmer son acceptation/publication, sans supposer que la Release GitHub effectue cette étape.
 - [ ] Tester sur le Samsung Android 16 la qualité sonore (guitare et musique) et les gestes.
+
+## BB-019 — Bug de fausse défaite (20/10/2026)
+- [x] Diagnostiquer divergence entre `hasLegalMove` (orientation courante) et `shapeFits` (4 orientations).
+- [x] Corriger le moteur en partageant le même prédicat de légalité pour génération et game-over, sans mutation des pièces.
+- [x] Ajouter tests reproduisant le bug et ses variantes (barre 90°, L 90/180/270°, diagonales, used=true, vraie défaite, sauvegarde conservée).
+- [x] Préparer candidate `0.15.0` code15, préserver le package et la PEM/JKS ; ne pas expédier l'AAB 0.14 avec faux game-over.
+- [ ] GitHub CI tests Node/Chrome et nouvelle APK Android complète 0.15 avec 21 OGG + MP3 ; produire lien direct `.apk` avec SHA.
+- [ ] Vérifier sur Samsung Android16 rotation des trois pièces restantes et vraie fin de partie.
+- [ ] **Seulement après validation**, préparer merge `main`, GitHub Release 0.15 et **nouvelle** AAB signée avec la clé historique ; ne pas envoyer la 0.14 bugguée à Play. Aucune autorisation de publication implicite par la seule demande de correction.

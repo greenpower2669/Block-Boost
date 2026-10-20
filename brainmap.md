@@ -106,3 +106,7 @@ BB-014 : scripts/reuse_blockboost_013_audio.py vérifie le SHA complet 0.13, les
 ## BB-018 — AAB signée archivée durablement
 - L'Upload Key originale et le PEM canonique de `main` ont signé/contrôlé l'AAB (Actions #39394294446 et [#39395073250](https://github.com/greenpower2669/Block-Boost/actions/runs/39395073250), SUCCESS). [AAB signée directe](https://github.com/greenpower2669/Block-Boost/releases/download/v0.14.0/BlockBoost-0.14.0-release-candidate.aab) sur la GitHub Release v0.14.0, avec [SHA256SUMS](https://github.com/greenpower2669/Block-Boost/releases/download/v0.14.0/SHA256SUMS), sans archive ZIP.
 - Contrat IMMUTABLE-002 conservé : PEM permanent, jamais redemandé à Fab ; Play Console restant à faire. Détails dans `brain.md` et `todo.md`.
+
+## BB-019 — Faux game-over après rotation (20/10/2026)
+- Correction dans `src/engine.mjs` : `hasLegalMove` appelle désormais `shapeFits` commun au tirage, donc 4 rotations vérifiées sur toute pièce restante. Test de régression dans `tests/engine.test.mjs`.
+- Nouvelle candidate `0.15.0` code15 sur `feature/rotation-gameover-fix-015`, APK de test (21 sons + MP3) sur branche temporaire. **Version 0.14 Release signée GELÉE / pas de Play.** Continuer dans `todo.md` et `debughistorical.md`, sans toucher à la JKS et au PEM immuable.

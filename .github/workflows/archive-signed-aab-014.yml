@@ -1,0 +1,72 @@
+name: '🔐 Archiver AAB 0.14 signée — accès direct, sans ZIP'
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/archive-signed-aab-014.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: blockboost-014-signed-aab-archive
+  cancel-in-progress: false
+
+jobs:
+  archive:
+    if: github.repository == 'greenpower2669/Block-Boost' && github.ref_name == 'main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Récupérer les vrais binaires déjà signés par la JKS historique
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          gh run download 39394294446 --repo "$GITHUB_REPOSITORY" \
+            --name 'BlockBoost-0.14.0-signed-candidate' --dir dist
+          test -s dist/BlockBoost-0.14.0-release-candidate.aab
+          test -s dist/BlockBoost-0.14.0-release-candidate.apk
+          test -s dist/SHA256SUMS
+          (cd dist && sha256sum -c SHA256SUMS)
+      - name: Contrôler certificat de signature PUBLIC + ressources, sans manipuler la JKS
+        shell: bash
+        run: |
+          set -euo pipefail
+          AAB=dist/BlockBoost-0.14.0-release-candidate.aab
+          PEM=android/certificates/BlockBoost-upload-certificate.pem
+          test -s "$PEM"
+          jarsigner -verify "$AAB" | grep -F 'jar verified.'
+          EXPECTED="$(openssl x509 -in "$PEM" -noout -fingerprint -sha256 | cut -d= -f2 | tr -d '\r')"
+          SIGNED="$(keytool -printcert -jarfile "$AAB" | sed -n 's/^[[:space:]]*SHA256: //p' | head -n 1 | tr -d '\r')"
+          test -n "$EXPECTED" && test -n "$SIGNED"
+          test "$SIGNED" = "$EXPECTED"
+          unzip -Z1 "$AAB" | grep -Fx 'base/assets/www/Blockboostmusic.mp3'
+          unzip -Z1 "$AAB" | grep -Fx 'base/assets/www/src/music-bed.mjs'
+          COUNT="$(unzip -Z1 "$AAB" | grep -Ec '^base/assets/www/assets/licensed/.*\.ogg$')"
+          test "$COUNT" -eq 21
+      - name: Rendre l'AAB durable dans GitHub Release v0.14.0 (ne pas toucher à Play)
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh release view v0.14.0 --repo "$GITHUB_REPOSITORY" >/dev/null
+          if gh release view v0.14.0 --repo "$GITHUB_REPOSITORY" \
+               --json assets --jq '.assets[].name' | grep -Fxq 'BlockBoost-0.14.0-release-candidate.aab'; then
+            echo 'AAB déjà archivée, aucune nouvelle publication.'
+          else
+            gh release upload v0.14.0 \
+              dist/BlockBoost-0.14.0-release-candidate.aab \
+              dist/SHA256SUMS \
+              --repo "$GITHUB_REPOSITORY"
+          fi
+          echo "### AAB signée vérifiée" >> "$GITHUB_STEP_SUMMARY"
+          echo "https://github.com/$GITHUB_REPOSITORY/releases/download/v0.14.0/BlockBoost-0.14.0-release-candidate.aab" >> "$GITHUB_STEP_SUMMARY"
+          echo 'Google Play Console : envoi non réalisé par ce workflow.' >> "$GITHUB_STEP_SUMMARY"

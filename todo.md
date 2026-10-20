@@ -324,6 +324,11 @@ APK brute : https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/bl
 - [x] Corriger le moteur en partageant le même prédicat de légalité pour génération et game-over, sans mutation des pièces.
 - [x] Ajouter tests reproduisant le bug et ses variantes (barre 90°, L 90/180/270°, diagonales, used=true, vraie défaite, sauvegarde conservée).
 - [x] Préparer candidate `0.15.0` code15, préserver le package et la PEM/JKS ; ne pas expédier l'AAB 0.14 avec faux game-over.
-- [ ] GitHub CI tests Node/Chrome et nouvelle APK Android complète 0.15 avec 21 OGG + MP3 ; produire lien direct `.apk` avec SHA.
+- [x] CI Node/Chrome 39404856825 + 39404863168 SUCCESS, Android complet 39404856807 SUCCESS, [APK directe 0.15 sans ZIP](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-rotation-fix-015/temp/android/BlockBoost-0.15.0-rotation-fix-debug.apk) **18 161 020 octets**, SHA256 `483291a64335900cbeef9cc415e17d5e947f7ff46b93e4322a602f9d88ceb0e3`, 21 OGG + MP3 vérifiés.
 - [ ] Vérifier sur Samsung Android16 rotation des trois pièces restantes et vraie fin de partie.
 - [ ] **Seulement après validation**, préparer merge `main`, GitHub Release 0.15 et **nouvelle** AAB signée avec la clé historique ; ne pas envoyer la 0.14 bugguée à Play. Aucune autorisation de publication implicite par la seule demande de correction.
+
+## BB-019 — Réception et publication à venir
+- [x] Code du moteur, tests de rotation et CI Android/Chrome ; APK [0.15 corrigée disponible](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-rotation-fix-015/temp/android/BlockBoost-0.15.0-rotation-fix-debug.apk), SHA256 `483291a64335900cbeef9cc415e17d5e947f7ff46b93e4322a602f9d88ceb0e3`.
+- [ ] **Tester physiquement sur Samsung** : derniers coups possibles uniquement après rotation (2e doigt), L retourné, aucune fausse fin, score/records/sauvegarde, audio de la guitare.
+- [ ] Après validation explicite Fab, merger PR [#17](https://github.com/greenpower2669/Block-Boost/pull/17), fabriquer/signature AAB **0.15 code15** avec JKS et PEM immuables (workflow déjà adapté), archiver AAB et Release 0.15, publier via Play Console. **Ne pas utiliser la 0.14.**

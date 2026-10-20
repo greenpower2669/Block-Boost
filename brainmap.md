@@ -110,3 +110,7 @@ BB-014 : scripts/reuse_blockboost_013_audio.py vérifie le SHA complet 0.13, les
 ## BB-019 — Faux game-over après rotation (20/10/2026)
 - Correction dans `src/engine.mjs` : `hasLegalMove` appelle désormais `shapeFits` commun au tirage, donc 4 rotations vérifiées sur toute pièce restante. Test de régression dans `tests/engine.test.mjs`.
 - Nouvelle candidate `0.15.0` code15 sur `feature/rotation-gameover-fix-015`, APK de test (21 sons + MP3) sur branche temporaire. **Version 0.14 Release signée GELÉE / pas de Play.** Continuer dans `todo.md` et `debughistorical.md`, sans toucher à la JKS et au PEM immuable.
+
+## BB-019 — APK 0.15 corrigée et tests verts
+- Correction du faux Game Over à rotation dans `src/engine.mjs`, PR [#17](https://github.com/greenpower2669/Block-Boost/pull/17) brouillon. [APK directe 0.15](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-rotation-fix-015/temp/android/BlockBoost-0.15.0-rotation-fix-debug.apk), SHA256 `483291a64335900cbeef9cc415e17d5e947f7ff46b93e4322a602f9d88ceb0e3`; CI Android #39404856807 et Node/Chrome #39404856825/#39404863168 réussies.
+- **Pas de merge main ni publication Play sans validation** ; surtout ne pas envoyer l'AAB v0.14 bugguée. Détails, incidents et suivi dans `brain.md`, `debughistorical.md`, `todo.md`.

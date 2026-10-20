@@ -86,9 +86,9 @@ jobs:
           mkdir -p temp/android
           cp android/dist/BlockBoost-0.15.0-rotation-fix-debug.apk temp/android/
           cp android/dist/BlockBoost-0.15.0-rotation-fix-debug.sha256 temp/android/
-          sed -i 's#android/dist/#temp/android/#' temp/android/BlockBoost-0.15.0-rotation-fix-debug.sha256
-          (cd / && true)
-          sha256sum -c temp/android/BlockBoost-0.15.0-rotation-fix-debug.sha256
+          # The checksum file contains the bare filename. Verify from its
+          # containing directory, not the repository root.
+          (cd temp/android && sha256sum -c BlockBoost-0.15.0-rotation-fix-debug.sha256)
           cat > temp/android/README-rotation-fix.md <<'EOF'
           Block Boost 0.15.0, APK DEBUG complète de test.
           Correction rotation/fin de partie, 21 sons et musique offline.

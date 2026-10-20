@@ -308,6 +308,13 @@ APK brute : https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/bl
 ## BB-018 — Signé : transfert Play restant (20/10/2026)
 - [x] `FAB-IMMUTABLE-002`, PEM public permanent + réussite de vraie signature AAB avec la JKS historique.
 - [x] [AAB/APK release signées — CI SUCCESS](https://github.com/greenpower2669/Block-Boost/actions/runs/39394294446) : artefact `BlockBoost-0.14.0-signed-candidate` contenant aussi le fichier `SHA256SUMS`.
-- [ ] **Récupérer l'AAB signée avant expiration de l'artefact Actions (19/11/2026)** et la placer en conservation durable si le transfert Play n'est pas immédiat.
+- [x] **AAB signée archivée durablement dans la Release GitHub** : [téléchargement direct `.aab`](https://github.com/greenpower2669/Block-Boost/releases/download/v0.14.0/BlockBoost-0.14.0-release-candidate.aab), 17 946 986 octets ; [SHA256SUMS](https://github.com/greenpower2669/Block-Boost/releases/download/v0.14.0/SHA256SUMS), contrôlés par [Actions #39395073250](https://github.com/greenpower2669/Block-Boost/actions/runs/39395073250) SUCCESS. Cette version n'expire plus avec l'artefact Actions.
 - [ ] Envoyer l'AAB signée à Google Play Console avec le package `fr.greenpower.blockboost`, contrôler les avertissements/rejets éventuels puis l'état effectif de publication. Aucun upload/état Play attesté depuis ce chat.
 - [ ] Préserver le PEM/les quatre secrets et exécuter la signature sur les futures versions sans redemander à Fab le certificat PUBLIC.
+
+## BB-018 — Dernier bilan
+- [x] Conserver le PEM public dans main en IMMUTABLE et ne plus redemander le fichier à Fab.
+- [x] Construire l'AAB signée historiquement, vérifier DER JKS/PEM, package `fr.greenpower.blockboost`, code 14, MP3, 21 effets.
+- [x] [Archiver l'AAB signée directement dans la Release v0.14.0](https://github.com/greenpower2669/Block-Boost/releases/download/v0.14.0/BlockBoost-0.14.0-release-candidate.aab), ainsi que les [empreintes SHA256](https://github.com/greenpower2669/Block-Boost/releases/download/v0.14.0/SHA256SUMS) ; GitHub Actions #39395073250 en succès.
+- [ ] **Reste :** téléverser l'AAB sur Google Play Console et confirmer son acceptation/publication, sans supposer que la Release GitHub effectue cette étape.
+- [ ] Tester sur le Samsung Android 16 la qualité sonore (guitare et musique) et les gestes.

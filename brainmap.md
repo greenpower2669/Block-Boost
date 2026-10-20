@@ -102,3 +102,7 @@ BB-014 : scripts/reuse_blockboost_013_audio.py vérifie le SHA complet 0.13, les
 - PEM public [déposé à demeure sur main](https://github.com/greenpower2669/Block-Boost/blob/main/android/certificates/BlockBoost-upload-certificate.pem), empreinte de référence dans `ordres-de-mission.md` FAB-IMMUTABLE-002.
 - AAB **effectivement construite et signée** avec l'ancienne Upload Key, [Actions #39394294446](https://github.com/greenpower2669/Block-Boost/actions/runs/39394294446) SUCCESS ; l'artefact `BlockBoost-0.14.0-signed-candidate` expire le 19/11/2026 ; voir `brain.md` BB-018.
 - Suite : téléchargement/transfert de cette AAB à la **Play Console**, publication encore non confirmée. Ne jamais régénérer JKS ni redemander le PEM.
+
+## BB-018 — AAB signée archivée durablement
+- L'Upload Key originale et le PEM canonique de `main` ont signé/contrôlé l'AAB (Actions #39394294446 et [#39395073250](https://github.com/greenpower2669/Block-Boost/actions/runs/39395073250), SUCCESS). [AAB signée directe](https://github.com/greenpower2669/Block-Boost/releases/download/v0.14.0/BlockBoost-0.14.0-release-candidate.aab) sur la GitHub Release v0.14.0, avec [SHA256SUMS](https://github.com/greenpower2669/Block-Boost/releases/download/v0.14.0/SHA256SUMS), sans archive ZIP.
+- Contrat IMMUTABLE-002 conservé : PEM permanent, jamais redemandé à Fab ; Play Console restant à faire. Détails dans `brain.md` et `todo.md`.

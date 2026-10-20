@@ -97,3 +97,8 @@ BB-014 : scripts/reuse_blockboost_013_audio.py vérifie le SHA complet 0.13, les
 ## BB-018 — PEM public historique permanent
 - `ordres-de-mission.md` → **FAB-IMMUTABLE-002** : certificat public de l'Upload Key versionné **une seule fois** sous `android/certificates/BlockBoost-upload-certificate.pem`. À conserver dans chaque version de `main`; ne pas redemander à Fab à chaque AAB.
 - Contrôles SHA/validité et diagnostic pipeline AAB dans `brain.md`, `debughistorical.md`, `todo.md`. Ne jamais committer JKS ni mots de passe ; ne jamais substituer de nouvelle clé si les secrets échouent.
+
+## BB-018 — Signatures désormais opérationnelles (20/10/2026)
+- PEM public [déposé à demeure sur main](https://github.com/greenpower2669/Block-Boost/blob/main/android/certificates/BlockBoost-upload-certificate.pem), empreinte de référence dans `ordres-de-mission.md` FAB-IMMUTABLE-002.
+- AAB **effectivement construite et signée** avec l'ancienne Upload Key, [Actions #39394294446](https://github.com/greenpower2669/Block-Boost/actions/runs/39394294446) SUCCESS ; l'artefact `BlockBoost-0.14.0-signed-candidate` expire le 19/11/2026 ; voir `brain.md` BB-018.
+- Suite : téléchargement/transfert de cette AAB à la **Play Console**, publication encore non confirmée. Ne jamais régénérer JKS ni redemander le PEM.

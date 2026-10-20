@@ -301,6 +301,13 @@ APK brute : https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/bl
 ## BB-018 — Nouveau socle IMMUTABLE du certificat public
 - [x] Fab transmet le PEM public et approuve explicitement sa conservation sur GitHub pour les versions futures. Certificat RSA4096 reconnu, fingerprint SHA-256 `D7:73:E8:88:80:EF:A7:28:A0:16:D7:A7:E1:DF:A3:AE:29:6A:A3:0B:2E:DD:33:18:8A:04:50:DD:A6:1E:76:0F`.
 - [x] Enregistrer `FAB-IMMUTABLE-002` en tête des ordres de mission : **conserver à vie le certificat public sur main**, ne jamais redemander à chaque publication, ne jamais remplacer la clé JKS.
-- [ ] Ajouter le fichier `android/certificates/BlockBoost-upload-certificate.pem` à main et vérifier lecture GitHub (public seulement).
-- [ ] Contrôler GitHub Actions AAB déclenchée à l'ajout du certificat : validation des 4 secrets et correspondance PEM/JKS, 21 OGG, MP3, vraie AAB signée et SHA256. En cas d'échec, consigner l'étape exacte et corriger sans fuite des secrets.
+- [x] [PEM public ajouté et vérifié sur `main`](https://github.com/greenpower2669/Block-Boost/blob/main/android/certificates/BlockBoost-upload-certificate.pem) ; commit `48b34aa53d98baff74d214685892813bb2584967`.
+- [x] [Actions AAB #39394294446](https://github.com/greenpower2669/Block-Boost/actions/runs/39394294446) SUCCESS : quatre secrets fonctionnels, JKS comparée au PEM historique, vrai `.aab` release signé, APK release signée, SHA256SUMS, code14, 21 OGG et MP3, nettoyage secrets. Artefact `BlockBoost-0.14.0-signed-candidate` (ID 12250912694), expire le 19/11/2026.
 - [ ] Une fois AAB signée vérifiée, continuer l'envoi via Play Console ; ne pas prétendre Google Play publié avant preuve.
+
+## BB-018 — Signé : transfert Play restant (20/10/2026)
+- [x] `FAB-IMMUTABLE-002`, PEM public permanent + réussite de vraie signature AAB avec la JKS historique.
+- [x] [AAB/APK release signées — CI SUCCESS](https://github.com/greenpower2669/Block-Boost/actions/runs/39394294446) : artefact `BlockBoost-0.14.0-signed-candidate` contenant aussi le fichier `SHA256SUMS`.
+- [ ] **Récupérer l'AAB signée avant expiration de l'artefact Actions (19/11/2026)** et la placer en conservation durable si le transfert Play n'est pas immédiat.
+- [ ] Envoyer l'AAB signée à Google Play Console avec le package `fr.greenpower.blockboost`, contrôler les avertissements/rejets éventuels puis l'état effectif de publication. Aucun upload/état Play attesté depuis ce chat.
+- [ ] Préserver le PEM/les quatre secrets et exécuter la signature sur les futures versions sans redemander à Fab le certificat PUBLIC.

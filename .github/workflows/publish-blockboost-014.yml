@@ -1,0 +1,95 @@
+name: '📦 Block Boost 0.14 — GitHub Release vérifiée'
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/publish-blockboost-014.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: blockboost-release-v0.14.0
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: github.repository == 'greenpower2669/Block-Boost' && github.ref_name == 'main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Tester la version publiée
+        run: |
+          set -euo pipefail
+          grep -F "applicationId 'fr.greenpower.blockboost'" android/app/build.gradle
+          grep -F 'versionCode 14' android/app/build.gradle
+          grep -F "versionName '0.14.0'" android/app/build.gradle
+          test -s Blockboostmusic.mp3
+          test -f src/music-bed.mjs
+          node --test tests/*.test.mjs
+      - name: Récupérer uniquement l'APK complète validée par CI
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          curl -fL --retry 4 --retry-delay 3 \
+            'https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-full-0.14.0/temp/android/BlockBoost-0.14.0-full-debug.apk' \
+            -o dist/BlockBoost-0.14.0-full-debug.apk
+          echo '3e27f2abc081328feca400f80ff086cb4869257977cb17a102ad9bf1eea923e1  dist/BlockBoost-0.14.0-full-debug.apk' | sha256sum -c -
+          test "$(wc -c < dist/BlockBoost-0.14.0-full-debug.apk)" -eq 18160892
+          (cd dist && sha256sum BlockBoost-0.14.0-full-debug.apk > BlockBoost-0.14.0-full-debug.sha256)
+          APK=dist/BlockBoost-0.14.0-full-debug.apk
+          unzip -Z1 "$APK" | grep -Fx 'assets/www/Blockboostmusic.mp3'
+          unzip -Z1 "$APK" | grep -Fx 'assets/www/src/music-bed.mjs'
+          unzip -Z1 "$APK" | grep -Fx 'assets/www/src/winning-snap.mjs'
+          unzip -Z1 "$APK" | grep -Fx 'assets/www/assets/licensed/result-guitar.ogg'
+          COUNT="$(unzip -Z1 "$APK" | grep -Ec '^assets/www/assets/licensed/.*\.ogg$')"
+          test "$COUNT" -eq 21
+          MP3_BYTES="$(unzip -l "$APK" | awk '$4=="assets/www/Blockboostmusic.mp3" {print $1}')"
+          test "$MP3_BYTES" -eq 17549936
+          cmp src/music-bed.mjs <(unzip -p "$APK" assets/www/src/music-bed.mjs)
+      - name: Rédiger les notes de sortie
+        shell: bash
+        run: |
+          cat > dist/RELEASE_NOTES.md <<'EOF'
+          # 🐾 Block Boost 0.14.0 — Jeu complet Android
+
+          **APK Android de test directement installable, sans ZIP.**
+
+          - Aimantation douce et juste vers les placements réellement gagnants ; nouveaux coins et diagonales rares, gros blocs mieux répartis.
+          - Reflets et halos lumineux tournant sur 360° sans rotation des pièces.
+          - Feux d'artifice de 6 secondes à 1000, 2000, 3000 points…
+          - Écran record à trois animations, avec jingle de guitare électrique.
+          - Musique `Blockboostmusic.mp3` intégrée hors ligne, discrète et stable ; fondu lent uniquement pendant la guitare du record.
+          - 21 sons intégrés au jeu, voix désactivées par défaut mais réactivables, sauvegarde locale des scores.
+
+          **Identité Android** : `fr.greenpower.blockboost`, code 14.
+          **Qualité** : tests Node/Chrome et APK Android complets réussis sur la branche feature ; empreinte SHA-256 vérifiée ci-dessus. Vérification matérielle finale sur Samsung encore recommandée.
+
+          ⚠️ **Cette APK est signée avec une clé de test (debug). Ce n'est PAS l'AAB Google Play signée.** L'AAB ne sera produite qu'avec l'Upload Key historique et son certificat public PEM validés, jamais avec une nouvelle clé. L'installation de cette APK peut différer d'une mise à jour Play ; sauvegarder les données.
+          EOF
+      - name: Publier sur GitHub Releases sans modifier Play
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if gh release view v0.14.0 --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo 'La Release v0.14.0 existe déjà : aucun remplacement automatique.'
+          else
+            gh release create v0.14.0 \
+              dist/BlockBoost-0.14.0-full-debug.apk \
+              dist/BlockBoost-0.14.0-full-debug.sha256 \
+              --repo "$GITHUB_REPOSITORY" \
+              --target "$GITHUB_SHA" \
+              --title 'Block Boost v0.14.0 — Jeu complet + musique' \
+              --notes-file dist/RELEASE_NOTES.md \
+              --prerelease
+          fi
+          echo "https://github.com/$GITHUB_REPOSITORY/releases/tag/v0.14.0" >> "$GITHUB_STEP_SUMMARY"

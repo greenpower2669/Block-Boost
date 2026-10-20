@@ -16,8 +16,14 @@ export const SHAPES = [
   [[0,0],[1,0],[0,1],[0,2]],
   [[0,0],[1,0],[2,0],[2,1],[2,2]],
   [[0,0],[1,0],[0,1],[1,1],[2,1]],
-  [[0,0],[1,0],[2,0],[0,1],[2,1]]
+  [[0,0],[1,0],[2,0],[0,1],[2,1]],
+  [[0,0],[1,0],[0,1]], // compact L of three, NOT the existing full 2x2
+  [[0,0],[1,1]], [[1,0],[0,1]],
+  [[0,0],[1,1],[2,2]], [[2,0],[1,1],[0,2]]
 ];
+export const DRAW_CONFIG=Object.freeze({diagonalChance:.015,largeAtStart:2.6,
+  largeWhenCrowded:.30,largeMinCells:5});
+const FIRST_DIAGONAL=SHAPES.length-4;
 export const emptyBoard = () => Array.from({length: SIZE}, () => Array(SIZE).fill(null));
 export function bounds(coords) {
   return { width: Math.max(...coords.map(c => c[0])) + 1,
@@ -45,11 +51,49 @@ export function hasLegalMove(board,pieces) {
     )
   );
 }
-export function pieceBatch(rng=Math.random) {
-  return Array.from({length:3}, (_,i) => ({
-    id: i, coords: SHAPES[Math.floor(rng()*SHAPES.length)].map(([x,y])=>[x,y]),
-    color: PALETTE[Math.floor(rng()*PALETTE.length)], used:false
-  }));
+// All new pieces are legal on the current board in at least one orientation.
+// Change draw probabilities here, not in the comeback/high-score assistance.
+function shapeFits(board,coords){
+  let shape=coords;
+  for(let orientation=0;orientation<4;orientation++){
+    const {width,height}=bounds(shape);
+    for(let y=0;y<=SIZE-height;y++)for(let x=0;x<=SIZE-width;x++)
+      if(canPlace(board,shape,x,y))return true;
+    shape=rotate(shape);
+  }
+  return false;
+}
+function weightedIndex(indices,density,rng,config){
+  const weights=indices.map(i=>{
+    const cells=SHAPES[i].length;
+    if(cells>=config.largeMinCells)return config.largeWhenCrowded+
+      (config.largeAtStart-config.largeWhenCrowded)*(1-density)**2;
+    return cells===1?.65+1.2*density:1;
+  });
+  const total=weights.reduce((n,w)=>n+w,0);
+  let offset=Math.min(.999999999,Math.max(0,rng()))*total;
+  for(let i=0;i<indices.length;i++)if((offset-=weights[i])<0)return indices[i];
+  return indices[indices.length-1];
+}
+export function pieceBatch(rng=Math.random,board=emptyBoard(),config=DRAW_CONFIG){
+  const density=board.flat().filter(c=>c!==null).length/(SIZE*SIZE);
+  const legal=SHAPES.map((shape,i)=>({shape,i}))
+    .filter(({shape})=>density===0||shapeFits(board,shape));
+  const ordinary=legal.filter(({i})=>i<FIRST_DIAGONAL).map(({i})=>i);
+  const diagonals=legal.filter(({i})=>i>=FIRST_DIAGONAL).map(({i})=>i);
+  const fallback=ordinary.length?ordinary:[0];
+  let usedDiagonal=false;
+  return Array.from({length:3},(_,i)=>{
+    const chanceSample=rng();
+    const rare=!usedDiagonal&&diagonals.length>0&&chanceSample>0&&
+      chanceSample<config.diagonalChance; // deterministic RNG(0) keeps legacy singleton tests
+    if(rare)usedDiagonal=true;
+    const candidates=rare?diagonals:fallback;
+    const index=weightedIndex(candidates,density,rng,config);
+    return {id:i,coords:SHAPES[index].map(([x,y])=>[x,y]),
+      color:PALETTE[Math.floor(Math.min(.999999999,Math.max(0,rng()))*PALETTE.length)],
+      used:false};
+  });
 }
 /**
  * The player gets a discreet LUCK boost, never an artificial score reward,
@@ -127,19 +171,20 @@ export function batchProspect(board,pieces){
  * two-move clearing potential.  The original random offer stays possible.
  */
 export function comebackBatch(board,rng=Math.random,chance=0){
-  const ordinary=pieceBatch(rng);
+  const ordinary=pieceBatch(rng,board);
   if(chance<=0||rng()>=chance)return {pieces:ordinary,assisted:false};
   const original= batchProspect(board,ordinary);
   let winner=ordinary,highest=original;
   for(let i=0;i<5;i++){
-    const candidate=pieceBatch(rng);
+    const candidate=pieceBatch(rng,board);
     const score=batchProspect(board,candidate);
     if(score>highest){highest=score;winner=candidate;}
   }
   return {pieces:winner,assisted:highest>original};
 }
 export function newGame(rng=Math.random) {
-  return {board:emptyBoard(),pieces:pieceBatch(rng),score:0,combo:0,bestCombo:0,
+  const board=emptyBoard();
+  return {board,pieces:pieceBatch(rng,board),score:0,combo:0,bestCombo:0,
     moves:0,gameOver:false,version:1};
 }
 // A successful clearing move increases the combo. Any non-clearing placement resets it.

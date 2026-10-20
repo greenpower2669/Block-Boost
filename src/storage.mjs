@@ -2,7 +2,7 @@ import {sanitizeGame} from "./engine.mjs";
 export const SAVE_KEY="block-boost.local.v1";
 const MASCOTS=["pompom","plume","lilo","nox","moka","biscotte"];
 const defaults = () => ({version:1,bestScore:0,lastScore:0,gamesPlayed:0,
-  bestCombo:0,history:[],mascot:"pompom",settings:{voice:false,fx:true,reducedMotion:false,haptics:true,hapticGuidance:true},
+  bestCombo:0,history:[],mascot:"pompom",settings:{voice:false,fx:true,music:true,musicVolume:16,reducedMotion:false,haptics:true,hapticGuidance:true},
   progress:null});
 const saneNumber = v => Number.isSafeInteger(v)&&v>=0&&v<=1000000000?v:0;
 export function sanitizeSave(data) {
@@ -14,6 +14,8 @@ export function sanitizeSave(data) {
   if(data.settings&&typeof data.settings==="object")
     for(const k of Object.keys(d.settings)) if(typeof data.settings[k]==="boolean")
       d.settings[k]=data.settings[k];
+  if(Number.isFinite(data.settings?.musicVolume))
+    d.settings.musicVolume=Math.max(0,Math.min(100,Math.round(data.settings.musicVolume)));
   if(Array.isArray(data.history)) d.history=data.history.slice(-20)
     .filter(o=>o&&Number.isSafeInteger(o.score)&&o.score>=0&&o.score<=1000000000)
     .map(o=>({score:o.score,at:typeof o.at==="string"?o.at:""}));

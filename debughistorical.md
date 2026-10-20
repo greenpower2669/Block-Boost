@@ -126,3 +126,51 @@ Changement 0.12 sur branche `feature/score-comeback-victory-music-012` (main int
 Musique disco : ancien Bass Drop 3 provisoire remplacé **en mode WebAudio** par création pure synthétisée 4 secondes, 67 notes de cinq familles, limiteur doux et fondu à l'arrêt ; Bass Drop Sonniss toujours en fallback. Pas de fichier musical licencié ajouté au dépôt public. Les tests de partition garantissent fin <=4s et densité de composition.
 
 [Node/Chrome 39084934741](https://github.com/greenpower2669/Block-Boost/actions/runs/39084934741), [CI APK public 39084934816](https://github.com/greenpower2669/Block-Boost/actions/runs/39084934816), [CI APK privée 39085006124](https://github.com/greenpower2669/Djipie/actions/runs/39085006124) success. [Fichier APK complète Block Boost](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-comeback-victory-full-0.12.0/temp/android/BlockBoost-0.12.0-comeback-victory-full-debug.apk) 442949 octets, SHA `d4ff4b8509c1a840cf3258cc9b31c586acbdfc1aae51b220d8ae065a1e35dd67` vérifié par binaire Git identique. Si un utilisateur a déjà la même application signée par une autre clé debug, Android peut exiger la désinstallation — **ne pas garantir la conservation des scores**. Test réel du son non effectué.
+
+## 18 octobre — 0.13 avant dernière release
+
+Ancien test Chrome de jackpot disco se déclenchait au-delà de 1000 points, ce qui est désormais correctement remplacé par le show FIREWORKS (priorité). Test revu : combo disco sous 1000 ; croisement ×10 au-delà de plusieurs seuils = feux d'artifice + score ×10 HUD inchangé ; record final = trois animations consécutives, guitare, replay accessible. Échec audio privé de première tentative dû à une assertion obsolète `COUNT == 11`, corrigée vers `COUNT == 21`; fichiers et build valides. Le nouveau package `fr.greenpower.blockboost` change l'espace de sauvegarde Android : ne pas supprimer le vieux proto tant que les scores ne sont pas sauvegardés. Tout reste en feature, main/release 0.12 non modifiées.
+
+### Livraison effective 0.13 AVANT release (18 octobre 2026)
+
+- **APK complète 21 sons Djipie dans le jeu entier**, livrée en un fichier **.apk direct sans ZIP** sur une branche temporaire de Block Boost : [Télécharger BlockBoost 0.13](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-fireworks-full-0.13.0/temp/android/BlockBoost-0.13.0-fireworks-full-debug.apk).
+- Taille **606 101 octets**. SHA-256 `c2943324577d7014851890fe767321beb36c26fcc41ae57a06cb78ede0215ec3`. Blob Git `d29b69c09620f9fe0a8d11530bbc31da1203f0df` vérifié IDENTIQUE entre sortie privée Djipie et branche de livraison publique Block Boost `temp/blockboost-fireworks-full-0.13.0`, commit livraison `99453146c0e52b3061d16afccb5d2e03d816c1d8`.
+- Tests Node/Chrome tactiles **SUCCESS** [39145851083](https://github.com/greenpower2669/Block-Boost/actions/runs/39145851083), dernier contrôle source docs [39146091168](https://github.com/greenpower2669/Block-Boost/actions/runs/39146091168) **SUCCESS**, build Android public [39145851089](https://github.com/greenpower2669/Block-Boost/actions/runs/39145851089) **SUCCESS**, build APK privée **21 FX intégrés** [39146050159](https://github.com/greenpower2669/Djipie/actions/runs/39146050159) **SUCCESS**.
+- Code et APK prête à tester sur Samsung Android 16. **Ni main ni la release GitHub v0.12 ne sont modifiés**. PR Block Boost [#16](https://github.com/greenpower2669/Block-Boost/pull/16) et Djipie [#12](https://github.com/greenpower2669/Djipie/pull/12) laissées en brouillon. L'écoute physique et une éventuelle AAB signée Play avec nouveau package `fr.greenpower.blockboost` restent à valider.
+- Important : applicationId passée de `fr.greenpower.blockboost.bubbleslab` au package Play confirmé `fr.greenpower.blockboost`, Android installe côte à côte et ne migre pas automatiquement les records de l'ancienne application.
+
+
+## 19 octobre — Retour utilisateur avant toute modification : micro-glissement du doigt et halo 360°
+
+Symptôme rapporté par Fab : lorsqu'un placement réellement gagnant est presque aligné, la très légère descente du doigt lors du relâchement peut déplacer le bloc et empêcher la pose attendue. **Observation du code, cause probable non encore prouvée par test Samsung :** dans `src/main.mjs`, `pointerup` recalcule `metrics(coords,e.clientX,e.clientY)` et ignore le dernier alignement gagnant du fantôme. Mission à réaliser ultérieurement : aimantation sélective d'un placement gagnant légal, petit biais supérieur et hystérésis ; jamais sur poses perdantes ; tests tactile/sensation requis.
+
+Autre observation technique : les reflets des cellules `will-solve` dans `styles.css` ont un `conic-gradient` dont la phase reste figée, tandis que `rainbowWave` fait seulement `filter:hue-rotate`. Fab veut **rotation angulaire réelle des halos 360°**, en préservant couleurs et brillance, sans bouger le bloc ; mode réduit. Besoin d'un coin L 2×2 trois cases (carré 2×2 plein déjà existant), barres diagonales 2/3 cases à faible probabilité, gros blocs plus favorables en début si plaçables.
+
+La nouvelle demande du 19/10 est une **passation sans code**, enregistrée au registre avec **IMMUTABLE** pour package Play `fr.greenpower.blockboost`, Upload Key RSA 4096 existante, PEM, alias, noms de secrets, AAB signée et livraisons. Aucun test/génération AAB nouveau effectué pour elle. [Détails](docs/passation-ultime-snap-pieces-lumiere-aab-014.md).
+
+## BB-014 19/10/2026 : décalage de pose gagnante, cause code et correctif candidat
+Observation Fab : le doigt redescend légèrement au lâcher, et une case annoncée gagnante peut être perdue. Code 0.13 : `pointerup` recalculait directement `metrics(clientX,clientY)`, indépendant du fantôme, laissant l'arrondi changer l'ancre. Nouveau chemin candidat : cible gagnante calculée une fois à partir des cibles légales, hystérésis courte et coordonnées exactes pour le rendu et la pose ; effacement sur rotation/cancel. Ancien `rainbowWave` ne changeait que la teinte, pas l'angle conique ; ajout d'une phase angulaire enregistrée. **Non vérifié encore physiquement** sur Samsung ni pour AAB : à inscrire en recette, pas annoncer comme validé.
+
+- **CI initiale BB-014 du commit 9b947508** : 66/68 tests unitaires réussis ; échec `bonus.test` car `rng=()=>0` tirait exceptionnellement une diagonale (attendu historique : singleton), et assertion de seuil anti-snap incorrecte dans le nouveau test (0,54 moins biais 0,09 = 0,45, encore en acquisition). Correctifs : réserver le `rng=0` au chemin déterministe ordinaire, et placer l'assertion hors rayon à 0,59. Recontrôler en CI, ne pas prétendre tests verts avant résultat.
+
+BB-014 : le premier build 0.14 était un fallback CC0 sans 21 sons. Correctif candidat : restauration depuis APK 0.13 complète vérifiée, puis test de présence 21 OGG avant toute livraison. Ne pas déclarer succès sans constat CI.
+
+- 19/10 BB-014, incident pipeline : substitution JS naïve a interprété `$'` de la commande grep comme suffixe de chaîne, dupliquant les dernières étapes YAML. GitHub Actions a rejeté les deux workflows **sans jobs** sur c274430. Remise à plat depuis les versions saines du commit 02719c, réinjection via remplacement fonctionnel (ne traite pas les `$` comme spéciaux) et vérification de structure YAML. Aucun binaire erroné diffusé.
+
+- BB-014, **preuve après reconstruction YAML** : GitHub Actions 39230344488 SUCCESS, tests Node/Chrome 39230344461 et 39230351456 SUCCESS ; restauration SHA-256 de l'APK 0.13 OK, comptage 21 FX dans APK 0.14 OK, dépôt .apk direct dans Block Boost OK (taille 608074, SHA 2f815dd0faf5a0db8a1526fdb8034b8a52f9330cf8c10c55cce9f3954ea619ca). Validation tactile Android 16 non réalisée. AAB signée non construite ; PEM public référent absent des sources courantes, validité des secrets non encore testée, NE PAS régénérer JKS.
+
+## BB-015 — Mix musical, tests et limites (19/10/2026)
+- Choix technique : atténuation temporelle de l'accompagnement, plutôt que filtrage spectral irréversible. Le ducking couvre SFX courts / longs, fanfare 4s, guitare, fireworks 6s et voix ; retour progressif.
+- Reproductibilité : MP3 identique à main (SHA blob `ab73a2914ab6afe3c6b9f30093766053977dcc0e`), Android inclut `assets/www/Blockboostmusic.mp3`, service worker ne met pas le MP3 lourd en précache.
+- CI et APK source 0.14 réussis (Android #39324826000 ; tests #39324826032 et #39324832287). Android matériel non encore écouté.
+- Vérifications terrain attendues : décodage offline WebView, absence de coupure/artefact lors du fade, équilibre FX/TTS/musique, écran verrouillé, reprise, boucle MP3. Ne pas déclarer la qualité audio validée avant essai.
+
+## BB-016 — Retour utilisateur sur la brutalité du volume
+- Régression perceptive BB-015 : ducking fréquent de 85 ms provoquant un pompage abrupt, même en présence d'effets courts.
+- Correctif demandé : éliminer toutes les baisses à l'exception de la guitare électrique de record ; facteur modéré 0,55 et rampes 1200/2000 ms ; conserver la musique en boucle à faible niveau et volume réglable.
+- Tests d'écoute obligatoires : vérifier transition après capture de score, effet guitare manquant (fallback sans ducking), interruption prématurée, reprise Android, et stabilité au cours des parties riches en effets.
+
+## BB-017 — Contrôles publication & signature (20/10/2026)
+- Derniers tests branche PR #16 : Node/Chrome verts sur commits 2b4a998..., APK source 0.14 musique stable (21 sons) vérifiée par Actions 39326900698, SHA256 `3e27f2abc081328feca400f80ff086cb4869257977cb17a102ad9bf1eea923e1`.
+- Avant release : fusion autorisée le 20/10, nouveau workflow de GitHub Release 0.14 à déclenchement contrôlé lors de l'intégration `main`. Ne pas publier l'ancienne APK avec ducking violent (SHA `8fe7dec...`) ; utiliser exclusivement la dernière APK `3e27f2...`.
+- AAB release signée : branche actuelle ne contient pas `android/certificates/BlockBoost-upload-certificate.pem`; secrets impossibles à vérifier depuis le simple contenu du dépôt. Les gardes PEM et 4 secrets ne doivent pas être désactivées. Toute tentative doit échouer proprement en absence des prérequis. AAB non encore fabriquée et Play non confirmé.

@@ -42,3 +42,50 @@ Contrat permanent : **Djipie est uniquement source/médiathèque de sons, Block 
 ## Actuel 0.12 — chance quand loin du record + fanfare disco 4s
 
 Lire [docs/comeback-score-victory-music-012.md](docs/comeback-score-victory-music-012.md). Source: `feature/score-comeback-victory-music-012`. APK finale complète avec 11 effets Sonniss dans **Block Boost** sur `temp/blockboost-comeback-victory-full-0.12.0` (442949 octets, SHA-256 `d4ff4b8509c1a840cf3258cc9b31c586acbdfc1aae51b220d8ae065a1e35dd67`). Toujours aucun merge main. Pour la suite utiliser les tiroirs du brain et de cette mission, Djipie reste seulement médiathèque sonore complémentaire.
+
+## Travail actuel (18 octobre) : Block Boost v0.13 pré-release
+
+Branche `feature/final-result-fireworks-013`, effets score 1000/2000… par partie et écran nouveau record : **disco → bulles → fireworks**, jingle guitare Djipie et mix 7 bang + 2 ambiances chacun limité à six secondes ; 21 sons synchronisés uniquement dans APK final privée Djipie, sans fichier sonore séparé dans public. Nouveau package Google Play prévu `fr.greenpower.blockboost`. Voir `brain.md`, `ordres-de-mission.md`, `todo.md`, `debughistorical.md`. Pas encore de fusion main ni de nouvelle release.
+
+### Livraison effective 0.13 AVANT release (18 octobre 2026)
+
+- **APK complète 21 sons Djipie dans le jeu entier**, livrée en un fichier **.apk direct sans ZIP** sur une branche temporaire de Block Boost : [Télécharger BlockBoost 0.13](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-fireworks-full-0.13.0/temp/android/BlockBoost-0.13.0-fireworks-full-debug.apk).
+- Taille **606 101 octets**. SHA-256 `c2943324577d7014851890fe767321beb36c26fcc41ae57a06cb78ede0215ec3`. Blob Git `d29b69c09620f9fe0a8d11530bbc31da1203f0df` vérifié IDENTIQUE entre sortie privée Djipie et branche de livraison publique Block Boost `temp/blockboost-fireworks-full-0.13.0`, commit livraison `99453146c0e52b3061d16afccb5d2e03d816c1d8`.
+- Tests Node/Chrome tactiles **SUCCESS** [39145851083](https://github.com/greenpower2669/Block-Boost/actions/runs/39145851083), dernier contrôle source docs [39146091168](https://github.com/greenpower2669/Block-Boost/actions/runs/39146091168) **SUCCESS**, build Android public [39145851089](https://github.com/greenpower2669/Block-Boost/actions/runs/39145851089) **SUCCESS**, build APK privée **21 FX intégrés** [39146050159](https://github.com/greenpower2669/Djipie/actions/runs/39146050159) **SUCCESS**.
+- Code et APK prête à tester sur Samsung Android 16. **Ni main ni la release GitHub v0.12 ne sont modifiés**. PR Block Boost [#16](https://github.com/greenpower2669/Block-Boost/pull/16) et Djipie [#12](https://github.com/greenpower2669/Djipie/pull/12) laissées en brouillon. L'écoute physique et une éventuelle AAB signée Play avec nouveau package `fr.greenpower.blockboost` restent à valider.
+- Important : applicationId passée de `fr.greenpower.blockboost.bubbleslab` au package Play confirmé `fr.greenpower.blockboost`, Android installe côte à côte et ne migre pas automatiquement les records de l'ancienne application.
+
+## 19 octobre 2026 — Passation BB-014 / signature Play IMMUTABLE
+
+Le registre `ordres-de-mission.md` comporte désormais en **tête** la section `BLOCKBOOST-IMMUTABLE-001` : identité Play `fr.greenpower.blockboost`, version 0.13 prérelease, package ancien distinct, JKS privée **existante** générée et récupérée (pas de régénération), certificat public `BlockBoost-upload-certificate.pem`, quatre noms de secrets GitHub, incompatibilité de nom `ANDROID_UPLOAD_STORE_PASSWORD` (générique FabCopilot) / `ANDROID_UPLOAD_KEYSTORE_PASSWORD` (projet réel) à traiter sans valeur dans les docs ; AAB release à produire et vérifier plus tard, APK directe sans ZIP dans Block Boost, Djipie audio uniquement. Mission **BB-014 non codée** ajoutée en fin du registre : snap gagnant contre recul du doigt, 2×2 déjà présent, diagonales 2-3 rares, gros blocs fréquents si plaçables en début de partie, reflet dégradé 360° sans rotation géométrique. Pas de merge `main` ni nouvelle release ; la 0.13 reste en PR #16 à valider.
+
+
+## 19/10/2026 — Entrée canonique : passation gameplay + signature AAB (IMMUTABLE)
+
+**Lire en premier** [`ordres-de-mission.md`](ordres-de-mission.md), section **IMMUTABLE / À PRÉSERVER — BLOCK BOOST PLAY** (système de publication à ne pas dériver), puis [passation complète 19/10](docs/passation-ultime-snap-pieces-lumiere-aab-014.md). **Aucun code créé pour cette nouvelle demande** ; 0.13 déjà existante avant passation, PR #16 brouillon, APK complète 0.13 testable.
+
+Chemins à étudier à la reprise (pas encore corrigés) : `src/main.mjs` → `metrics`, `drawGhost`, `pointerup` (conversion répétée causant potentiellement glissement de cible), `src/haptic-sonar.mjs` → `clearingTargets`, `src/solve-preview.mjs` → cibles réellement gagnantes, `src/engine.mjs` → `SHAPES` (carré 2×2 plein déjà présent, coin L 2×2 et diagonales 2/3 manquantes) et `pieceBatch` / `comebackBatch` (pondération selon grille). `styles.css` → `conic-gradient` statique + `rainbowWave` actuellement `hue-rotate`, à transformer en orientation lumineuse réellement tournante 360°.
+
+Publication : Android `fr.greenpower.blockboost` identifié dans 0.13, code 13, JKS récupérée RSA 4096 alias `blockboost-upload`/PEM public. 4 noms de secrets GitHub sans valeurs listés dans immutable ; vrai AAB release signé et vérifié à construire uniquement après approbation, ne pas confondre avec APK debug. Djipie privé = construction audio, **jeu fini toujours publié depuis Block Boost**. L'ancienne GitHub Release 0.12 reste en place ; aucun merge 0.13 ni Play confirmé.
+
+## BB-014 — carte technique ajoutée le 19/10/2026
+- `src/winning-snap.mjs` : fonction pure de sélection à hystérésis, seules les entrées de `clearingTargets` sont éligibles.
+- `src/main.mjs` : `metrics` → coordonnées fractionnaires ; `dragPlacement` résout le verrouillage ; `drawGhost`, `previewRainbow`, `updateSonar` utilisent les coordonnées résolues ; `pointerup` réutilise la même sélection ; `computeSonar` annule cible à rotation ; `resetDrag` l'efface.
+- `src/engine.mjs` : ajout L3 et quatre diagonales, `shapeFits`, `weightedIndex`, `DRAW_CONFIG`, `pieceBatch(rng,board,config)`, `comebackBatch` reçoit la grille.
+- `styles.css` : `@property --rainbow-phase` + `rainbowWave` 360°, halos de toutes familles dont forêt/électrique ; respect animations réduites.
+- `tests/finish-014.test.mjs` + `tests/touch.e2e.mjs` : tests de réception ; `.github/workflows/android-apk.yml` reste une APK CC0 de secours ; `.github/workflows/android-play-candidate.yml` vérifie PEM/JKS/secrets et signe un AAB candidat ; `android/app/build.gradle` code14 et signature env temporaire.
+
+BB-014 : scripts/reuse_blockboost_013_audio.py vérifie le SHA complet 0.13, les 21 OGG et le mapping, restaure temporairement assets/licensed et src/private-audio.mjs. Workflow android-apk.yml fabrique APK 0.14 complète en temp/blockboost-full-0.14.0 ; android-play-candidate.yml utilise les mêmes sons, mais exige clé/signature.
+
+- BB-014 bilan de build : Actions 39230344488 (APK 0.14 complète) et 39230344461/39230351456 (tests) vertes ; branche artifact-only `temp/blockboost-full-0.14.0` commit 456c53de…, `temp/android/BlockBoost-0.14.0-full-debug.apk`, SHA 2f815dd0faf5a0db8a1526fdb8034b8a52f9330cf8c10c55cce9f3954ea619ca. AAB Play passe exclusivement par `.github/workflows/android-play-candidate.yml` dispatch manuel protégé si PEM public historique et quatre secrets fonctionnels.
+
+## BB-015 — Musique de fond du jeu (19/10/2026)
+- Nouveau composant `src/music-bed.mjs` (ducking FX/voix, musique `Blockboostmusic.mp3` 16 % et réglages persistants). Documentation et livraison vérifiée : lire `brain.md`, rubrique **BB-015**.
+- APK offline 0.14 avec musique + 21 FX, SHA/CI consignés dans `todo.md`. Test sonore Samsung requis. Les restrictions IMMUTABLE sur signature, merge et Play demeurent.
+
+## BB-016 — Correction volume après test d'écoute
+- Se référer au tiroir `brain.md` section BB-016 : le ducking global BB-015 a été supprimé sur demande de Fab, seul le jingle guitare électrique du record peut réduire très doucement le fond musical. `todo.md` contient validation CI/APK à terminer.
+
+## BB-017 — Publication autorisée le 20/10/2026
+- Fab autorise explicitement merge PR #16 et GitHub Release 0.14. Le workflow `.github/workflows/publish-blockboost-014.yml` vérifie le SHA de l'APK complète avant de créer une pré-release. Lire `ordres-de-mission.md` section BB-017.
+- AAB Play : workflow manuel sur main, bloqué si PEM public historique ou secrets de l'Upload Key existante manquants. Les limitations ne sont pas levées par l'autorisation de publication ; voir `todo.md` et `brain.md`.

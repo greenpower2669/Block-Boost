@@ -3,6 +3,7 @@ import {victoryScore,VICTORY_SECONDS} from "./victory-music.mjs";
 import {CONCERT_CUES,chooseJingle} from "./concert-cues.mjs";
 import {KENNEY_AUDIO} from "./kenney-audio.mjs";
 import {VoiceDirector} from "./voice-director.mjs";
+import {MusicBed} from "./music-bed.mjs";
 // Audio and mascot direction: independent of the rules engine. No remote services.
 export const MASCOTS={
   pompom:{name:"Pompom",species:"Panda roux",emoji:"🦊",voicePitch:0.90,lines:{
@@ -47,10 +48,17 @@ export class Feedback {
     this.kenneySequences=new Map();
     this.lastMelodyAt=0;
     this.licensedPlayers=new Map();
+    this.specialPlayers=new Map();
+    this.specialTimers=[];
+    this.fireworkPlaying=false;
     this.victoryMaster=null;
     this.lastVictoryAt=-Infinity;
+    this.music=new MusicBed(this.getSettings);
   }
+  updateMusic(){this.music.sync();}
+  setMusicVisible(visible){this.music.setVisible(visible);}
   ensureAudio() {
+    this.music.start(); // independent of FX and voice switches
     if(!this.getSettings().fx) return;
     try{
       const Context=globalThis.AudioContext||globalThis.webkitAudioContext;
@@ -119,6 +127,7 @@ export class Feedback {
     if(!this.ctx)return false;
     const now=Date.now();
     if(now-this.lastVictoryAt<2300)return true; // one fanfare, no overlapping Bass Drop fallback
+    // The regular disco/festival jingle does not change the background level.
     this.stopVictoryMusic();
     try {
       const ctx=this.ctx,t0=ctx.currentTime+.018;
@@ -184,6 +193,82 @@ export class Feedback {
       return true;
     }catch {return false;}
   }
+  /** Final-result guitar + fireworks from Djipie, mixed only for real events.
+   * No raw files are placed in public source. Private CI injects asset paths.
+   */
+  special(event,volume=.24){
+    if(this.getSettings().fx===false||!globalThis.Audio)return false;
+    const path=PRIVATE_AUDIO_FILES[event];
+    if(!path)return false;
+    try{
+      let audio=this.specialPlayers.get(event);
+      if(!audio){
+        audio=new Audio(new URL(path,import.meta.url).href);
+        audio.preload="auto";
+        this.specialPlayers.set(event,audio);
+      }
+      audio.volume=volume;
+      audio.pause();audio.currentTime=0;
+      if(event==="result-guitar"&&!audio.__musicGuitarReleaseBound){
+        audio.__musicGuitarReleaseBound=true;
+        audio.addEventListener?.("ended",()=>this.music.releaseGuitar());
+      }
+      audio.play()?.catch?.(()=>{
+        if(event==="result-guitar")this.music.releaseGuitar();
+      });
+      return true;
+    }catch{return false;}
+  }
+  stopSpecial(event){
+    const p=this.specialPlayers.get(event);
+    if(p)try{p.pause();p.currentTime=0;}catch{}
+  }
+  stopResultGuitar(){
+    this.stopSpecial("result-guitar");
+    this.music.releaseGuitar();
+  }
+  playResultGuitar(){
+    this.stopResultGuitar();
+    const hasGuitar=Boolean(this.getSettings().fx&&PRIVATE_AUDIO_FILES["result-guitar"]);
+    // A gentle, partial 1.2s descent only while the electric guitar plays.
+    // Normal sound effects, speech and fireworks leave background music stable.
+    if(hasGuitar)this.music.duckFor();
+    return this.special("result-guitar",.42)||this.playVictoryMusic();
+  }
+  stopFireworksAudio(){
+    for(const timer of this.specialTimers)clearTimeout(timer);
+    this.specialTimers=[];
+    for(const name of ["fireworks-bed-amb","fireworks-bed-explosions",
+      ...Array.from({length:7},(_,i)=>"fireworks-bang-"+String(i+1).padStart(2,"0"))])
+      this.stopSpecial(name);
+    this.fireworkPlaying=false;
+  }
+  playFireworksAudio(){
+    this.stopFireworksAudio();
+    if(this.getSettings().fx===false)return false;
+    this.fireworkPlaying=true;
+    // No ducking for fireworks: background music remains quietly constant.
+    // Both ambient beds are converted and hard-trimmed to MAXIMUM six seconds
+    // in Djipie's private compiler, with a short fade-out. The local timer
+    // stops them independently of any faulty file duration/decoder.
+    const start=this.special("fireworks-bed-amb",.105);
+    const layer=this.special("fireworks-bed-explosions",.13);
+    const timings=[140,760,1450,2120,2910,3770,4810];
+    timings.forEach((delay,i)=>{
+      const name="fireworks-bang-"+String(i+1).padStart(2,"0");
+      this.specialTimers.push(setTimeout(()=>{
+        if(this.fireworkPlaying&&this.getSettings().fx&&!this.special(name,.25)){
+          // Public CC0-only build: soft pitched hit, never a loud synthetic explosion.
+          this.chirp(330+(i%4)*95,.11,.024);
+        }
+      },delay));
+    });
+    this.specialTimers.push(setTimeout(()=>this.stopFireworksAudio(),6000));
+    return start||layer;
+  }
+  stopAllSpecial(){
+    this.stopFireworksAudio();this.stopResultGuitar();
+  }
   /** 24 real small Kenney OGGs exported from Djipie CC0 — never Sonniss. */
   playKenney(event){
     if(this.getSettings().fx===false || !globalThis.Audio)return false;
@@ -226,6 +311,7 @@ export class Feedback {
   }
   fx(event) {
     if(!this.getSettings().fx)return;
+    // All ordinary FX and voices mix over a fixed, quiet music bed.
     // Original 4s fanfare takes the place of the old short Bass Drop / Kenney
     // sample when WebAudio is available; source WAV is kept as fallback only.
     if(event==="festival-disco"&&this.playVictoryMusic())return;
@@ -308,6 +394,7 @@ export class Feedback {
     this.lastByKind.set(kind,now);
     this.onCaption(phrase);
     this.onEmotion(kind==="clear"?"happy":kind);
+    // Speech is clear over the low constant music bed: no sudden side-chain dip.
     clearTimeout(this.captionTimeout);clearTimeout(this.emotionTimeout);
     this.captionTimeout=setTimeout(()=>this.onCaption(""),3700);
     this.emotionTimeout=setTimeout(()=>this.onEmotion("idle"),1200);
@@ -350,8 +437,10 @@ export class Feedback {
     this.lastVoice=0;
     this.lastByKind.clear();
   }
-  stop(){
+  stop(pauseMusic=false){
+    if(pauseMusic)this.music.pause();
     this.stopVictoryMusic();
+    this.stopAllSpecial();
     this.stopGuidance();
     this.stopVoice();
   }

@@ -206,3 +206,87 @@ APK brute : https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/bl
 - [x] Livrer [APK COMPLÈTE 0.12 depuis SON repo Block Boost](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-comeback-victory-full-0.12.0/temp/android/BlockBoost-0.12.0-comeback-victory-full-debug.apk), 442949 octets, SHA256 `d4ff4b8509c1a840cf3258cc9b31c586acbdfc1aae51b220d8ae065a1e35dd67`, sans ZIP ni upload du corpus sonore brut.
 - [ ] Test physique sur Samsung : timbre drôle/chaleureux et complexe de la fanfare, mixage vis-à-vis bulles et annonces, performance du choix chanceux, conservation de l'installation / signature debug.
 - [ ] Ne pas merger main ni lancer Google Play sans validation.
+
+## 0.13 final avant release
+- [x] Palier fireworks de la partie : 1000, 2000 etc ; reset partie zéro et priorité de 6 s.
+- [x] Trois spectacles consécutifs UNIQUEMENT si High Score historique battu sur écran de résultat.
+- [x] 7 bang + 2 ambiances limitées à 6 s, jingle guitare avec repli offline, 11 sons précédents maintenus.
+- [x] Animation douce & respect animations réduites, bouton rejouer et score visibles.
+- [x] Tests Node + Chrome tactiles verts.
+- [ ] Compiler APK finale complète avec 21 effets à partir de TOUT DERNIER commit, puis transférer binaire vers branche TEMP Block Boost, SHA identique.
+- [ ] Essais réels Android 16 son, score, 1000, pause/back, rejouer, persistance.
+- [ ] Après validation expresse Fab : fusion main, AAB signée `fr.greenpower.blockboost` via clé GitHub de production et publication Play Console.
+
+### Livraison effective 0.13 AVANT release (18 octobre 2026)
+
+- **APK complète 21 sons Djipie dans le jeu entier**, livrée en un fichier **.apk direct sans ZIP** sur une branche temporaire de Block Boost : [Télécharger BlockBoost 0.13](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-fireworks-full-0.13.0/temp/android/BlockBoost-0.13.0-fireworks-full-debug.apk).
+- Taille **606 101 octets**. SHA-256 `c2943324577d7014851890fe767321beb36c26fcc41ae57a06cb78ede0215ec3`. Blob Git `d29b69c09620f9fe0a8d11530bbc31da1203f0df` vérifié IDENTIQUE entre sortie privée Djipie et branche de livraison publique Block Boost `temp/blockboost-fireworks-full-0.13.0`, commit livraison `99453146c0e52b3061d16afccb5d2e03d816c1d8`.
+- Tests Node/Chrome tactiles **SUCCESS** [39145851083](https://github.com/greenpower2669/Block-Boost/actions/runs/39145851083), dernier contrôle source docs [39146091168](https://github.com/greenpower2669/Block-Boost/actions/runs/39146091168) **SUCCESS**, build Android public [39145851089](https://github.com/greenpower2669/Block-Boost/actions/runs/39145851089) **SUCCESS**, build APK privée **21 FX intégrés** [39146050159](https://github.com/greenpower2669/Djipie/actions/runs/39146050159) **SUCCESS**.
+- Code et APK prête à tester sur Samsung Android 16. **Ni main ni la release GitHub v0.12 ne sont modifiés**. PR Block Boost [#16](https://github.com/greenpower2669/Block-Boost/pull/16) et Djipie [#12](https://github.com/greenpower2669/Djipie/pull/12) laissées en brouillon. L'écoute physique et une éventuelle AAB signée Play avec nouveau package `fr.greenpower.blockboost` restent à valider.
+- Important : applicationId passée de `fr.greenpower.blockboost.bubbleslab` au package Play confirmé `fr.greenpower.blockboost`, Android installe côte à côte et ne migre pas automatiquement les records de l'ancienne application.
+
+## À développer APRÈS passation 19/10 — mission BB-014 (Fab : « code pas »)
+- [ ] Sur **placements réellement gagnants** : alignement aimanté exact, compensation légère vers le haut, hystérésis `pointerup` contre micro-recul ; aucun snap sur mauvais placements ni cases occupées. Débogage `metrics`, `drawGhost`, `previewRainbow`, `pointerup` et rotation second doigt ; tests tactiles Android.
+- [ ] Favoriser 2×2 **déjà existant** ; intégrer 2 diagonales de longueurs 2 et 3 **très rares** ; augmenter fréquence des gros blocs uniquement quand ils sont plaçables en début de partie, diminuer en fin ; préserver sélections de `comebackBatch` et équilibre de difficulté.
+- [ ] Ajouter sur les blocs prêts à gagner un **halo dégradé tournant 360°** sans faire tourner les cellules, mode mouvement réduit.
+- [ ] Après développement futur : tests Android + APK directe jeu complet dans dépôt Block Boost, AAB Play `fr.greenpower.blockboost` signée avec **Upload Key existante** et 4 secrets GitHub, vrais contrôles de signature, sous réserve d'autorisation de Fab pour merge/release/Play.
+- [x] Passation et protocole de signature préservés en **tête de `ordres-de-mission.md` — BLOCKBOOST-IMMUTABLE-001**, sans code ni release.
+
+
+## Mission ouverte, non codée — 19/10 : ultime gameplay puis AAB sécurisé
+
+- [ ] **Seulement après accord de Fab pour coder** : ajouter aimantation réactive des **vrais** placements gagnants, correction micro-descente à la levée du doigt (petit biais supérieur, hystérésis, cible verrouillée) sans aide pour placements perdants. Coordonner prévisualisation, haptique et case réelle ; tester rotation 2 doigts.
+- [ ] Ajouter coin L **3 cases dans 2×2** (le carré plein existe), diagonales 2/3 cases dans 2 orientations **très rares**, rééquilibrer grands blocs au début **seulement plaçables** puis diminuer avec occupation ; tester distributions et garde-fou comeback.
+- [ ] Faire tourner à 360° les **reflets lumineux**, pas les cases ni les formes ; préserver dégradés/halos existants, animations réduites et fluidité Samsung.
+- [ ] Préserver 0.13 déjà livrée (PR #16, APK complète 21 sons, feux 1000/2000… par partie / 6s, guitare et triple séquence record). Vérifier sur Samsung avant toute release ; ne pas refaire le travail existant.
+- [ ] Vérifier sans jamais révéler les **4 secrets GitHub** normalisés ; confirmer sauvegarde privée/reconstruction JKS existante RSA 4096 alias `blockboost-upload`. Créer pipeline de **vraie AAB release** `fr.greenpower.blockboost`, versionCode >13, signature correspondant au PEM, tests Android, SHA256 et inclusion des sons ; ne jamais régénérer la clé.
+- [ ] Livrer APK direct sans ZIP sur Block Boost, AAB distinct signé ; PR et release **seulement sur validation de Fab** ; Google Play Console non encore confirmée créée.
+
+**Conservation obligatoire :** [section IMMUTABLE ordres-de-mission.md](ordres-de-mission.md) + [passation intégrale](docs/passation-ultime-snap-pieces-lumiere-aab-014.md). Ici **aucun code, aucun build, aucune nouvelle release réalisés** pour la demande 19/10 : documents de passation seulement.
+
+## BB-014 — état de développement candidat, 19 octobre 2026
+- [x] Lire les cinq mémoires, la méthode et la PR #16 ; ne rien merger.
+- [x] Préparer implémentation candidate 0.14 : snap ciblé, nouvelles pièces pondérées, halo conique 360°, tests unitaires/tactiles, version Android et cache.
+- [ ] Confirmer CI Node/Chrome et build Android 0.14 ; corriger les échecs et documenter runs/SHA.
+- [ ] Produire via Djipie build privé complet 0.14 aux 21 sons et déposer une **vraie APK .apk directe** dans la branche temp/ du dépôt Block Boost, pas un fallback CC0.
+- [ ] Vérifier les 4 secrets requis et le certificat PEM public de l'Upload Key 4096 déjà existante sans jamais divulguer ni régénérer la JKS ; exécuter le workflow manuel AAB signé, contrôler certificat, code14, ID, sons, SHA et livrer un .aab distinct.
+- [ ] Test physique Samsung Android16 : wobble pointerup, positions neutres jamais aimantées, rotation 2 doigts, blocs L/diagonales, fréquence, halos et performance, 21 sons, fireworks et triple record.
+- [ ] Attendre validation explicite pour merge main, GitHub Release et Google Play.
+
+- [x] Reproduire l'échec CI initial : 66/68 verts ; corriger RNG déterministe zéro et assertion rayon. Relancer les workflows automatiquement sur le commit de correction.
+
+- [x] Préparer le pipeline 0.14 21 FX depuis APK 0.13 SHA validé sans fuite de fichiers audio autonomes.
+- [ ] Vérifier réussite Actions, SHA du .apk direct complet, essai Samsung ; certifier AAB seulement lorsque PEM public et quatre secrets valides sont fournis à la CI.
+
+- [x] Diagnostiquer rejet YAML des workflows sur c274430 (expansion accidentelle du `$'` dans replace) ; reconstruire depuis la version saine 02719c et relancer CI.
+
+### BB-014 — bilan vérifié CI 19/10
+- [x] Tests Node et Chrome : Actions 39230344461 et 39230351456, SUCCESS.
+- [x] Compiler **APK entière** 0.14.0 (21 FX vérifiés, source 0.13 SHA contrôlé) : Actions 39230344488 SUCCESS.
+- [x] Livrer directement sans ZIP sur Block Boost : [APK complète 0.14](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-full-0.14.0/temp/android/BlockBoost-0.14.0-full-debug.apk), 608074 octets, SHA256 `2f815dd0faf5a0db8a1526fdb8034b8a52f9330cf8c10c55cce9f3954ea619ca`, branche `temp/blockboost-full-0.14.0`, commit `456c53de878ba97fcbcf787b6ee7ecca8c654553`.
+- [ ] Vérifier sur Samsung Android 16 : snap juste gagné/micro-descente, rotation 2 doigts, diagonales et L, halos 360°, fréquence des gros blocs, fireworks/son/score/sauvegarde.
+- [ ] **AAB signée Play non produite** : fournir/importer certificat **public** PEM original de l'Upload Key dans `android/certificates/BlockBoost-upload-certificate.pem` sur la branche privée de travail appropriée ; exécuter workflow manuel seulement après avoir configuré les 4 secrets existants (noms immuables) ; comparer vrais certificats et vérifier package fr.greenpower.blockboost, code14, SHA et 21 sons. Ne jamais régénérer JKS.
+- [ ] Valider explicitement auprès de Fab avant merge main, GitHub Release, ou upload Google Play.
+
+## BB-015 — Musique de fond priorisée (19/10/2026)
+- [x] Intégrer `Blockboostmusic.mp3` à la branche de travail et à l'APK offline, avec MIME `audio/mpeg` et sans réencodage.
+- [x] Ajouter bus musical indépendant : boucle 16 % initiale, baisse rapide pendant FX/voix/événements, restauration douce après, réglage volume ON/OFF indépendant et sauvegarde.
+- [x] Tests Node/Chrome réussis (Actions 39324826032 / 39324832287) et Android **complet** (39324826000), 21 effets + MP3 vérifiés, APK directe 18 160 356 octets / SHA `8fe7dec4de78c620e9ae12e14932dba43d792735120def761e22e5ce94a53a89`.
+- [ ] Test Samsung Android 16 : musique ne masque jamais voix, bang, combo ; pas de trous de boucle ; retour de volume correct ; son pendant 6s fireworks et jingle record ; lecture hors réseau ; passage arrière-plan/avant-plan.
+- [ ] Éventuelles corrections de niveau après écoute de Fab ; préserver 21 sons et signature Android existante. **Attendre approbation avant AAB signée / merge main / Release / Play.**
+
+## BB-016 — Correction après écoute de Fab (19/10/2026)
+- [x] À la demande de Fab, **désactiver l'atténuation automatique sur TOUS les FX, voix, fanfares disco et fireworks** : la musique doit rester faible et stable au volume choisi (défaut conservé 16 %, curseur indépendant).
+- [x] **Seule exception : guitare électrique du nouvel écran record** : réduction modérée au lieu de silence (~55 % du niveau musical), descente lente 1,2 s, retour très doux 2 s, fin de guitare libère l'atténuation ; ne jamais couper/repartir la musique de fond.
+- [x] Préserver l'APK offline, les 21 effets Djipie, les paramètres, le package `fr.greenpower.blockboost`, la JKS et la PR #16 sans merge.
+- [x] Tests Node/Chrome BB-016 réussis (Actions [39326900709](https://github.com/greenpower2669/Block-Boost/actions/runs/39326900709) et [39326909190](https://github.com/greenpower2669/Block-Boost/actions/runs/39326909190)) ; **APK complète 0.14 reconstruite et livrée** (Actions [39326900698](https://github.com/greenpower2669/Block-Boost/actions/runs/39326900698), SUCCESS). [Fichier APK direct](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-full-0.14.0/temp/android/BlockBoost-0.14.0-full-debug.apk), **18 160 892 octets**, SHA256 `3e27f2abc081328feca400f80ff086cb4869257977cb17a102ad9bf1eea923e1`.
+- [ ] Essai Samsung : niveau continu en jeu, seules guitare/record atténuées, pas d'à-coups à l'entrée ni à la sortie, redémarrage et arrière-plan.
+
+## BB-017 — Publication autorisée par Fab le 20/10/2026
+- [x] Autorisation explicite de Fab pour fusion `main`, GitHub Release, suivi mémoire et préparation AAB sur Block Boost 0.14.
+- [x] Préparer `.github/workflows/publish-blockboost-014.yml` : tests, versionCode 14, SHA de l'APK corrigée `3e27f2abc081328feca400f80ff086cb4869257977cb17a102ad9bf1eea923e1`, 21 sons et MP3, publication GitHub Release v0.14.0 en **prerelease APK debug**.
+- [x] Rendre `.github/workflows/android-play-candidate.yml` utilisable sur `main` **uniquement après vérification de la JKS existante / PEM public / 4 secrets**, sans nouvelle clé.
+- [ ] Effectuer merge PR #16 ; vérifier nouveau HEAD de `main`, CI main et Release GitHub 0.14 après exécution du workflow.
+- [ ] Vérifier le certificat public PEM historique correspondant à l'Upload Key (actuellement non présent dans la branche), configurer/valider les 4 secrets via runner sécurisé, compiler AAB release signée et comparer certificat/empreintes et assets (21 OGG + MP3). Ne jamais inventer ni régénérer JKS.
+- [ ] Dépôt Google Play Console de l'AAB, contrôles Console et confirmation de publication effective ; ne pas déclarer cette étape avant résultat observé.
+- [ ] Test physique Samsung Android 16 de la dernière musique stable / fondu guitare et fonctionnement global avant validation de diffusion publique Play.

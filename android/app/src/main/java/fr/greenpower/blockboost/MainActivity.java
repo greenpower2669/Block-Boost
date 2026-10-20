@@ -121,6 +121,7 @@ public final class MainActivity extends Activity {
         if (path.endsWith(".png")) return "image/png";
         if (path.endsWith(".jpg") || path.endsWith(".jpeg")) return "image/jpeg";
         if (path.endsWith(".webp")) return "image/webp";
+        if (path.endsWith(".mp3")) return "audio/mpeg";
         if (path.endsWith(".woff2")) return "font/woff2";
         return "application/octet-stream";
     }

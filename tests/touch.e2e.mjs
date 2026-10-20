@@ -25,7 +25,7 @@ try{
   const page=await context.newPage(),errors=[];
   page.on("pageerror",err=>errors.push(err.message));
   await page.addInitScript(()=>{
-    Math.random=()=>0.13;
+    Math.random=()=>0.07; // deterministic 3-cell horizontal with the new weighted draw
     window.__hapticCalls=[];
     window.__voiceCalls=[];
     window.__voiceStops=0;
@@ -139,6 +139,13 @@ try{
   assert.equal(await page.locator(".cell.will-solve").count(),8,
     "All eight truly completed cells should glow in rainbow before placement");
   assert.match(await page.locator("#solve-signal").textContent(),/1 LIGNE.*8 BLOCS/);
+  const wobble={...target,y:target.y+cellSize*.54};
+  await dragCDP.send("Input.dispatchTouchEvent",{type:"touchMove",touchPoints:[wobble]});
+  assert.equal(await page.locator(".cell.will-solve").count(),8,
+    "A tiny downward movement must not break the winning preview");
+  const ghostPosition=await page.locator("#drag-ghost").boundingBox();
+  assert.ok(Math.abs(ghostPosition.y-(b2.y+7))<5,
+    "Winner ghost must be aligned with the real board");
   await dragCDP.send("Input.dispatchTouchEvent",{type:"touchEnd",touchPoints:[]});
   assert.equal(await page.locator(".cell.will-solve").count(),0,
     "Anticipation is cleared immediately on release");
@@ -150,7 +157,7 @@ try{
     const board=Array.from({length:8},()=>Array(8).fill(null));
     for(let y=0;y<2;y++)for(let x=0;x<7;x++)board[y][x]="sun";
     saved.progress={runStartBest:0,game:{
-      board,version:1,score:150,combo:2,bestCombo:2,moves:6,gameOver:false,
+      board,version:1,score:0,combo:1,bestCombo:1,moves:6,gameOver:false,
       pieces:[
         {id:0,coords:[[0,0],[0,1]],color:"rose",used:false},
         {id:1,coords:[[0,0]],color:"sky",used:false},
@@ -211,14 +218,49 @@ try{
   await page.reload({waitUntil:"networkidle"});
   await page.locator(".piece-slot").first().click();
   await page.locator(".cell").nth(3*8+3).click();
-  assert.equal(await page.locator("#festival-stage").getAttribute("data-theme"),"disco");
-  assert.equal(await page.locator("#festival-stage .festival-disco-ball").count(),1);
-  assert.equal(await page.locator("#festival-stage .bubble-floor-spot").count(),5);
-  assert.ok(await page.locator("#festival-stage .festival-bubble").count()>=12);
-  assert.match(await page.locator("#festival-stage .festival-bonus-front").textContent(),/CROISEMENT ×10/);
+  // Cross ×10 passes the 1000/2000/3000 score thresholds. The NEW
+  // priority is the six-second firework concert; x10 scoring stays intact.
+  assert.equal(await page.locator("#festival-stage").getAttribute("data-theme"),null);
+  assert.equal(await page.locator("#game-fireworks").isVisible(),true);
+  assert.equal(await page.locator("#game-fireworks .firework-burst").count(),9);
+  assert.match((await page.locator("#game-fireworks .fireworks-headline").textContent()).replace(/[^0-9àA-Z ]/g,""),/1000 à 3000 POINTS/);
+  assert.match(await page.locator("#game-fireworks .fireworks-headline").textContent(),/POINTS/);
   assert.match(await page.locator("#bonus-earned").textContent(),/CROISEMENT LIGNE \+ COLONNE ×10/);
   const crossScore=Number((await page.locator("#score").textContent()).replace(/\s/g,""));
   assert.ok(crossScore>=3355,"The actual cross must score at least 3205 + prior 150");
+  // NEW RECORD result: real game-over through a legal final move, no manual
+  // festival invocation. Three scenes MUST run sequentially, with replay live.
+  await page.addInitScript(()=>{
+    const key="block-boost.local.v1",saved=JSON.parse(localStorage.getItem(key));
+    const board=Array.from({length:8},()=>Array(8).fill("rose"));
+    for(let i=0;i<8;i++)board[i][i]=null;
+    board[7][0]=null;board[0][7]=null;
+    saved.bestScore=500;
+    saved.progress={runStartBest:500,game:{
+      board,version:1,score:850,combo:0,bestCombo:0,moves:5,gameOver:false,
+      pieces:[
+        {id:0,coords:[[0,0]],color:"rose",used:false},
+        {id:1,coords:[[0,0],[1,0]],color:"sky",used:false},
+        {id:2,coords:[[0,0],[0,1]],color:"mint",used:false}
+      ]
+    }};
+    localStorage.setItem(key,JSON.stringify(saved));
+  });
+  await page.reload({waitUntil:"networkidle"});
+  await page.locator(".piece-slot").first().click();
+  await page.locator(".cell").last().click();
+  await page.locator("#end-dialog").waitFor({state:"visible",timeout:5000});
+  assert.match(await page.locator("#result-title").textContent(),/Nouveau record/);
+  assert.equal(await page.locator("#result-effects").getAttribute("data-scene"),"disco");
+  await page.waitForTimeout(3450);
+  assert.equal(await page.locator("#result-effects").getAttribute("data-scene"),"bubbles");
+  await page.waitForTimeout(2850);
+  assert.equal(await page.locator("#result-effects").getAttribute("data-scene"),"fireworks");
+  assert.ok(await page.locator("#result-effects .firework-burst").count()>0);
+  await page.locator("#retry-button").click();
+  assert.equal(await page.locator("#end-dialog").isVisible(),false);
+  assert.equal(await page.locator("#result-effects").getAttribute("data-scene"),"");
+  assert.equal(await page.locator("#game-fireworks").isVisible(),false);
   assert.deepEqual(errors,[],"Browser should not report uncaught errors");
   console.log("✅ Tactile à deux doigts, bonus visible, EXTRA absent après rotation et restauration locale : OK");
 }finally{

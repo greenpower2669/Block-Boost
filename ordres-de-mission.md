@@ -243,3 +243,13 @@ Le workflow 0.14 utilise uniquement en CI les 21 sons du jeu complet 0.13 après
 - Fab rejette le ducking général (« mauvaise idée » ; baisse brutale) : conserver une musique discrète à niveau constant pendant FX/voix et festivals.
 - Exception autorisée : seule guitare électrique du record baisse modérément le fond, par fondu lent à l'entrée (1200 ms) et à la sortie (2000 ms), sans couper le morceau.
 - Faire les tests et une APK complète de test ; préserver signature JKS, 21 effets, mémoire projet, aucune fusion main ni publication Play.
+
+## BB-017 — AUTORISATION EXPRESSE DE PUBLICATION (20/10/2026)
+
+Fab autorise désormais explicitement « merge, release, mémoire à jour et AAB ». La restriction **pas de merge/release sans accord explicite** est satisfaite pour **ce cycle Block Boost 0.14** uniquement. Les autres éléments du contrat IMMUTABLE restent entièrement applicables :
+- Fusionner la PR #16 vérifiée dans main ; publier une GitHub Release 0.14 clairement marquée **APK debug de test**, jamais présentée comme une AAB Play signée.
+- Préserver le package `fr.greenpower.blockboost`, versionCode 14 et la clé d'upload JKS RSA 4096 existante alias `blockboost-upload` ; **aucune nouvelle clé**.
+- Préparer puis, dès que le certificat PEM historique et les quatre secrets GitHub sont tous vérifiés sur runner CI, produire une véritable `.aab` release signée et contrôler la signature et le contenu (21 effets + musique MP3).
+- La publication **Google Play** elle-même ne doit être annoncée réussie qu'après preuve d'un transfert/acceptation dans la Play Console. L'APK debug distribuée sur GitHub n'est pas une publication Play.
+- Nouveau workflow `.github/workflows/publish-blockboost-014.yml` : après merge sur main, vérifier code14, tests, APK complète et SHA256 avant publication GitHub Release v0.14.0 pré-release. `.github/workflows/android-play-candidate.yml` reste **manuel**, accessible sur main ; il refuse de signer sans certificats et secrets valides.
+- Actualiser `brain.md`, `brainmap.md`, `debughistorical.md`, `todo.md` à chaque étape. Contrôler résultat CI et liens de téléchargement avant toute annonce de succès.

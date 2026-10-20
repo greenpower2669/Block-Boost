@@ -169,3 +169,8 @@ BB-014 : le premier build 0.14 était un fallback CC0 sans 21 sons. Correctif ca
 - Régression perceptive BB-015 : ducking fréquent de 85 ms provoquant un pompage abrupt, même en présence d'effets courts.
 - Correctif demandé : éliminer toutes les baisses à l'exception de la guitare électrique de record ; facteur modéré 0,55 et rampes 1200/2000 ms ; conserver la musique en boucle à faible niveau et volume réglable.
 - Tests d'écoute obligatoires : vérifier transition après capture de score, effet guitare manquant (fallback sans ducking), interruption prématurée, reprise Android, et stabilité au cours des parties riches en effets.
+
+## BB-017 — Contrôles publication & signature (20/10/2026)
+- Derniers tests branche PR #16 : Node/Chrome verts sur commits 2b4a998..., APK source 0.14 musique stable (21 sons) vérifiée par Actions 39326900698, SHA256 `3e27f2abc081328feca400f80ff086cb4869257977cb17a102ad9bf1eea923e1`.
+- Avant release : fusion autorisée le 20/10, nouveau workflow de GitHub Release 0.14 à déclenchement contrôlé lors de l'intégration `main`. Ne pas publier l'ancienne APK avec ducking violent (SHA `8fe7dec...`) ; utiliser exclusivement la dernière APK `3e27f2...`.
+- AAB release signée : branche actuelle ne contient pas `android/certificates/BlockBoost-upload-certificate.pem`; secrets impossibles à vérifier depuis le simple contenu du dépôt. Les gardes PEM et 4 secrets ne doivent pas être désactivées. Toute tentative doit échouer proprement en absence des prérequis. AAB non encore fabriquée et Play non confirmé.

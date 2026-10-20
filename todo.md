@@ -281,3 +281,12 @@ APK brute : https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/bl
 - [x] Préserver l'APK offline, les 21 effets Djipie, les paramètres, le package `fr.greenpower.blockboost`, la JKS et la PR #16 sans merge.
 - [x] Tests Node/Chrome BB-016 réussis (Actions [39326900709](https://github.com/greenpower2669/Block-Boost/actions/runs/39326900709) et [39326909190](https://github.com/greenpower2669/Block-Boost/actions/runs/39326909190)) ; **APK complète 0.14 reconstruite et livrée** (Actions [39326900698](https://github.com/greenpower2669/Block-Boost/actions/runs/39326900698), SUCCESS). [Fichier APK direct](https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/blockboost-full-0.14.0/temp/android/BlockBoost-0.14.0-full-debug.apk), **18 160 892 octets**, SHA256 `3e27f2abc081328feca400f80ff086cb4869257977cb17a102ad9bf1eea923e1`.
 - [ ] Essai Samsung : niveau continu en jeu, seules guitare/record atténuées, pas d'à-coups à l'entrée ni à la sortie, redémarrage et arrière-plan.
+
+## BB-017 — Publication autorisée par Fab le 20/10/2026
+- [x] Autorisation explicite de Fab pour fusion `main`, GitHub Release, suivi mémoire et préparation AAB sur Block Boost 0.14.
+- [x] Préparer `.github/workflows/publish-blockboost-014.yml` : tests, versionCode 14, SHA de l'APK corrigée `3e27f2abc081328feca400f80ff086cb4869257977cb17a102ad9bf1eea923e1`, 21 sons et MP3, publication GitHub Release v0.14.0 en **prerelease APK debug**.
+- [x] Rendre `.github/workflows/android-play-candidate.yml` utilisable sur `main` **uniquement après vérification de la JKS existante / PEM public / 4 secrets**, sans nouvelle clé.
+- [ ] Effectuer merge PR #16 ; vérifier nouveau HEAD de `main`, CI main et Release GitHub 0.14 après exécution du workflow.
+- [ ] Vérifier le certificat public PEM historique correspondant à l'Upload Key (actuellement non présent dans la branche), configurer/valider les 4 secrets via runner sécurisé, compiler AAB release signée et comparer certificat/empreintes et assets (21 OGG + MP3). Ne jamais inventer ni régénérer JKS.
+- [ ] Dépôt Google Play Console de l'AAB, contrôles Console et confirmation de publication effective ; ne pas déclarer cette étape avant résultat observé.
+- [ ] Test physique Samsung Android 16 de la dernière musique stable / fondu guitare et fonctionnement global avant validation de diffusion publique Play.

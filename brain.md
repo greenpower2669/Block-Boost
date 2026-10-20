@@ -269,3 +269,9 @@ Son BB-014 : restauration éphémère des 21 effets du jeu APK 0.13 SHA-vérifi�
 
 ## BB-016 — Retrait du ducking général (19/10/2026)
 Retour d'écoute de Fab : la diminution de la musique à chaque son était trop brutale et désagréable. Décision : musique de fond continue et discrète ; **aucune baisse sur FX, voix, fireworks ou disco**, seulement la guitare électrique du record avec descente sur 1200 ms, facteur 0,55, et retour sur 2000 ms. Réglage musique conservé, 21 effets inchangés. Tests automatiques et essai Samsung à suivre. Ne pas fusionner main sans validation.
+
+## BB-017 — Autorisation de fusion/publication (20 octobre 2026)
+- Fab valide expressément merge PR #16 + GitHub Release + mise à jour mémoires + AAB Google Play. Important : ne pas confondre GitHub Release APK debug et publication Play AAB signée.
+- CI Node/Chrome 39327231168 et 39327224893 en succès sur la branche v0.14 ; APK complète avec musique corrigée et 21 effets produite par Actions 39326900698, SHA256 `3e27f2abc081328feca400f80ff086cb4869257977cb17a102ad9bf1eea923e1`.
+- Création du workflow `publish-blockboost-014.yml` : à l'intégration dans main, contrôle du SHA et des assets puis `gh release create v0.14.0 --prerelease` pour APK de test directe et empreinte. Ne jamais remplacer la Release 0.12 ni masquer le statut debug.
+- Workflow AAB signé rendu exécutable manuellement depuis main, sans supprimer ses gardes : PEM public historique manquant dans le dépôt et état des quatre secrets non attesté. Ne jamais régénérer JKS ; publication Play en attente de preuves cryptographiques et Console.

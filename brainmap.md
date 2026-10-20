@@ -85,3 +85,7 @@ BB-014 : scripts/reuse_blockboost_013_audio.py vérifie le SHA complet 0.13, les
 
 ## BB-016 — Correction volume après test d'écoute
 - Se référer au tiroir `brain.md` section BB-016 : le ducking global BB-015 a été supprimé sur demande de Fab, seul le jingle guitare électrique du record peut réduire très doucement le fond musical. `todo.md` contient validation CI/APK à terminer.
+
+## BB-017 — Publication autorisée le 20/10/2026
+- Fab autorise explicitement merge PR #16 et GitHub Release 0.14. Le workflow `.github/workflows/publish-blockboost-014.yml` vérifie le SHA de l'APK complète avant de créer une pré-release. Lire `ordres-de-mission.md` section BB-017.
+- AAB Play : workflow manuel sur main, bloqué si PEM public historique ou secrets de l'Upload Key existante manquants. Les limitations ne sont pas levées par l'autorisation de publication ; voir `todo.md` et `brain.md`.

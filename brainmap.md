@@ -93,3 +93,7 @@ BB-014 : scripts/reuse_blockboost_013_audio.py vérifie le SHA complet 0.13, les
 ## BB-017 — Livraison GitHub 0.14 au 20/10/2026
 - **main fusionnée et GitHub Release v0.14.0 effective**, APK complète debug avec musique stable, 21 sons ; point d'entrée [Release](https://github.com/greenpower2669/Block-Boost/releases/tag/v0.14.0). Lire `brain.md` section BB-017 pour détails et SHA.
 - **AAB Google Play encore ouverte**, faute de PEM public de référence disponible et validation CI des quatre secrets. Référence d'état : `todo.md`, `ordres-de-mission.md` (BB-017). Ne jamais changer d'Upload Key.
+
+## BB-018 — PEM public historique permanent
+- `ordres-de-mission.md` → **FAB-IMMUTABLE-002** : certificat public de l'Upload Key versionné **une seule fois** sous `android/certificates/BlockBoost-upload-certificate.pem`. À conserver dans chaque version de `main`; ne pas redemander à Fab à chaque AAB.
+- Contrôles SHA/validité et diagnostic pipeline AAB dans `brain.md`, `debughistorical.md`, `todo.md`. Ne jamais committer JKS ni mots de passe ; ne jamais substituer de nouvelle clé si les secrets échouent.

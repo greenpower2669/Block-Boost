@@ -297,3 +297,10 @@ APK brute : https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/bl
 - [ ] Exécuter le workflow manuel `.github/workflows/android-play-candidate.yml` sur `main` une fois le PEM authentique et les 4 secrets présents ; conserver le contrôle par comparaison d'empreintes, SHA de l'AAB, inclusion de 21 OGG + MP3 et versionCode14.
 - [ ] Publication Google Play Console de l'AAB signée et vérification de son statut de traitement ; **aucune publication Play réalisée ou confirmée à cette date**.
 - [ ] Réception physique Samsung Android16 des dernières modifications avant généralisation.
+
+## BB-018 — Nouveau socle IMMUTABLE du certificat public
+- [x] Fab transmet le PEM public et approuve explicitement sa conservation sur GitHub pour les versions futures. Certificat RSA4096 reconnu, fingerprint SHA-256 `D7:73:E8:88:80:EF:A7:28:A0:16:D7:A7:E1:DF:A3:AE:29:6A:A3:0B:2E:DD:33:18:8A:04:50:DD:A6:1E:76:0F`.
+- [x] Enregistrer `FAB-IMMUTABLE-002` en tête des ordres de mission : **conserver à vie le certificat public sur main**, ne jamais redemander à chaque publication, ne jamais remplacer la clé JKS.
+- [ ] Ajouter le fichier `android/certificates/BlockBoost-upload-certificate.pem` à main et vérifier lecture GitHub (public seulement).
+- [ ] Contrôler GitHub Actions AAB déclenchée à l'ajout du certificat : validation des 4 secrets et correspondance PEM/JKS, 21 OGG, MP3, vraie AAB signée et SHA256. En cas d'échec, consigner l'étape exacte et corriger sans fuite des secrets.
+- [ ] Une fois AAB signée vérifiée, continuer l'envoi via Play Console ; ne pas prétendre Google Play publié avant preuve.

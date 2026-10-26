@@ -1,0 +1,123 @@
+name: "🔐 Récupération sécurisée clé upload Block Boost (sans régénération)"
+on:
+  push:
+    branches:
+      - feature/bootstrap-google-play-upload-key-013
+    paths:
+      - .github/workflows/recover-existing-upload-key.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: blockboost-one-time-upload-key-recovery
+  cancel-in-progress: false
+
+jobs:
+  recover:
+    name: "Déplacer uniquement JKS chiffrée et certificat dans artifact 7j"
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: "Récupérer les fichiers existants sans régénérer la clé"
+        shell: bash
+        run: |
+          set -euo pipefail
+          BRANCH=temp/blockboost-upload-key-013
+          if ! git ls-remote --exit-code origin "refs/heads/$BRANCH" > /dev/null; then
+            echo "::error::Branche source absente : clé non retrouvée. Ne rien recréer."
+            exit 1
+          fi
+          git fetch --no-tags --depth=1 origin "refs/heads/$BRANCH"
+          mkdir -p "$RUNNER_TEMP/blockboost-key-recovery"
+          git show FETCH_HEAD:cle-google-play/BlockBoost-upload.jks.bbenc > "$RUNNER_TEMP/blockboost-key-recovery/BlockBoost-upload.jks.bbenc"
+          git show FETCH_HEAD:cle-google-play/BlockBoost-upload-certificate.pem > "$RUNNER_TEMP/blockboost-key-recovery/BlockBoost-upload-certificate.pem"
+          git show FETCH_HEAD:cle-google-play/recuperer-cle-blockboost.html > "$RUNNER_TEMP/blockboost-key-recovery/recuperer-cle-blockboost.html"
+          # Verify this is the ORIGINAL encrypted key, not a new key.
+          python3 - <<'PY'
+          from pathlib import Path
+          import os
+          p=Path(os.environ['RUNNER_TEMP'])/'blockboost-key-recovery'
+          enc=(p/'BlockBoost-upload.jks.bbenc').read_bytes()
+          assert len(enc)==3929, "Unexpected encrypted key size"
+          assert enc[:8]==b'BBKEY001', "Encryption format not recognized"
+          assert len(enc[52:])>1000, "Encrypted JKS is missing"
+          pem=(p/'BlockBoost-upload-certificate.pem').read_text()
+          assert '-----BEGIN CERTIFICATE-----' in pem
+          assert '-----END CERTIFICATE-----' in pem
+          assert 'crypto.subtle.decrypt' in (p/'recuperer-cle-blockboost.html').read_text()
+          assert not list(p.glob('*.jks')), "Plain private keystore must not exist"
+          print("Original encrypted key verified, certificate and offline recovery tool present.")
+          PY
+          openssl x509 -in "$RUNNER_TEMP/blockboost-key-recovery/BlockBoost-upload-certificate.pem" -noout -subject -fingerprint -sha256
+          cat > "$RUNNER_TEMP/blockboost-key-recovery/LISEZ-MOI.txt" <<'EOF'
+          BLOCK BOOST : CLÉ D'IMPORTATION GOOGLE PLAY (EXISTANTE, NON RÉGÉNÉRÉE)
+
+          1. Extraire les trois fichiers de ce tout petit ZIP GitHub Actions
+             (quelques kilo-octets) avec l'application Fichiers Android.
+          2. Ouvrir 'recuperer-cle-blockboost.html' dans un navigateur local
+             et sélectionner 'BlockBoost-upload.jks.bbenc'.
+          3. Saisir le mot de passe détenu par Fab :
+             ANDROID_UPLOAD_KEYSTORE_PASSWORD.
+          4. Télécharger le .jks dans un stockage PRIVE et sécurisé.
+          5. Copier le Base64 de la clé privée UNIQUEMENT vers le secret GitHub :
+             ANDROID_UPLOAD_KEYSTORE_BASE64.
+          6. Garder aussi le certificat PUBLIC .pem pour Google Play Console.
+
+          Alias permanent : blockboost-upload.
+          Les mots de passe ne doivent jamais être partagés dans une conversation
+          ni enregistrés dans le dépôt public.
+          Ne pas faire créer une seconde clé. Cet artifact expire après 7 jours.
+          EOF
+
+      - name: "Déposer UNIQUEMENT les fichiers chiffrés dans l'artifact temporaire"
+        uses: actions/upload-artifact@v4
+        with:
+          name: BlockBoost-cle-upload-CHIFFREE-7jours
+          path: |
+            ${{ runner.temp }}/blockboost-key-recovery/BlockBoost-upload.jks.bbenc
+            ${{ runner.temp }}/blockboost-key-recovery/BlockBoost-upload-certificate.pem
+            ${{ runner.temp }}/blockboost-key-recovery/recuperer-cle-blockboost.html
+            ${{ runner.temp }}/blockboost-key-recovery/LISEZ-MOI.txt
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 0
+
+      - name: "Vérifier que l'artifact existe AVANT de retirer la branche publique"
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          for attempt in 1 2 3 4 5 6; do
+            ARTIFACT_ID="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/artifacts" \
+              --jq '.artifacts[] | select(.name == "BlockBoost-cle-upload-CHIFFREE-7jours" and .expired == false) | .id' | head -n1)"
+            if [ -n "$ARTIFACT_ID" ]; then
+              echo "Artifact chiffré disponible (ID $ARTIFACT_ID) : suppression de la branche autorisée."
+              break
+            fi
+            sleep 4
+          done
+          if [ -z "${ARTIFACT_ID:-}" ]; then
+            echo "::error::Artifact introuvable : branche temporaire conservée pour ne pas perdre la clé."
+            exit 1
+          fi
+          echo "https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" >> "$GITHUB_STEP_SUMMARY"
+          echo "Récupération : artifact 'BlockBoost-cle-upload-CHIFFREE-7jours' (7 jours, ZIP GitHub Actions)." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: "Supprimer la BRANCHE TEMP publique avec le fichier chiffré"
+        shell: bash
+        run: |
+          set -euo pipefail
+          git push origin --delete temp/blockboost-upload-key-013
+          if git ls-remote --exit-code origin refs/heads/temp/blockboost-upload-key-013 >/dev/null 2>&1; then
+            echo "::error::Référence de branche toujours présente."
+            exit 1
+          fi
+          echo "Branche temporaire supprimée. Aucun .jks privé n'a été écrit dans Git." >> "$GITHUB_STEP_SUMMARY"

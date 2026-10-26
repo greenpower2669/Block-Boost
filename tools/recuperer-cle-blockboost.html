@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'none'; img-src 'none'; form-action 'none'">
+<title>Block Boost — récupérer la clé Google Play</title>
+<style>body{background:#f5f7ff;color:#141d38;font:1.23rem/1.5 system-ui,sans-serif;padding:1rem;max-width:42rem}h1{font-size:1.65rem}label{display:block;font-weight:bold;margin-top:1.4rem}input,button,textarea{display:block;box-sizing:border-box;width:100%;min-height:3.3rem;margin-top:.5rem;padding:.6rem;font:inherit;border:2px solid #243987;border-radius:.7rem}button{background:#234296;color:white;font-weight:bold}button:focus,input:focus{outline:4px solid orange}textarea{height:8rem;font-size:.88rem;overflow-wrap:anywhere}#status{font-weight:bold;margin:1rem 0}</style></head>
+<body><h1>🔐 Récupérer ma clé Block Boost</h1>
+<p><strong>Cette page est 100 % hors ligne.</strong> Elle n'envoie aucun mot de passe ni fichier sur Internet. Ouvre-la sur ton téléphone après téléchargement depuis GitHub.</p>
+<label for="file">1. Sélectionne le fichier chiffré .jks.bbenc téléchargé</label><input type="file" id="file" accept=".bbenc">
+<label for="pass">2. Mot de passe ANDROID_UPLOAD_KEYSTORE_PASSWORD</label><input id="pass" type="password" autocomplete="off" spellcheck="false">
+<button id="recover">3. Déchiffrer et télécharger ma clé .jks</button><div id="status" role="status" aria-live="polite"></div>
+<section id="ready" hidden><p>✅ Clé récupérée. Sauvegarde le fichier .jks dans un endroit privé et fiable.</p>
+<button id="download">Retélécharger la clé .jks</button>
+<p>Pour renseigner le secret GitHub <code>ANDROID_UPLOAD_KEYSTORE_BASE64</code>, copie uniquement dans GitHub ce texte confidentiel :</p>
+<label for="secret">Clé Base64 privée</label><textarea id="secret" readonly></textarea><button id="copy">Copier le Base64</button></section>
+<p><small>Le certificat public .pem est fourni séparément. Ne partage jamais la clé ou tes mots de passe dans le chat ou sur un dépôt public.</small></p>
+<script>
+"use strict";const $=id=>document.getElementById(id);let plaintext=null;
+function download(){if(!plaintext)return;const u=URL.createObjectURL(new Blob([plaintext],{type:"application/octet-stream"}));const a=document.createElement("a");a.href=u;a.download="BlockBoost-upload.jks";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),12000)}
+function asBase64(bytes){let r="";for(let i=0;i<bytes.length;i+=8192)r+=String.fromCharCode(...bytes.subarray(i,i+8192));return btoa(r)}
+$("recover").onclick=async()=>{
+ $("ready").hidden=true;plaintext=null;$("status").textContent="Déchiffrement…";
+ try{
+  if(!crypto?.subtle)throw Error("Ouvre ce fichier avec Chrome ou Firefox.");
+  const f=$("file").files?.[0],pass=$("pass").value;
+  if(!f||!pass)throw Error("Choisis le fichier et entre le mot de passe.");
+  const a=new Uint8Array(await f.arrayBuffer());
+  if(a.length<1050||new TextDecoder().decode(a.slice(0,8))!=="BBKEY001")throw Error("Fichier Block Boost invalide.");
+  const k0=await crypto.subtle.importKey("raw",new TextEncoder().encode(pass),{name:"PBKDF2"},false,["deriveKey"]);
+  const key=await crypto.subtle.deriveKey({name:"PBKDF2",salt:a.slice(8,24),iterations:850000,hash:"SHA-256"},k0,{name:"AES-GCM",length:256},false,["decrypt"]);
+  const body=a.slice(52),tag=a.slice(36,52),ct=new Uint8Array(body.length+tag.length);ct.set(body);ct.set(tag,body.length);
+  plaintext=new Uint8Array(await crypto.subtle.decrypt({name:"AES-GCM",iv:a.slice(24,36),tagLength:128},key,ct));
+  $("pass").value="";$("secret").value=asBase64(plaintext);$("ready").hidden=false;$("status").textContent="✅ Clé déchiffrée et contrôlée.";download();
+ }catch(e){$("status").textContent="❌ "+(e.name==="OperationError"?"Mauvais mot de passe ou fichier altéré.":e.message)}
+};
+$("download").onclick=download;
+$("copy").onclick=async()=>{$("secret").focus();$("secret").select();try{await navigator.clipboard.writeText($("secret").value);$("status").textContent="✅ Copié. Colle uniquement dans le secret GitHub."}catch{$("status").textContent="Texte sélectionné : utilise Copier dans le menu Android."}};
+</script></body></html>

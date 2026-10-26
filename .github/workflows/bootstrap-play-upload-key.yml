@@ -1,0 +1,113 @@
+name: "🔐 Générer une seule fois la clé d'importation Google Play — Block Boost"
+
+on:
+  push:
+    branches:
+      - feature/bootstrap-google-play-upload-key-013
+    paths:
+      - .github/workflows/bootstrap-play-upload-key.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: one-time-blockboost-upload-key
+  cancel-in-progress: false
+
+jobs:
+  generate-upload-key:
+    name: "Créer JKS privée, PEM public, archive JKS chiffrée"
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      BB_STORE_PASSWORD: ${{ secrets.ANDROID_UPLOAD_KEYSTORE_PASSWORD }}
+      BB_KEY_PASSWORD: ${{ secrets.ANDROID_UPLOAD_KEY_PASSWORD }}
+      BB_ALIAS: ${{ secrets.ANDROID_UPLOAD_KEY_ALIAS }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: "Bloquer si une clé a déjà été créée ou si un secret manque"
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git ls-remote --exit-code origin refs/heads/temp/blockboost-upload-key-013 >/dev/null 2>&1; then
+            echo "::error::Une clé a déjà été générée dans la branche temporaire. Ne pas en recréer une autre."
+            exit 1
+          fi
+          if [ "$BB_ALIAS" != "blockboost-upload" ]; then
+            echo "::error::ANDROID_UPLOAD_KEY_ALIAS doit être exactement blockboost-upload."
+            exit 1
+          fi
+          if [ "${#BB_STORE_PASSWORD}" -lt 16 ]; then
+            echo "::error::ANDROID_UPLOAD_KEYSTORE_PASSWORD absent ou trop court. Exiger au moins 16 caractères pour protéger la clé privée publiée chiffrée."
+            exit 1
+          fi
+          if [ "${#BB_KEY_PASSWORD}" -lt 6 ]; then
+            echo "::error::ANDROID_UPLOAD_KEY_PASSWORD absent ou inférieur à 6 caractères."
+            exit 1
+          fi
+          test -f scripts/bootstrap-encrypt-upload-key.cjs
+          test -f tools/recuperer-cle-blockboost.html
+      - name: "Générer clé RSA 4096 bits dans le runner et exporter le certificat public"
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          mkdir -p "$RUNNER_TEMP/bb-upload"
+          keytool -genkeypair -noprompt             -alias "$BB_ALIAS"             -keyalg RSA -keysize 4096 -sigalg SHA256withRSA -validity 10000             -storetype JKS             -dname "CN=Block Boost Upload,OU=Android,O=Block Boost,C=FR"             -keystore "$RUNNER_TEMP/bb-upload/upload.jks"             -storepass:env BB_STORE_PASSWORD             -keypass:env BB_KEY_PASSWORD
+          keytool -exportcert -rfc             -alias "$BB_ALIAS"             -keystore "$RUNNER_TEMP/bb-upload/upload.jks"             -storepass:env BB_STORE_PASSWORD             -file "$RUNNER_TEMP/bb-upload/BlockBoost-upload-certificate.pem"
+          keytool -list -keystore "$RUNNER_TEMP/bb-upload/upload.jks"             -storepass:env BB_STORE_PASSWORD -alias "$BB_ALIAS" >/dev/null
+          openssl x509 -in "$RUNNER_TEMP/bb-upload/BlockBoost-upload-certificate.pem"             -noout -fingerprint -sha256
+      - name: "Chiffrer la JKS et vérifier son intégrité avant toute publication"
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/bootstrap-encrypt-upload-key.cjs             "$RUNNER_TEMP/bb-upload/upload.jks"             "$RUNNER_TEMP/bb-upload/BlockBoost-upload.jks.bbenc"
+          test -s "$RUNNER_TEMP/bb-upload/BlockBoost-upload.jks.bbenc"
+          cp tools/recuperer-cle-blockboost.html "$RUNNER_TEMP/bb-upload/recuperer-cle-blockboost.html"
+          # No unencrypted private JKS must ever enter the repository.
+          rm "$RUNNER_TEMP/bb-upload/upload.jks"
+          test ! -e "$RUNNER_TEMP/bb-upload/upload.jks"
+      - name: "Publier uniquement le fichier CHIFFRÉ et le certificat public en TEMP"
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout --orphan temp/blockboost-upload-key-013
+          git rm -rf --cached . >/dev/null
+          mkdir -p cle-google-play
+          cp "$RUNNER_TEMP/bb-upload/BlockBoost-upload.jks.bbenc" cle-google-play/
+          cp "$RUNNER_TEMP/bb-upload/BlockBoost-upload-certificate.pem" cle-google-play/
+          cp "$RUNNER_TEMP/bb-upload/recuperer-cle-blockboost.html" cle-google-play/
+          cat > cle-google-play/README.md <<'EOF'
+          # Block Boost — Upload Key Google Play : récupération temporaire
+          
+          La clé privée JKS **n'est JAMAIS publiée en clair** ici.
+          Ce dossier contient uniquement :
+          - `BlockBoost-upload.jks.bbenc` : clé JKS chiffrée AES-256-GCM,
+            PBKDF2-SHA256 avec 850000 itérations. Mot de passe :
+            `ANDROID_UPLOAD_KEYSTORE_PASSWORD`, détenu par Fab.
+          - `BlockBoost-upload-certificate.pem` : certificat PUBLIC pour Google Play.
+          - `recuperer-cle-blockboost.html` : page locale, SANS INTERNET,
+            pour déchiffrer le fichier bbenc et copier le Base64 qui sera placé
+            dans le secret `ANDROID_UPLOAD_KEYSTORE_BASE64`.
+          
+          **Ne jamais mettre le .jks en clair dans un dépôt, une Release ou un artifact public.**
+          Conserver une copie privée de la JKS et des deux mots de passe.
+          Ne pas régénérer une nouvelle clé tant que la première n'est pas perdue.
+          Ce certificat ne signe pas automatiquement l'APK debug déjà publiée :
+          un futur AAB de production devra être construit avec l'upload key.
+          EOF
+          git add -f cle-google-play/BlockBoost-upload.jks.bbenc             cle-google-play/BlockBoost-upload-certificate.pem             cle-google-play/recuperer-cle-blockboost.html cle-google-play/README.md
+          git commit -m "security: livrer clé Google Play UNIQUEMENT chiffrée et certificat PEM"
+          git push origin HEAD:refs/heads/temp/blockboost-upload-key-013
+          echo "### Récupération Block Boost Upload Key" >> "$GITHUB_STEP_SUMMARY"
+          echo "Clé **uniquement chiffrée**, PEM public et page de récupération hors ligne :" >> "$GITHUB_STEP_SUMMARY"
+          echo "https://github.com/$GITHUB_REPOSITORY/tree/temp/blockboost-upload-key-013/cle-google-play" >> "$GITHUB_STEP_SUMMARY"

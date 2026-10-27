@@ -2,14 +2,8 @@ name: 🔐 Block Boost 0.15 — Candidat AAB signé Play
 
 on:
   workflow_dispatch:
-  # L'ajout du certificat PUBLIC historique sur main déclenche une
-  # tentative sécurisée ; les quatre secrets et la JKS sont contrôlés
-  # avant toute signature. Aucun déclenchement par une PR.
-  push:
-    branches: [main]
-    paths:
-      - 'android/certificates/BlockBoost-upload-certificate.pem'
-      - 'android/app/build.gradle' # Nouvelle versionCode : construire la VRAIE AAB sur main après fusion
+  # Workflow historique 0.15 archivé : ne plus déclencher sur les versions 0.16+.
+  # La signature 0.16 est effectuée par play-api36-candidate-016.yml.
 
 permissions:
   contents: read

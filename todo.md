@@ -376,3 +376,12 @@ APK brute : https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/bl
 - **GitHub Actions [#40546914910](https://github.com/greenpower2669/Block-Boost/actions/runs/40546914910) : SUCCESS** ; tests, compile Android API36, signature APK/AAB, JKS historique/PEM SHA-256, 21 OGG + musique, logo WebP PWA/Android et SHA des binaires validés.
 - **GitHub Release [v0.16.0](https://github.com/greenpower2669/Block-Boost/releases/tag/v0.16.0) publiée**, fichiers directs `BlockBoost-0.16.0-release.apk` (18 177 100 octets, SHA-256 `61c3682ca5c22b1e346a02ffc336fe8d2c94a2809fa06fb18dde5b45df7b2596`) et `BlockBoost-0.16.0-play.aab` (17 980 833 octets, SHA-256 `c7fb17e1bcbb76b3984b5b6794ebcc724545427486caf895583d62bd9fb3ed8c`), fichier `SHA256SUMS`.
 - **Toujours à faire** : test physique Samsung et véritable soumission du fichier AAB dans Play Console, acceptation et publication Play non attestées.
+
+## BB-023 — Google Play : versionCode 16 déjà consommé → v0.17.0 (27/10/2026)
+
+- [x] Lire les informations Play Console rapportées par Fab : versionCode 16, 0.16.0, SDK 36 déjà importé.
+- [x] Réserver versionCode 17, versionName 0.17.0 ; conserver applicationId, SDK36, logo BB, JKS/PEM, son et gameplay.
+- [ ] Tests automatiques PR et validation du workflow de signature 0.17.
+- [ ] Fusionner dans main après CI verte et publier GitHub Release v0.17.0 avec APK/AAB signées directes et SHA.
+- [ ] Faire importer l'AAB code17 sur Play Console par Fab ; constater les avertissements, la validation et l'état réel de la distribution.
+- [ ] Essai Samsung et sécurité de la conservation des sauvegardes/ancien certificat debug.

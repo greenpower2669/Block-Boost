@@ -351,3 +351,7 @@ Fab valide fusion + Release APK/AAB le 27/10. La branche du logo transparent `fe
 - **GitHub Actions [#40546914910](https://github.com/greenpower2669/Block-Boost/actions/runs/40546914910) : SUCCESS** ; tests, compile Android API36, signature APK/AAB, JKS historique/PEM SHA-256, 21 OGG + musique, logo WebP PWA/Android et SHA des binaires validés.
 - **GitHub Release [v0.16.0](https://github.com/greenpower2669/Block-Boost/releases/tag/v0.16.0) publiée**, fichiers directs `BlockBoost-0.16.0-release.apk` (18 177 100 octets, SHA-256 `61c3682ca5c22b1e346a02ffc336fe8d2c94a2809fa06fb18dde5b45df7b2596`) et `BlockBoost-0.16.0-play.aab` (17 980 833 octets, SHA-256 `c7fb17e1bcbb76b3984b5b6794ebcc724545427486caf895583d62bd9fb3ed8c`), fichier `SHA256SUMS`.
 - **Toujours à faire** : test physique Samsung et véritable soumission du fichier AAB dans Play Console, acceptation et publication Play non attestées.
+
+## BB-023 — Publication correctrice 0.17 (27/10/2026)
+
+Google Play Console contient déjà `versionCode 16` / `0.16.0`, SDK36 (constaté et rapporté directement par Fab). Changement **seulement de version** : Android `versionCode 17` / `versionName 0.17.0`, même package, même signature, même icône transparente BB, même gameplay, 21 OGG et musique. Workflow précédent 0.16 archivé ; nouveau `.github/workflows/play-api36-release-017.yml` signe APK/AAB release et publie deux fichiers directs plus SHA. Statut exact de la nouvelle Release et de la soumission Play dans `todo.md`.

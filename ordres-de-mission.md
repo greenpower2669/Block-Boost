@@ -317,3 +317,9 @@ Fab autorise désormais explicitement « merge, release, mémoire à jour et AAB
 ## BB-016 — Icône approuvée et codage autorisé le 27/10/2026
 
 Fab a approuvé le logo avec bordure carrée arrondie, quatre blocs lumineux, patte dorée et transparence à l'extérieur, puis a autorisé son intégration. Implémentation sur `feature/blockboost-transparent-logo-016`, Android adaptatif et PWA, sans modification du jeu ni de son package. Conserver le contrôle de la signature existante et des sauvegardes. Les contrôles CI et le test Samsung restent requis, ainsi que l'accord explicite de Fab pour une fusion sur `main` et toute nouvelle Release APK/AAB.
+
+## BB-022 — Autorisation explicite fusion et publication 0.16 (27/10/2026)
+
+Fab autorise « On merge release apk aab pour l appstore aussi ». Mission : intégrer le nouveau logo néon carré arrondi et fond extérieur transparent (BB-016) avec la conformité Android 16 API 36 issue de `feature/play-api36-compliance-016`, passer `versionCode 16` / `versionName 0.16.0`, fusionner dans `main` après vérification des tests, puis produire APK de distribution et AAB pour Google Play dans la même GitHub Release `v0.16.0`.
+
+Préserver impérativement `applicationId fr.greenpower.blockboost`, la JKS Upload Key historique, le PEM canonique, les 21 effets, la musique, les sauvegardes, le moteur, les scores et l'absence de réseau. Réutiliser les quatre secrets sans divulguer leurs valeurs. Pipeline `.github/workflows/play-api36-candidate-016.yml` adapté à `main` et à la signature contrôlée (SHA-256, fingerprint, API36, ressources). Désactiver le déclenchement automatique du vieux pipeline signé 0.15. **Une Release sur GitHub ne vaut pas publication sur Google Play Console : transfert et acceptation dans la console encore à vérifier.**

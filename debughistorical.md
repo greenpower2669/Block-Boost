@@ -241,3 +241,7 @@ BB-014 : le premier build 0.14 était un fallback CC0 sans 21 sons. Correctif ca
 ## 27/10/2026 — Absence de la nouvelle icône dans la Release 0.15
 
 L'audit des fichiers `ic_launcher_foreground.xml` et `assets/icon.svg` a confirmé que l'ancien dessin restait dans la Release 0.15 : problème d'intégration source, et pas seulement de cache du lanceur. Correctif iconographique BB-016 commité sur branche dédiée le 27/10 : visuel approuvé avec transparence, Android + PWA. Validation réelle sur le Samsung encore à faire.
+
+## BB-022 — Audit de la chaîne release 0.16 (27/10/2026)
+
+Ancienne v0.15 et ses workflows de signature sont verrouillés au code 15 et SDK 35, donc ne permettent pas une nouvelle soumission Google Play en octobre 2026 (API36 exigée). Fusion des changements de la branche de candidat API36 (`android/app/build.gradle`, `MainActivity.java`, test `android-play-016.test.mjs`) dans la branche contenant le nouveau logo. Réaffectation du workflow API36 au push `main` : contrôle du package/version, de la JKS existante contre PEM, des 21 OGG et MP3, de l'icône WebP présente dans AAB, des signatures APK/AAB et des SHA-256 avant `gh release create v0.16.0`. Désactivation du déclenchement automatique de l'ancien workflow 0.15 pour éviter un build code15 concurrent non pertinent. État final et liens à compléter après exécutions Actions.

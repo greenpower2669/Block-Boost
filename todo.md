@@ -358,3 +358,14 @@ APK brute : https://raw.githubusercontent.com/greenpower2669/Block-Boost/temp/bl
 - [x] Cache PWA, favicon et manifeste révisés, test automatique ajouté.
 - [ ] Confirmer la réussite de la CI et du build Android.
 - [ ] Vérifier visuellement sur le Samsung puis obtenir l’accord de Fab avant merge/release.
+
+## BB-022 — Livraison 0.16 logo + Android 16 + Play — 27/10/2026
+
+- [x] Autorisation expresse de Fab pour fusion `main`, nouvelle Release GitHub APK/AAB, préparation Google Play.
+- [x] Combiner la nouvelle icône transparente et les adaptations Android API36, conserver le code du jeu et la clé d'importation historique.
+- [x] Préparer workflow signé pour la branche `main`, AAB/APK directs, vérifications certificat, SHA, 21 OGG, musique et logo.
+- [ ] CI de branche combinée verte avant fusion.
+- [ ] Fusionner PR logo + API36 dans `main` et vérifier le SHA final.
+- [ ] Vérifier GitHub Actions sur `main` : production, signature, empreintes et Release `v0.16.0` publiée avec fichiers APK et AAB directs.
+- [ ] Vérification physique de l'icône et du gameplay sur Samsung Android 16 (launcher, navigation, sauvegardes).
+- [ ] Soumettre l'AAB dans Play Console, puis vérifier statut et acceptation — séparé de la Release GitHub.

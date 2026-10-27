@@ -132,3 +132,7 @@ BB-014 : scripts/reuse_blockboost_013_audio.py vérifie le SHA complet 0.13, les
 ## Icône transparente BB-016 — 27/10/2026
 
 Travaux sur `feature/blockboost-transparent-logo-016` : icône Android et PWA remplacées par le logo approuvé (fond extérieur transparent). Lire `docs/logo-transparent-2026-10-27.md` et `todo.md`. Reste à valider sur Samsung ; aucun merge ni nouvelle Release.
+
+## Version 0.16 — intégration logo transparent + API36 (27/10/2026)
+
+Référence de livraison : branche `feature/blockboost-transparent-logo-016`, design `docs/logo-transparent-2026-10-27.md`, compatibilité Play cible API36 et versionCode16. Mission autorisée `ordres-de-mission.md` BB-022, état de livraison dans `todo.md`, trace technique `debughistorical.md`. Workflow signé principal `.github/workflows/play-api36-candidate-016.yml` ; Google Play Console est une étape distincte.

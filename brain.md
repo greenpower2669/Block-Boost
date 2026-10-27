@@ -340,3 +340,7 @@ Fab fournit le fichier public `BlockBoost-upload-certificate.pem` et approuve sa
 ## BB-016 — Nouveau logo 27/10/2026
 
 Intégration du logo 3D carré à coins arrondis, blocs lumineux et patte dorée approuvé par Fab : ressource WebP transparente 192 px identique dans Android et PWA, référence Android adaptative avec marges internes, favicon/manifeste Web et cache renouvelés. Tests dédiés. Branche `feature/blockboost-transparent-logo-016`, pas encore fusionnée ; gameplay et identité d'application conservés. Vérifier CI et rendu Samsung avant toute nouvelle version.
+
+## BB-022 — Octobre 2026, version 0.16 en préparation
+
+Fab valide fusion + Release APK/AAB le 27/10. La branche du logo transparent `feature/blockboost-transparent-logo-016` réunit désormais l'icône WebP 192×192 (sphère/carré néon arrondi, patte jaune, alpha externe) et le correctif Android 16 API36 issu de la PR #18. Le workflow `play-api36-candidate-016.yml` est adapté à une compilation/signature sur `main` et une Release GitHub `v0.16.0` avec APK, AAB et SHA ; conserver JKS/PEM historiques sans remplacement. Suivre les résultats de CI et de publication dans `todo.md`. Google Play Console non automatiquement publiée.

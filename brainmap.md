@@ -143,3 +143,7 @@ Référence de livraison : branche `feature/blockboost-transparent-logo-016`, de
 - **GitHub Actions [#40546914910](https://github.com/greenpower2669/Block-Boost/actions/runs/40546914910) : SUCCESS** ; tests, compile Android API36, signature APK/AAB, JKS historique/PEM SHA-256, 21 OGG + musique, logo WebP PWA/Android et SHA des binaires validés.
 - **GitHub Release [v0.16.0](https://github.com/greenpower2669/Block-Boost/releases/tag/v0.16.0) publiée**, fichiers directs `BlockBoost-0.16.0-release.apk` (18 177 100 octets, SHA-256 `61c3682ca5c22b1e346a02ffc336fe8d2c94a2809fa06fb18dde5b45df7b2596`) et `BlockBoost-0.16.0-play.aab` (17 980 833 octets, SHA-256 `c7fb17e1bcbb76b3984b5b6794ebcc724545427486caf895583d62bd9fb3ed8c`), fichier `SHA256SUMS`.
 - **Toujours à faire** : test physique Samsung et véritable soumission du fichier AAB dans Play Console, acceptation et publication Play non attestées.
+
+## BB-023 — VersionCode Play 17, 27 octobre 2026
+
+Fab a constaté `versionCode 16` déjà présent dans Play Console : passage à `versionCode 17` et version `0.17.0`, sans modifier l'icône BB, SDK36 ou la signature historique. Mission : `ordres-de-mission.md` BB-023 ; suivi : `todo.md` ; traces : `debughistorical.md`. Workflow `.github/workflows/play-api36-release-017.yml`.

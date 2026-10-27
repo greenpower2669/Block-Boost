@@ -1,12 +1,6 @@
 name: "📦 Block Boost 0.16 — APK et AAB Play signées + GitHub Release"
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'android/app/build.gradle'
-      - 'android/app/src/main/res/**'
-      - 'assets/blockboost-logo.webp'
-      - '.github/workflows/play-api36-candidate-016.yml'
+  # Workflow historique 0.16 conservé pour archivage manuel uniquement
   workflow_dispatch:
 
 permissions:

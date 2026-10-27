@@ -1,0 +1,152 @@
+name: "📦 Block Boost 0.17 — APK et AAB Play signées + GitHub Release"
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'android/app/build.gradle'
+      - 'android/app/src/main/res/**'
+      - 'assets/blockboost-logo.webp'
+      - '.github/workflows/play-api36-release-017.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: blockboost-play-api36-release-017
+  cancel-in-progress: true
+
+jobs:
+  build-signed:
+    if: github.repository == 'greenpower2669/Block-Boost' && github.ref_name == 'main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.13'
+      - name: Installer le SDK Android API 36 et outils de signature
+        run: |
+          set -euo pipefail
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-36" "build-tools;35.0.0"
+      - name: Vérifier le jeu, les versions, la confidentialité et les régressions
+        run: |
+          node --test tests/*.test.mjs
+          test "$(grep -Ec '^ *targetSdk 36$' android/app/build.gradle)" -eq 1
+          test "$(grep -Ec '^ *compileSdk 36$' android/app/build.gradle)" -eq 1
+      - name: Restaurer les 21 effets OGG du jeu complet avec contrôle SHA
+        run: |
+          python3 scripts/reuse_blockboost_013_audio.py .
+          test "$(find assets/licensed -name '*.ogg' | wc -l)" -eq 21
+      - name: Retrouver la JKS historique, vérifier sa conformité au PEM IMMUTABLE
+        shell: bash
+        env:
+          ANDROID_UPLOAD_KEYSTORE_BASE64: ${{ secrets.ANDROID_UPLOAD_KEYSTORE_BASE64 }}
+          ANDROID_UPLOAD_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_UPLOAD_KEYSTORE_PASSWORD }}
+          ANDROID_UPLOAD_KEY_ALIAS: ${{ secrets.ANDROID_UPLOAD_KEY_ALIAS }}
+          ANDROID_UPLOAD_KEY_PASSWORD: ${{ secrets.ANDROID_UPLOAD_KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          for name in ANDROID_UPLOAD_KEYSTORE_BASE64 ANDROID_UPLOAD_KEYSTORE_PASSWORD ANDROID_UPLOAD_KEY_ALIAS ANDROID_UPLOAD_KEY_PASSWORD; do
+            test -n "${!name:-}" || { echo "::error::Secret absent: $name"; exit 1; }
+          done
+          test "$ANDROID_UPLOAD_KEY_ALIAS" = "blockboost-upload"
+          umask 077
+          printf '%s' "$ANDROID_UPLOAD_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/upload.jks"
+          keytool -exportcert -rfc -keystore "$RUNNER_TEMP/upload.jks" -storepass "$ANDROID_UPLOAD_KEYSTORE_PASSWORD" -alias "$ANDROID_UPLOAD_KEY_ALIAS" -file "$RUNNER_TEMP/actual.pem" >/dev/null
+          openssl x509 -in android/certificates/BlockBoost-upload-certificate.pem -outform DER > "$RUNNER_TEMP/expected.der"
+          openssl x509 -in "$RUNNER_TEMP/actual.pem" -outform DER > "$RUNNER_TEMP/actual.der"
+          cmp "$RUNNER_TEMP/expected.der" "$RUNNER_TEMP/actual.der"
+          {
+            echo "ANDROID_UPLOAD_KEYSTORE_PATH=$RUNNER_TEMP/upload.jks"
+            echo "ANDROID_UPLOAD_KEYSTORE_PASSWORD=$ANDROID_UPLOAD_KEYSTORE_PASSWORD"
+            echo "ANDROID_UPLOAD_KEY_ALIAS=$ANDROID_UPLOAD_KEY_ALIAS"
+            echo "ANDROID_UPLOAD_KEY_PASSWORD=$ANDROID_UPLOAD_KEY_PASSWORD"
+          } >> "$GITHUB_ENV"
+      - name: Compiler APK release et AAB release SIGNÉES sans nouvelle clé
+        working-directory: android
+        run: gradle --no-daemon :app:assembleRelease :app:bundleRelease
+      - name: Valider API 36 version17, signature, audio complet et SHA256
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK=android/app/build/outputs/apk/release/app-release.apk
+          AAB=android/app/build/outputs/bundle/release/app-release.aab
+          PEM=android/certificates/BlockBoost-upload-certificate.pem
+          test -s "$APK" && test -s "$AAB"
+          BADGING="$("$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK")"
+          printf '%s\n' "$BADGING" | grep -F "package: name='fr.greenpower.blockboost' versionCode='17' versionName='0.17.0'"
+          printf '%s\n' "$BADGING" | grep -F "targetSdkVersion:'36'"
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose "$APK"
+          jarsigner -verify "$AAB" | grep -F 'jar verified.'
+          EXPECTED="$(openssl x509 -in "$PEM" -noout -fingerprint -sha256 | cut -d= -f2 | tr -d '\r')"
+          SIGNED="$(keytool -printcert -jarfile "$AAB" | sed -n 's/^[[:space:]]*SHA256: //p' | head -n 1 | tr -d '\r')"
+          test -n "$EXPECTED" && test "$SIGNED" = "$EXPECTED"
+          unzip -Z1 "$AAB" | grep -Fx 'base/assets/www/assets/blockboost-logo.webp'
+          unzip -Z1 "$AAB" | grep -Fx 'base/assets/www/Blockboostmusic.mp3'
+          unzip -Z1 "$AAB" | grep -Fx 'base/assets/www/src/engine.mjs'
+          unzip -p "$AAB" base/assets/www/src/engine.mjs | cmp - src/engine.mjs
+          unzip -p "$AAB" base/assets/www/src/engine.mjs | grep -F 'shapeFits(board,piece.coords)'
+          unzip -Z1 "$AAB" | grep -Fx 'base/assets/www/assets/licensed/result-guitar.ogg'
+          AUDIO_COUNT="$(unzip -Z1 "$AAB" | grep -Ec '^base/assets/www/assets/licensed/.*\.ogg$')"
+          test "$AUDIO_COUNT" -eq 21
+          mkdir -p android/dist
+          cp "$APK" android/dist/BlockBoost-0.17.0-release.apk
+          cp "$AAB" android/dist/BlockBoost-0.17.0-play.aab
+          (cd android/dist && sha256sum *.apk *.aab > SHA256SUMS)
+          (cd android/dist && sha256sum -c SHA256SUMS)
+      - name: Supprimer la clé privée et ses copies éphémères
+        if: always()
+        shell: bash
+        run: |
+          rm -f "$RUNNER_TEMP/upload.jks" "$RUNNER_TEMP/actual.pem" "$RUNNER_TEMP/actual.der" "$RUNNER_TEMP/expected.der"
+          rm -rf assets/licensed
+          git restore -- src/private-audio.mjs || true
+      - name: Archiver candidate signée dans GitHub Actions
+        uses: actions/upload-artifact@v4
+        with:
+          name: BlockBoost-0.17.0-play-release
+          path: |
+            android/dist/*.apk
+            android/dist/*.aab
+            android/dist/SHA256SUMS
+          if-no-files-found: error
+          retention-days: 30
+      - name: Publier la Release GitHub 0.16 avec fichiers directs et signés
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          if gh release view v0.17.0 --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "::error::La release v0.17.0 existe déjà : ne pas écraser de binaires."
+            exit 1
+          fi
+          (cd android/dist && sha256sum -c SHA256SUMS)
+          cat > android/dist/RELEASE-NOTES.md <<'EOF'
+          # 🧩 Block Boost v0.17.0 — logo BB transparent, nouvelle AAB Play code 17
+          
+          - Nouveau logo néon à quatre blocs, patte dorée et carré arrondi, extérieur transparent.
+          - PWA et icône Android adaptative mises à jour.
+          - Android 16 API 36 (compileSdk/targetSdk 36), versionCode 17, package `fr.greenpower.blockboost`.
+          - Les 21 effets, la musique, le gameplay et les sauvegardes restent conservés.
+          - APK release et AAB Play signées avec l'Upload Key historique, contrôlées contre le certificat PEM permanent.
+          - Fichiers directs sans ZIP, avec empreintes SHA-256.
+          
+          **Google Play :** l'AAB fournie est prête pour soumission dans la Play Console ; cette Release GitHub ne publie pas l'application sur Google Play.
+          EOF
+          gh release create v0.17.0 \
+            android/dist/BlockBoost-0.17.0-release.apk \
+            android/dist/BlockBoost-0.17.0-play.aab \
+            android/dist/SHA256SUMS \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$GITHUB_SHA" \
+            --title 'Block Boost v0.17.0 — Nouveau logo & Android 16 Play' \
+            --notes-file android/dist/RELEASE-NOTES.md
+          echo "https://github.com/$GITHUB_REPOSITORY/releases/tag/v0.17.0" >> "$GITHUB_STEP_SUMMARY"

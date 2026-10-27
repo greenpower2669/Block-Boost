@@ -252,3 +252,7 @@ Ancienne v0.15 et ses workflows de signature sont verrouillés au code 15 et SDK
 - **GitHub Actions [#40546914910](https://github.com/greenpower2669/Block-Boost/actions/runs/40546914910) : SUCCESS** ; tests, compile Android API36, signature APK/AAB, JKS historique/PEM SHA-256, 21 OGG + musique, logo WebP PWA/Android et SHA des binaires validés.
 - **GitHub Release [v0.16.0](https://github.com/greenpower2669/Block-Boost/releases/tag/v0.16.0) publiée**, fichiers directs `BlockBoost-0.16.0-release.apk` (18 177 100 octets, SHA-256 `61c3682ca5c22b1e346a02ffc336fe8d2c94a2809fa06fb18dde5b45df7b2596`) et `BlockBoost-0.16.0-play.aab` (17 980 833 octets, SHA-256 `c7fb17e1bcbb76b3984b5b6794ebcc724545427486caf895583d62bd9fb3ed8c`), fichier `SHA256SUMS`.
 - **Toujours à faire** : test physique Samsung et véritable soumission du fichier AAB dans Play Console, acceptation et publication Play non attestées.
+
+## BB-023 — Correction version Android 17 pour Google Play (27/10/2026)
+
+Fab signale en ouvrant sa Play Console : version 16 (0.16.0), Android SDK36 déjà importée ; une nouvelle AAB `versionCode 16` serait refusée en doublon. Ne pas modifier le nom de fichier : reconstruire effectivement avec `versionCode 17`, conserver le même `applicationId`, SDK36, Upload Key et certificat PEM immuables. Désamorcer le trigger automatique de l'ancien workflow v0.16 et préparer pipeline v0.17 contrôlé (Node, certificat JKS/PEM, APK/AAB signées, 21 OGG, MP3, nouveau logo transparent, SHA, publication sans ZIP). Pas de publication Play attestée avant confirmation de Fab.

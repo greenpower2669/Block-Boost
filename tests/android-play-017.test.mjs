@@ -3,12 +3,12 @@ import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
 
 const read=path=>readFileSync(new URL("../"+path,import.meta.url),"utf8");
-test("Google Play API 36 + unique package + monotonic version 16",()=>{
+test("Google Play API 36 + unique package + monotonic version 17",()=>{
   const gradle=read("android/app/build.gradle");
   assert.match(gradle,/compileSdk\s+36\b/);
   assert.match(gradle,/targetSdk\s+36\b/);
-  assert.match(gradle,/versionCode\s+16\b/);
-  assert.match(gradle,/versionName\s+'0\.16\.0'/);
+  assert.match(gradle,/versionCode\s+17\b/);
+  assert.match(gradle,/versionName\s+'0\.17\.0'/);
   assert.match(gradle,/applicationId\s+'fr\.greenpower\.blockboost'/);
   assert.match(gradle,/include 'src\/\*\*\/\*\.mjs'/);
 });

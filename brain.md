@@ -336,3 +336,11 @@ Fab fournit le fichier public `BlockBoost-upload-certificate.pem` et approuve sa
 - Fab demande une « Git page » pour répondre au champ « URL des règles de confidentialité » dans Play Console. Politique écrite d'après le manifeste Android sans INTERNET, sans AdMob/analytics, sauvegardes locales de scores et paramètres, sons/TTS Android et vibrations. Pas de domicile ni d'adresse privée publiée.
 - Fichier source rendu publiquement : `docs/PRIVACY.md` ; site statique GitHub Pages prêt dans `docs/index.html` et `docs/privacy/index.html`. Si Pages du dépôt reste désactivé, ne pas présenter `https://greenpower2669.github.io/Block-Boost/privacy/` comme actif avant confirmation et configuration `main` / `/docs` dans Settings → Pages.
 - Site public hébergé via GitHub Pages distinct de l'AAB, aucune signature ou versionCode modifiés. Vérifier que la politique est aussi accessible depuis l'application (exigence de Play) avant publication ; l'AAB 0.16 existante ne contient pas encore de lien vers cette nouvelle page. L'utilisateur garde le contrôle de ses coordonnées publiées.
+
+## BB-016 — Nouveau logo 27/10/2026
+
+Intégration du logo 3D carré à coins arrondis, blocs lumineux et patte dorée approuvé par Fab : ressource WebP transparente 192 px identique dans Android et PWA, référence Android adaptative avec marges internes, favicon/manifeste Web et cache renouvelés. Tests dédiés. Branche `feature/blockboost-transparent-logo-016`, pas encore fusionnée ; gameplay et identité d'application conservés. Vérifier CI et rendu Samsung avant toute nouvelle version.
+
+## BB-022 — Octobre 2026, version 0.16 en préparation
+
+Fab valide fusion + Release APK/AAB le 27/10. La branche du logo transparent `feature/blockboost-transparent-logo-016` réunit désormais l'icône WebP 192×192 (sphère/carré néon arrondi, patte jaune, alpha externe) et le correctif Android 16 API36 issu de la PR #18. Le workflow `play-api36-candidate-016.yml` est adapté à une compilation/signature sur `main` et une Release GitHub `v0.16.0` avec APK, AAB et SHA ; conserver JKS/PEM historiques sans remplacement. Suivre les résultats de CI et de publication dans `todo.md`. Google Play Console non automatiquement publiée.

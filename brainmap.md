@@ -128,3 +128,11 @@ BB-014 : scripts/reuse_blockboost_013_audio.py vérifie le SHA complet 0.13, les
 - Fab demande une « Git page » pour répondre au champ « URL des règles de confidentialité » dans Play Console. Politique écrite d'après le manifeste Android sans INTERNET, sans AdMob/analytics, sauvegardes locales de scores et paramètres, sons/TTS Android et vibrations. Pas de domicile ni d'adresse privée publiée.
 - Fichier source rendu publiquement : `docs/PRIVACY.md` ; site statique GitHub Pages prêt dans `docs/index.html` et `docs/privacy/index.html`. Si Pages du dépôt reste désactivé, ne pas présenter `https://greenpower2669.github.io/Block-Boost/privacy/` comme actif avant confirmation et configuration `main` / `/docs` dans Settings → Pages.
 - Site public hébergé via GitHub Pages distinct de l'AAB, aucune signature ou versionCode modifiés. Vérifier que la politique est aussi accessible depuis l'application (exigence de Play) avant publication ; l'AAB 0.16 existante ne contient pas encore de lien vers cette nouvelle page. L'utilisateur garde le contrôle de ses coordonnées publiées.
+
+## Icône transparente BB-016 — 27/10/2026
+
+Travaux sur `feature/blockboost-transparent-logo-016` : icône Android et PWA remplacées par le logo approuvé (fond extérieur transparent). Lire `docs/logo-transparent-2026-10-27.md` et `todo.md`. Reste à valider sur Samsung ; aucun merge ni nouvelle Release.
+
+## Version 0.16 — intégration logo transparent + API36 (27/10/2026)
+
+Référence de livraison : branche `feature/blockboost-transparent-logo-016`, design `docs/logo-transparent-2026-10-27.md`, compatibilité Play cible API36 et versionCode16. Mission autorisée `ordres-de-mission.md` BB-022, état de livraison dans `todo.md`, trace technique `debughistorical.md`. Workflow signé principal `.github/workflows/play-api36-candidate-016.yml` ; Google Play Console est une étape distincte.

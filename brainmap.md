@@ -147,3 +147,11 @@ Référence de livraison : branche `feature/blockboost-transparent-logo-016`, de
 ## BB-023 — VersionCode Play 17, 27 octobre 2026
 
 Fab a constaté `versionCode 16` déjà présent dans Play Console : passage à `versionCode 17` et version `0.17.0`, sans modifier l'icône BB, SDK36 ou la signature historique. Mission : `ordres-de-mission.md` BB-023 ; suivi : `todo.md` ; traces : `debughistorical.md`. Workflow `.github/workflows/play-api36-release-017.yml`.
+
+### Livraison vérifiée BB-023 — 27/10/2026
+
+- Fab constate dans **Play Console** que code 16 / 0.16.0 / SDK36 était déjà présent, ce qui impose une nouvelle build **code 17**.
+- [PR #20](https://github.com/greenpower2669/Block-Boost/pull/20) **fusionnée dans main** : commit `03e5ca2e48b70ffbd445751ee54ca98957046710`, validations Node/Chrome via Actions #40582847709 et #40582886577 vertes.
+- [GitHub Actions #40583016760](https://github.com/greenpower2669/Block-Boost/actions/runs/40583016760) **COMPLETED/SUCCESS** : versionCode 17, targetSdk 36, même package, JKS historique comparée à PEM, APK release et AAB Play signées vérifiées, 21 OGG, musique MP3, logo BB WebP, SHA-256.
+- [GitHub Release v0.17.0](https://github.com/greenpower2669/Block-Boost/releases/tag/v0.17.0) **publiée**, fichier AAB direct `BlockBoost-0.17.0-play.aab` (17 980 841 octets, SHA256 `7a3c0fa9d220de9d6753dce3f8800239e18865016695ebf05dd0ab4458031688`) et APK direct `BlockBoost-0.17.0-release.apk` (18 177 104 octets, SHA256 `6133c10c55b0a2537f740f0c8508b47e8612199d71ee6e80835158f354749fb6`), `SHA256SUMS` inclus.
+- **Reste à faire :** Fab doit importer **0.17 AAB (pas 0.16)** dans Google Play Console et confirmer validation/revue/publication. Test physique Samsung non certifié.

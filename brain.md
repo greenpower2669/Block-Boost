@@ -344,3 +344,10 @@ Intégration du logo 3D carré à coins arrondis, blocs lumineux et patte dorée
 ## BB-022 — Octobre 2026, version 0.16 en préparation
 
 Fab valide fusion + Release APK/AAB le 27/10. La branche du logo transparent `feature/blockboost-transparent-logo-016` réunit désormais l'icône WebP 192×192 (sphère/carré néon arrondi, patte jaune, alpha externe) et le correctif Android 16 API36 issu de la PR #18. Le workflow `play-api36-candidate-016.yml` est adapté à une compilation/signature sur `main` et une Release GitHub `v0.16.0` avec APK, AAB et SHA ; conserver JKS/PEM historiques sans remplacement. Suivre les résultats de CI et de publication dans `todo.md`. Google Play Console non automatiquement publiée.
+
+### Bilan vérifié BB-022 — 27 octobre 2026
+
+- **Fusion `main` réussie**, PR [#19](https://github.com/greenpower2669/Block-Boost/pull/19), commit `4b9d048ff385cffaba45fa0c48e3ef523db71a3f`.
+- **GitHub Actions [#40546914910](https://github.com/greenpower2669/Block-Boost/actions/runs/40546914910) : SUCCESS** ; tests, compile Android API36, signature APK/AAB, JKS historique/PEM SHA-256, 21 OGG + musique, logo WebP PWA/Android et SHA des binaires validés.
+- **GitHub Release [v0.16.0](https://github.com/greenpower2669/Block-Boost/releases/tag/v0.16.0) publiée**, fichiers directs `BlockBoost-0.16.0-release.apk` (18 177 100 octets, SHA-256 `61c3682ca5c22b1e346a02ffc336fe8d2c94a2809fa06fb18dde5b45df7b2596`) et `BlockBoost-0.16.0-play.aab` (17 980 833 octets, SHA-256 `c7fb17e1bcbb76b3984b5b6794ebcc724545427486caf895583d62bd9fb3ed8c`), fichier `SHA256SUMS`.
+- **Toujours à faire** : test physique Samsung et véritable soumission du fichier AAB dans Play Console, acceptation et publication Play non attestées.

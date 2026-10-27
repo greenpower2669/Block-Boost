@@ -245,3 +245,10 @@ L'audit des fichiers `ic_launcher_foreground.xml` et `assets/icon.svg` a confirm
 ## BB-022 — Audit de la chaîne release 0.16 (27/10/2026)
 
 Ancienne v0.15 et ses workflows de signature sont verrouillés au code 15 et SDK 35, donc ne permettent pas une nouvelle soumission Google Play en octobre 2026 (API36 exigée). Fusion des changements de la branche de candidat API36 (`android/app/build.gradle`, `MainActivity.java`, test `android-play-016.test.mjs`) dans la branche contenant le nouveau logo. Réaffectation du workflow API36 au push `main` : contrôle du package/version, de la JKS existante contre PEM, des 21 OGG et MP3, de l'icône WebP présente dans AAB, des signatures APK/AAB et des SHA-256 avant `gh release create v0.16.0`. Désactivation du déclenchement automatique de l'ancien workflow 0.15 pour éviter un build code15 concurrent non pertinent. État final et liens à compléter après exécutions Actions.
+
+### Bilan vérifié BB-022 — 27 octobre 2026
+
+- **Fusion `main` réussie**, PR [#19](https://github.com/greenpower2669/Block-Boost/pull/19), commit `4b9d048ff385cffaba45fa0c48e3ef523db71a3f`.
+- **GitHub Actions [#40546914910](https://github.com/greenpower2669/Block-Boost/actions/runs/40546914910) : SUCCESS** ; tests, compile Android API36, signature APK/AAB, JKS historique/PEM SHA-256, 21 OGG + musique, logo WebP PWA/Android et SHA des binaires validés.
+- **GitHub Release [v0.16.0](https://github.com/greenpower2669/Block-Boost/releases/tag/v0.16.0) publiée**, fichiers directs `BlockBoost-0.16.0-release.apk` (18 177 100 octets, SHA-256 `61c3682ca5c22b1e346a02ffc336fe8d2c94a2809fa06fb18dde5b45df7b2596`) et `BlockBoost-0.16.0-play.aab` (17 980 833 octets, SHA-256 `c7fb17e1bcbb76b3984b5b6794ebcc724545427486caf895583d62bd9fb3ed8c`), fichier `SHA256SUMS`.
+- **Toujours à faire** : test physique Samsung et véritable soumission du fichier AAB dans Play Console, acceptation et publication Play non attestées.
